@@ -1,0 +1,69 @@
+{
+  "principal": 1267012378,
+  "deadline": "1802639786",
+  "steps": [
+    {
+      "to": "0xEC936eEe6c894Ad0557BcaD2d432e247F09D9DD9",
+      "sig": "synchronizeRewards()",
+      "gas": 8000000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 770516,
+      "hash": "0x32b1f5d52c0cd45b3991bb5a4b6792759172327d03c0f6730af3cdfd92dc6258"
+    },
+    {
+      "to": "0xd4B36946C8121b46c20de9AfBF9dF587C1b30f32",
+      "sig": "claimPrincipal(uint256,address)",
+      "gas": 8000000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 315463,
+      "hash": "0xc53f8abe629a23bc936eef6498395cd5b0584cf85709d4c4a37a31572e775667"
+    },
+    {
+      "to": "0x91A06E0EA997f0b25d0280D0741AA282497366b3",
+      "sig": "approve(address,uint256)",
+      "gas": 200000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 50875,
+      "hash": "0x89aa94c2f851ec03d337e5786d90755e362d3d74e30aea566ec6f7be8dab0803"
+    },
+    {
+      "to": "0x33462f6ffDE8Fef8088520408830aFaD5a75651f",
+      "sig": "deposit(address,address,uint256,uint256)",
+      "gas": 15000000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 370694,
+      "hash": "0xa451d3add2732f2c1720a8471d5c73c8ec4e393d124438d0e8627621c78d3260"
+    },
+    {
+      "to": "0x91A06E0EA997f0b25d0280D0741AA282497366b3",
+      "sig": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "gas": 20000000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 277108,
+      "hash": "0x1f2fd438c92b9b8f96042aefcfbff4e9eeab74b096eaaaa2b365e0e3e23f9259"
+    },
+    {
+      "to": "0xBE1a040edE4e9eC2A8612B83ba7f0ecDD3b612e4",
+      "sig": "activate()",
+      "gas": 20000000,
+      "code": 0,
+      "status": "0x1",
+      "gasUsed": 2326172,
+      "hash": "0x9275197136cd7e9101d1ef72d6b014d615271eb82c3e2224bdd6c5e67a18ab9a"
+    },
+    {
+      "to": "0xEC936eEe6c894Ad0557BcaD2d432e247F09D9DD9",
+      "sig": "sweepDust()",
+      "gas": 31900000,
+      "code": 0,
+      "status": "0x0",
+      "gasUsed": 31391954,
+      "hash": "0xf21e2f52d87ba937ae4b5b42bb9258298c96f18b1fc778f0460ca2a5af5fe439"
+    }
+  ]
+}

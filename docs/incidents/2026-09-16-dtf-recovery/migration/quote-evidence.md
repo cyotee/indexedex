@@ -1,3 +1,9 @@
+# Current status - 2026-11-18
+
+The current execution entry is [implementation-audit-20261118/verification.md](implementation-audit-20261118/verification.md). The passing Migration suite includes current observed Raw/RawRate/disabled/V3 comparisons, an actual asymmetric 18/6 pool differential, nonempty legacy buffered-book normalization, and native V3 pricing submission without repricing loaded credit. Earlier raw-hook evidence remains at [gap-closure-20261116/20261116T190111Z/pricing-parity.md](gap-closure-20261116/20261116T190111Z/pricing-parity.md). The historical snapshot below remains a historical body.
+
+## Historical body
+
 # Bounded frozen original-credit snapshot evidence
 
 Date: 2026-11-10. Worktree: `/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-02`.

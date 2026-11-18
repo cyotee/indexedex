@@ -1,0 +1,83 @@
+{
+  "blockNumber": "0xec",
+  "blockHash": "0x4675ee910a6c5f5a8b833f793664fb83e07fecb5961d7c662225c5b12f796eea",
+  "timestamp": "0x6b73a406",
+  "uri": "data:application/json;base64,eyJuYW1lIjoiTWlncmF0aW9uIERFVEYgIzMiLCJkZXNjcmlwdGlvbiI6IkZ1bmRlZCBNaWdyYXRpb24gREVURiBwcmluY2lwYWwgdW5sb2NrcyBpbiBmdWxsIDkwIGRheXMgYWZ0ZXIgY3JlYXRpb24uIE5vIHByaW5jaXBhbCB2ZXN0cyBiZWZvcmUgdGhlIGNsaWZmLiBSZXdhcmRzIGFjY3J1ZSBmcm9tIGNyZWF0aW9uLiBCZWZvcmUgYWN0aXZhdGlvbiBvbmx5IHByaW5jaXBhbC1vbmx5IGNsYWltcyBhcmUgYXZhaWxhYmxlIGFmdGVyIHRoZSBjbGlmZjsgcmV3YXJkIGFuZCBjb21iaW5lZCBjbGFpbXMgYXJlIGNsb3NlZC4gQ2xhaW1zIHBheSBzREVURi4iLCJpbWFnZSI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0ExTWpBZ05EUXdJajQ4Y21WamRDQjNhV1IwYUQwaU5USXdJaUJvWldsbmFIUTlJalEwTUNJZ2NuZzlJakl3SWlCbWFXeHNQU0lqTVRBeFlqSmhJaTgrUEdjZ1ptbHNiRDBpSTJVMVpqTmxaaUlnWm05dWRDMW1ZVzFwYkhrOUltMXZibTl6Y0dGalpTSStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqTTBJaUJtYjI1MExYTnBlbVU5SWpFMUlqNU5hV2R5WVhScGIyNGdSRVZVUmlBb1JFVlVSaWs4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqWXdJaUJtYjI1MExYTnBlbVU5SWpFMElqNU5hV2R5WVhScGIyNGdZMnhwWm1ZZ1ltOXVaQ0FqTXp3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TkNJZ2VUMGlPVFFpSUdadmJuUXRjMmw2WlQwaU1UUWlQakF1TUNVZ2NISnBibU5wY0dGc0lIVnViRzlqYTJWa1BDOTBaWGgwUGp4eVpXTjBJSGc5SWpJMElpQjVQU0l4TURnaUlIZHBaSFJvUFNJME56SWlJR2hsYVdkb2REMGlPQ0lnY25nOUlqUWlJR1pwYkd3OUlpTXpNRFF5TlRNaUx6NDhjbVZqZENCNFBTSXlOQ0lnZVQwaU1UQTRJaUIzYVdSMGFEMGlNQ0lnYUdWcFoyaDBQU0k0SWlCeWVEMGlOQ0lnWm1sc2JEMGlJemhrWlRCak5TSXZQangwWlhoMElIZzlJakkwSWlCNVBTSXhORFVpSUdadmJuUXRjMmw2WlQwaU1URWlQbE4wWVhKMElERTNPVFE1TmpRM05ETWdMeUJOWVhSMWNtbDBlU0F4T0RBeU56UXdOelF6UEM5MFpYaDBQangwWlhoMElIZzlJakkwSWlCNVBTSXhOamNpSUdadmJuUXRjMmw2WlQwaU1USWlQa05zYVdabUlHeHZZMnRsWkNBdklERWdjMlZqYjI1a2N6d3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJeU5DSWdlVDBpTWpBMElpQm1iMjUwTFhOcGVtVTlJakV5SWo1TmFXZHlZWFJwYjI0Z1JFVlVSaUJ3Y21sdVkybHdZV3c4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqSXpNQ0lnWm05dWRDMXphWHBsUFNJeE55SStNUzR6T0Rnek5USTFPVFE4TDNSbGVIUStQSFJsZUhRZ2VEMGlNamM0SWlCNVBTSXlNRFFpSUdadmJuUXRjMmw2WlQwaU1USWlQbEpsYldGcGJtbHVaeUJFUlZSR0lIQnlhVzVqYVhCaGJEd3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJeU56Z2lJSGs5SWpJek1DSWdabTl1ZEMxemFYcGxQU0l4TnlJK01TNHpPRGd6TlRJMU9UUThMM1JsZUhRK1BIUmxlSFFnZUQwaU1qUWlJSGs5SWpJM01TSWdabTl1ZEMxemFYcGxQU0l4TWlJK1EyeGhhVzFoWW14bElIQnlhVzVqYVhCaGJDQnpSRVZVUmp3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TkNJZ2VUMGlNamszSWlCbWIyNTBMWE5wZW1VOUlqRTNJajR3TGpBd01EQXdNREF3TUR3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TnpnaUlIazlJakkzTVNJZ1ptOXVkQzF6YVhwbFBTSXhNaUkrUTJ4aGFXMWhZbXhsSUhKbGQyRnlaSE1nYzBSRlZFWThMM1JsZUhRK1BIUmxlSFFnZUQwaU1qYzRJaUI1UFNJeU9UY2lJR1p2Ym5RdGMybDZaVDBpTVRjaVBqQXVNREF3TURBd01EQXdQQzkwWlhoMFBqeDBaWGgwSUhnOUlqSTBJaUI1UFNJek5EUWlJR1p2Ym5RdGMybDZaVDBpTVRJaVBsUnZkR0ZzSUdOc1lXbHRZV0pzWlNCelJFVlVSand2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOQ0lnZVQwaU16Y3dJaUJtYjI1MExYTnBlbVU5SWpFM0lqNHdMakF3TURBd01EQXdNRHd2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOemdpSUhrOUlqTTBOQ0lnWm05dWRDMXphWHBsUFNJeE1pSStRV05qY25WbFpDQnlaWGRoY21SeklITkVSVlJHUEM5MFpYaDBQangwWlhoMElIZzlJakkzT0NJZ2VUMGlNemN3SWlCbWIyNTBMWE5wZW1VOUlqRTNJajR3TGpBek5EY3hOakU0TUR3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TkNJZ2VUMGlNemc1SWlCbWIyNTBMWE5wZW1VOUlqRXlJajVTWlhkaGNtUWdZMnhoYVcxeklHeHZZMnRsWkNCMWJuUnBiQ0JoWTNScGRtRjBhVzl1UEM5MFpYaDBQangwWlhoMElIZzlJakkwSWlCNVBTSTBNVE1pSUdadmJuUXRjMmw2WlQwaU1USWlQbEJ5YVc1amFYQmhiQzF2Ym14NUlHTnNZV2x0Y3lCd1lYa2djMFJGVkVZdVBDOTBaWGgwUGp3dlp6NDhMM04yWno0PSIsImF0dHJpYnV0ZXMiOlt7InRyYWl0X3R5cGUiOiJERVRGIG5hbWUiLCJ2YWx1ZSI6Ik1pZ3JhdGlvbiBERVRGIn0seyJ0cmFpdF90eXBlIjoiREVURiBzeW1ib2wiLCJ2YWx1ZSI6IkRFVEYifSx7InRyYWl0X3R5cGUiOiJSb2xlIiwidmFsdWUiOiJNaWdyYXRpb24gY2xpZmYgYm9uZCJ9LHsidHJhaXRfdHlwZSI6IlB1cmNoYXNlZCBERVRGIiwidmFsdWUiOiIxLjM4ODM1MjU5NCJ9LHsidHJhaXRfdHlwZSI6IlJlbWFpbmluZyBERVRGIHByaW5jaXBhbCIsInZhbHVlIjoiMS4zODgzNTI1OTQifSx7InRyYWl0X3R5cGUiOiJDbGFpbWVkIERFVEYgcHJpbmNpcGFsIiwidmFsdWUiOiIwLjAwMDAwMDAwMCJ9LHsidHJhaXRfdHlwZSI6IkNsYWltYWJsZSBwcmluY2lwYWwgc0RFVEYiLCJ2YWx1ZSI6IjAuMDAwMDAwMDAwIn0seyJ0cmFpdF90eXBlIjoiQ2xhaW1hYmxlIHJld2FyZHMgc0RFVEYiLCJ2YWx1ZSI6IjAuMDAwMDAwMDAwIn0seyJ0cmFpdF90eXBlIjoiVG90YWwgY2xhaW1hYmxlIHNERVRGIiwidmFsdWUiOiIwLjAwMDAwMDAwMCJ9LHsidHJhaXRfdHlwZSI6IkFjY3J1ZWQgcmV3YXJkcyBzREVURiIsInZhbHVlIjoiMC4wMzQ3MTYxODAifSx7InRyYWl0X3R5cGUiOiJSZXdhcmQgZGVsaXZlcnkiLCJ2YWx1ZSI6IkxvY2tlZCB1bnRpbCBhY3RpdmF0aW9uIn0seyJ0cmFpdF90eXBlIjoiQ2xpZmYgc3RhcnQiLCJkaXNwbGF5X3R5cGUiOiJkYXRlIiwidmFsdWUiOjE3OTQ5NjQ3NDN9LHsidHJhaXRfdHlwZSI6IlByaW5jaXBhbCB1bmxvY2sgdGltZSIsImRpc3BsYXlfdHlwZSI6ImRhdGUiLCJ2YWx1ZSI6MTgwMjc0MDc0M30seyJ0cmFpdF90eXBlIjoiQ2xpZmYgZHVyYXRpb24gc2Vjb25kcyIsInZhbHVlIjo3Nzc2MDAwfSx7InRyYWl0X3R5cGUiOiJQcmluY2lwYWwgdW5sb2NrZWQgYnBzIiwidmFsdWUiOjB9LHsidHJhaXRfdHlwZSI6IlByaW5jaXBhbCBzdGF0dXMiLCJ2YWx1ZSI6IkNsaWZmIGxvY2tlZCJ9LHsidHJhaXRfdHlwZSI6IlNlY29uZHMgcmVtYWluaW5nIiwidmFsdWUiOiIxIn1dfQ==",
+  "metadata": {
+    "name": "Migration DETF #3",
+    "description": "Funded Migration DETF principal unlocks in full 90 days after creation. No principal vests before the cliff. Rewards accrue from creation. Before activation only principal-only claims are available after the cliff; reward and combined claims are closed. Claims pay sDETF.",
+    "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5NaWdyYXRpb24gY2xpZmYgYm9uZCAjMzwvdGV4dD48dGV4dCB4PSIyNCIgeT0iOTQiIGZvbnQtc2l6ZT0iMTQiPjAuMCUgcHJpbmNpcGFsIHVubG9ja2VkPC90ZXh0PjxyZWN0IHg9IjI0IiB5PSIxMDgiIHdpZHRoPSI0NzIiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiMzMDQyNTMiLz48cmVjdCB4PSIyNCIgeT0iMTA4IiB3aWR0aD0iMCIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iIzhkZTBjNSIvPjx0ZXh0IHg9IjI0IiB5PSIxNDUiIGZvbnQtc2l6ZT0iMTEiPlN0YXJ0IDE3OTQ5NjQ3NDMgLyBNYXR1cml0eSAxODAyNzQwNzQzPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIxNjciIGZvbnQtc2l6ZT0iMTIiPkNsaWZmIGxvY2tlZCAvIDEgc2Vjb25kczwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjA0IiBmb250LXNpemU9IjEyIj5NaWdyYXRpb24gREVURiBwcmluY2lwYWw8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjIzMCIgZm9udC1zaXplPSIxNyI+MS4zODgzNTI1OTQ8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIyMDQiIGZvbnQtc2l6ZT0iMTIiPlJlbWFpbmluZyBERVRGIHByaW5jaXBhbDwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjIzMCIgZm9udC1zaXplPSIxNyI+MS4zODgzNTI1OTQ8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjI3MSIgZm9udC1zaXplPSIxMiI+Q2xhaW1hYmxlIHByaW5jaXBhbCBzREVURjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjk3IiBmb250LXNpemU9IjE3Ij4wLjAwMDAwMDAwMDwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjI3MSIgZm9udC1zaXplPSIxMiI+Q2xhaW1hYmxlIHJld2FyZHMgc0RFVEY8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIyOTciIGZvbnQtc2l6ZT0iMTciPjAuMDAwMDAwMDAwPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIzNDQiIGZvbnQtc2l6ZT0iMTIiPlRvdGFsIGNsYWltYWJsZSBzREVURjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMzcwIiBmb250LXNpemU9IjE3Ij4wLjAwMDAwMDAwMDwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjM0NCIgZm9udC1zaXplPSIxMiI+QWNjcnVlZCByZXdhcmRzIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMzcwIiBmb250LXNpemU9IjE3Ij4wLjAzNDcxNjE4MDwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMzg5IiBmb250LXNpemU9IjEyIj5SZXdhcmQgY2xhaW1zIGxvY2tlZCB1bnRpbCBhY3RpdmF0aW9uPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSI0MTMiIGZvbnQtc2l6ZT0iMTIiPlByaW5jaXBhbC1vbmx5IGNsYWltcyBwYXkgc0RFVEYuPC90ZXh0PjwvZz48L3N2Zz4=",
+    "attributes": [
+      {
+        "trait_type": "DETF name",
+        "value": "Migration DETF"
+      },
+      {
+        "trait_type": "DETF symbol",
+        "value": "DETF"
+      },
+      {
+        "trait_type": "Role",
+        "value": "Migration cliff bond"
+      },
+      {
+        "trait_type": "Purchased DETF",
+        "value": "1.388352594"
+      },
+      {
+        "trait_type": "Remaining DETF principal",
+        "value": "1.388352594"
+      },
+      {
+        "trait_type": "Claimed DETF principal",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Claimable principal sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Claimable rewards sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Total claimable sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Accrued rewards sDETF",
+        "value": "0.034716180"
+      },
+      {
+        "trait_type": "Reward delivery",
+        "value": "Locked until activation"
+      },
+      {
+        "trait_type": "Cliff start",
+        "display_type": "date",
+        "value": 1794964743
+      },
+      {
+        "trait_type": "Principal unlock time",
+        "display_type": "date",
+        "value": 1802740743
+      },
+      {
+        "trait_type": "Cliff duration seconds",
+        "value": 7776000
+      },
+      {
+        "trait_type": "Principal unlocked bps",
+        "value": 0
+      },
+      {
+        "trait_type": "Principal status",
+        "value": "Cliff locked"
+      },
+      {
+        "trait_type": "Seconds remaining",
+        "value": "1"
+      }
+    ]
+  }
+}

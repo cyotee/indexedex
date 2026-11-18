@@ -1,0 +1,120 @@
+{
+  "planIdentity": "dtf-migration-gap-closure-plan-20261116-final",
+  "recordedAt": "2026-11-16T19:01:11.121Z",
+  "purpose": "Unrepaired source baseline. No production file was changed by this record.",
+  "git": {
+    "branch": "main",
+    "head": "42d2efc0d",
+    "tree": "15c55f7df"
+  },
+  "toolchain": {
+    "forge": "1.9.0",
+    "forgeCommit": "6056c5845d34205a83cf7108042adb137325c9df",
+    "forgeBuilt": "2026-11-02T20:16:54.701302000Z",
+    "forgePath": "/Users/cyotee/.foundry/bin/forge",
+    "solar": "0.3.0-dev+commit.a2b44354",
+    "solarSolidity": "0.8.38",
+    "solarPath": "/Users/cyotee/.foundry/bin/solar",
+    "foundryToml": {
+      "out": "out",
+      "cache_path": "cache_forge",
+      "solc": "0.8.35",
+      "via_ir": false,
+      "profiles": [
+        "default",
+        "fork"
+      ]
+    },
+    "useFlag": "forge build --help exposes --use <SOLC_VERSION> as a version, path, or executable name on PATH. solar is on PATH. This baseline did not compile."
+  },
+  "governingInputs": [
+    {
+      "path": "docs/reviews/dtf-migration-implementation-council-20261116-0228/REMEDIATION_PRD.md",
+      "sha256": "5df379c5865f3be2f74b70a834e1c48965b30c86697aeef41619b41dd36393ba",
+      "matchesPlan": true
+    },
+    {
+      "path": "docs/reviews/dtf-migration-implementation-council-20261116-0228/coordinator/resolution.md",
+      "sha256": "4c4cf99eff4899a69f94b245665c7717097b342f3b9bb96c7bc02ed4d70ffe49",
+      "matchesPlan": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "sha256": "affff781dfc522d96bba1c2fba28053ec5e7804f97c10504441445eaefef7949",
+      "matchesPlan": true
+    },
+    {
+      "path": "docs/research/dtf-migration-gap-closure-plan-20261116/IMPLEMENTATION_PLAN.md",
+      "sha256": "83c70e1cf4d638126f1f610a1d08d29c73167631e3f633b56a6db565a17b0d1d",
+      "matchesPlan": "this file; plan text does not pin its own hash"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "F1",
+      "state": "open",
+      "evidence": "sweepDust still calls _entrySweepDust(); MigrationCapitalReleasedToResidual is absent; MigrationDonationRemainder.t.sol is absent."
+    },
+    {
+      "id": "F2",
+      "state": "open",
+      "evidence": "deployAndIssue bootstraps 100/100 and does not broadcast a paid purchase. Public buyOwnerFirstBond is absent. Inherited _buyOwnerFirstBond is a vm.prank helper in TestBase_UniswapV4DetfMigration.sol:376."
+    },
+    {
+      "id": "F3",
+      "state": "open",
+      "evidence": "tokenURI sets migrationPresentation only for cliff or tokenId < 3, and rewardsClosed only when that flag is set. Section 2.2 requires migrationPresentation true for this target and rewardsClosed from activation alone."
+    },
+    {
+      "id": "P1",
+      "state": "open",
+      "evidence": "observedHook is absent. MigrationRawWeightedPricing.t.sol is absent."
+    },
+    {
+      "id": "F4",
+      "state": "open",
+      "evidence": "The five current migration documents have no gap-closure-20261116 links. This directory is the new entry and does not rewrite them."
+    }
+  ],
+  "ownedSources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV4DetfMigrationMaintenanceFacet.sol",
+      "sha256": "90aac39a49ee2edac5de9621de481df7585abae2eb97fd900b91b8c7320785d0",
+      "bytes": 6067
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol",
+      "sha256": "5ef058fa8b316182dbf139d263db4330d4b5648f21cd45a3d5c2581ae5967eb4",
+      "bytes": 40460
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/bondNft/UniswapV4DetfMigrationBondMetadataTarget.sol",
+      "sha256": "d45f8ab33a42298444386e67cc0a81305be123b3079cb9ada1b708fcda308d9d",
+      "bytes": 2050
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol",
+      "sha256": "d40bd7fea062c6ae18aa1f8be1a1d37256ac88147bfa3276a186cba5727bedd6",
+      "bytes": 13180
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol",
+      "sha256": "99380ffff76132e19dcfdf2d2051280523331ee85d54678b7e45e98647575cb4",
+      "bytes": 10573
+    },
+    {
+      "path": "scripts/foundry/recovery/dtf-migration/MigrationCoreLocalQA.s.sol",
+      "sha256": "b1fdc282c3d476a34048b992004cdcf05913ee8ac1b6960e5c7da78763805c83",
+      "bytes": 23591
+    }
+  ],
+  "absentProofFiles": [
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationDonationRemainder.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationRawWeightedPricing.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/migration/MigrationCoreLocalQA.t.sol"
+  ],
+  "unrelatedDirtyPreserved": [
+    "docs/testing/ARTIFACT_BUILDS.md"
+  ],
+  "historicalResultsAreNotRepairedSourceResults": true
+}

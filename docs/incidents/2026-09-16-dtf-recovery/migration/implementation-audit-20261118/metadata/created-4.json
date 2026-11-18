@@ -1,0 +1,75 @@
+{
+  "blockNumber": "0xeb",
+  "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54",
+  "timestamp": "0x6afcfd09",
+  "uri": "data:application/json;base64,eyJuYW1lIjoiTWlncmF0aW9uIERFVEYgIzQiLCJkZXNjcmlwdGlvbiI6IkZ1bmRlZCBNaWdyYXRpb24gREVURiBwdXJjaGFzZSB3aXRoIGxpbmVhciBwcmluY2lwYWwgdmVzdGluZy4gUmV3YXJkcyBhY2NydWUgd2hpbGUgcHJpbmNpcGFsIHZlc3RzLiBCZWZvcmUgYWN0aXZhdGlvbiBvbmx5IHZlc3RlZCBwcmluY2lwYWwgY2FuIGJlIGNsYWltZWQ7IHJld2FyZCBhbmQgY29tYmluZWQgY2xhaW1zIGFyZSBjbG9zZWQuIEFmdGVyIGFjdGl2YXRpb24gcmV3YXJkcyBjYW4gYWxzbyBiZSBjbGFpbWVkLiBBbGwgY2xhaW1zIHBheSBzREVURi4iLCJpbWFnZSI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0ExTWpBZ05EUXdJajQ4Y21WamRDQjNhV1IwYUQwaU5USXdJaUJvWldsbmFIUTlJalEwTUNJZ2NuZzlJakl3SWlCbWFXeHNQU0lqTVRBeFlqSmhJaTgrUEdjZ1ptbHNiRDBpSTJVMVpqTmxaaUlnWm05dWRDMW1ZVzFwYkhrOUltMXZibTl6Y0dGalpTSStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqTTBJaUJtYjI1MExYTnBlbVU5SWpFMUlqNU5hV2R5WVhScGIyNGdSRVZVUmlBb1JFVlVSaWs4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqWXdJaUJtYjI1MExYTnBlbVU5SWpFMElqNVRkR0ZyWldRZ1JFVlVSaUJpYjI1a0lDTTBQQzkwWlhoMFBqeDBaWGgwSUhnOUlqSTBJaUI1UFNJNU5DSWdabTl1ZEMxemFYcGxQU0l4TkNJK01DNHdKU0IyWlhOMFpXUThMM1JsZUhRK1BISmxZM1FnZUQwaU1qUWlJSGs5SWpFd09DSWdkMmxrZEdnOUlqUTNNaUlnYUdWcFoyaDBQU0k0SWlCeWVEMGlOQ0lnWm1sc2JEMGlJek13TkRJMU15SXZQanh5WldOMElIZzlJakkwSWlCNVBTSXhNRGdpSUhkcFpIUm9QU0l3SWlCb1pXbG5hSFE5SWpnaUlISjRQU0kwSWlCbWFXeHNQU0lqT0dSbE1HTTFJaTgrUEhSbGVIUWdlRDBpTWpRaUlIazlJakUwTlNJZ1ptOXVkQzF6YVhwbFBTSXhNU0krVTNSaGNuUWdNVGM1TkRrMk5EYzBOU0F2SUUxaGRIVnlhWFI1SURFNE1ESTNOREEzTkRVOEwzUmxlSFErUEhSbGVIUWdlRDBpTWpRaUlIazlJakUyTnlJZ1ptOXVkQzF6YVhwbFBTSXhNaUkrTnpjM05qQXdNQ0J6WldOdmJtUnpJSEpsYldGcGJtbHVaend2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOQ0lnZVQwaU1qQTBJaUJtYjI1MExYTnBlbVU5SWpFeUlqNVFkWEpqYUdGelpXUWdSRVZVUmp3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TkNJZ2VUMGlNak13SWlCbWIyNTBMWE5wZW1VOUlqRTNJajR3TGpZNU9UTTNNalV3TXp3dmRHVjRkRDQ4ZEdWNGRDQjRQU0l5TnpnaUlIazlJakl3TkNJZ1ptOXVkQzF6YVhwbFBTSXhNaUkrVW1WdFlXbHVhVzVuSUVSRlZFWWdjSEpwYm1OcGNHRnNQQzkwWlhoMFBqeDBaWGgwSUhnOUlqSTNPQ0lnZVQwaU1qTXdJaUJtYjI1MExYTnBlbVU5SWpFM0lqNHdMalk1T1RNM01qVXdNend2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOQ0lnZVQwaU1qY3hJaUJtYjI1MExYTnBlbVU5SWpFeUlqNURiR0ZwYldGaWJHVWdjSEpwYm1OcGNHRnNJSE5FUlZSR1BDOTBaWGgwUGp4MFpYaDBJSGc5SWpJMElpQjVQU0l5T1RjaUlHWnZiblF0YzJsNlpUMGlNVGNpUGpBdU1EQXdNREF3TURBd1BDOTBaWGgwUGp4MFpYaDBJSGc5SWpJM09DSWdlVDBpTWpjeElpQm1iMjUwTFhOcGVtVTlJakV5SWo1RGJHRnBiV0ZpYkdVZ2NtVjNZWEprY3lCelJFVlVSand2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOemdpSUhrOUlqSTVOeUlnWm05dWRDMXphWHBsUFNJeE55SStNQzR3TURBd01EQXdNREE4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqTTBOQ0lnWm05dWRDMXphWHBsUFNJeE1pSStWRzkwWVd3Z1kyeGhhVzFoWW14bElITkVSVlJHUEM5MFpYaDBQangwWlhoMElIZzlJakkwSWlCNVBTSXpOekFpSUdadmJuUXRjMmw2WlQwaU1UY2lQakF1TURBd01EQXdNREF3UEM5MFpYaDBQangwWlhoMElIZzlJakkzT0NJZ2VUMGlNelEwSWlCbWIyNTBMWE5wZW1VOUlqRXlJajVCWTJOeWRXVmtJSEpsZDJGeVpITWdjMFJGVkVZOEwzUmxlSFErUEhSbGVIUWdlRDBpTWpjNElpQjVQU0l6TnpBaUlHWnZiblF0YzJsNlpUMGlNVGNpUGpBdU1ERTNORGc0TURJelBDOTBaWGgwUGp4MFpYaDBJSGc5SWpJMElpQjVQU0l6T0RraUlHWnZiblF0YzJsNlpUMGlNVElpUGxKbGQyRnlaQ0JqYkdGcGJYTWdiRzlqYTJWa0lIVnVkR2xzSUdGamRHbDJZWFJwYjI0OEwzUmxlSFErUEhSbGVIUWdlRDBpTWpRaUlIazlJalF4TXlJZ1ptOXVkQzF6YVhwbFBTSXhNaUkrVUhKcGJtTnBjR0ZzTFc5dWJIa2dZMnhoYVcxeklIQmhlU0J6UkVWVVJpNDhMM1JsZUhRK1BDOW5Qand2YzNablBnPT0iLCJhdHRyaWJ1dGVzIjpbeyJ0cmFpdF90eXBlIjoiREVURiBuYW1lIiwidmFsdWUiOiJNaWdyYXRpb24gREVURiJ9LHsidHJhaXRfdHlwZSI6IkRFVEYgc3ltYm9sIiwidmFsdWUiOiJERVRGIn0seyJ0cmFpdF90eXBlIjoiUm9sZSIsInZhbHVlIjoiU3Rha2VkIERFVEYgYm9uZCJ9LHsidHJhaXRfdHlwZSI6IlB1cmNoYXNlZCBERVRGIiwidmFsdWUiOiIwLjY5OTM3MjUwMyJ9LHsidHJhaXRfdHlwZSI6IlJlbWFpbmluZyBERVRGIHByaW5jaXBhbCIsInZhbHVlIjoiMC42OTkzNzI1MDMifSx7InRyYWl0X3R5cGUiOiJDbGFpbWVkIERFVEYgcHJpbmNpcGFsIiwidmFsdWUiOiIwLjAwMDAwMDAwMCJ9LHsidHJhaXRfdHlwZSI6IkNsYWltYWJsZSBwcmluY2lwYWwgc0RFVEYiLCJ2YWx1ZSI6IjAuMDAwMDAwMDAwIn0seyJ0cmFpdF90eXBlIjoiQ2xhaW1hYmxlIHJld2FyZHMgc0RFVEYiLCJ2YWx1ZSI6IjAuMDAwMDAwMDAwIn0seyJ0cmFpdF90eXBlIjoiVG90YWwgY2xhaW1hYmxlIHNERVRGIiwidmFsdWUiOiIwLjAwMDAwMDAwMCJ9LHsidHJhaXRfdHlwZSI6IkFjY3J1ZWQgcmV3YXJkcyBzREVURiIsInZhbHVlIjoiMC4wMTc0ODgwMjMifSx7InRyYWl0X3R5cGUiOiJSZXdhcmQgZGVsaXZlcnkiLCJ2YWx1ZSI6IkxvY2tlZCB1bnRpbCBhY3RpdmF0aW9uIn0seyJ0cmFpdF90eXBlIjoiVmVzdGluZyBzdGFydCIsImRpc3BsYXlfdHlwZSI6ImRhdGUiLCJ2YWx1ZSI6MTc5NDk2NDc0NX0seyJ0cmFpdF90eXBlIjoiVmVzdGluZyBlbmQiLCJkaXNwbGF5X3R5cGUiOiJkYXRlIiwidmFsdWUiOjE4MDI3NDA3NDV9LHsidHJhaXRfdHlwZSI6IlZlc3Rpbmcgc3RhdHVzIiwidmFsdWUiOiJWZXN0aW5nIn0seyJ0cmFpdF90eXBlIjoiU2Vjb25kcyByZW1haW5pbmciLCJ2YWx1ZSI6Ijc3NzYwMDAifV19",
+  "metadata": {
+    "name": "Migration DETF #4",
+    "description": "Funded Migration DETF purchase with linear principal vesting. Rewards accrue while principal vests. Before activation only vested principal can be claimed; reward and combined claims are closed. After activation rewards can also be claimed. All claims pay sDETF.",
+    "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5TdGFrZWQgREVURiBib25kICM0PC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSI5NCIgZm9udC1zaXplPSIxNCI+MC4wJSB2ZXN0ZWQ8L3RleHQ+PHJlY3QgeD0iMjQiIHk9IjEwOCIgd2lkdGg9IjQ3MiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iIzMwNDI1MyIvPjxyZWN0IHg9IjI0IiB5PSIxMDgiIHdpZHRoPSIwIiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSIjOGRlMGM1Ii8+PHRleHQgeD0iMjQiIHk9IjE0NSIgZm9udC1zaXplPSIxMSI+U3RhcnQgMTc5NDk2NDc0NSAvIE1hdHVyaXR5IDE4MDI3NDA3NDU8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjE2NyIgZm9udC1zaXplPSIxMiI+Nzc3NjAwMCBzZWNvbmRzIHJlbWFpbmluZzwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjA0IiBmb250LXNpemU9IjEyIj5QdXJjaGFzZWQgREVURjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjMwIiBmb250LXNpemU9IjE3Ij4wLjY5OTM3MjUwMzwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjIwNCIgZm9udC1zaXplPSIxMiI+UmVtYWluaW5nIERFVEYgcHJpbmNpcGFsPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjMwIiBmb250LXNpemU9IjE3Ij4wLjY5OTM3MjUwMzwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjcxIiBmb250LXNpemU9IjEyIj5DbGFpbWFibGUgcHJpbmNpcGFsIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIyOTciIGZvbnQtc2l6ZT0iMTciPjAuMDAwMDAwMDAwPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjcxIiBmb250LXNpemU9IjEyIj5DbGFpbWFibGUgcmV3YXJkcyBzREVURjwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjI5NyIgZm9udC1zaXplPSIxNyI+MC4wMDAwMDAwMDA8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjM0NCIgZm9udC1zaXplPSIxMiI+VG90YWwgY2xhaW1hYmxlIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIzNzAiIGZvbnQtc2l6ZT0iMTciPjAuMDAwMDAwMDAwPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMzQ0IiBmb250LXNpemU9IjEyIj5BY2NydWVkIHJld2FyZHMgc0RFVEY8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIzNzAiIGZvbnQtc2l6ZT0iMTciPjAuMDE3NDg4MDIzPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIzODkiIGZvbnQtc2l6ZT0iMTIiPlJld2FyZCBjbGFpbXMgbG9ja2VkIHVudGlsIGFjdGl2YXRpb248L3RleHQ+PHRleHQgeD0iMjQiIHk9IjQxMyIgZm9udC1zaXplPSIxMiI+UHJpbmNpcGFsLW9ubHkgY2xhaW1zIHBheSBzREVURi48L3RleHQ+PC9nPjwvc3ZnPg==",
+    "attributes": [
+      {
+        "trait_type": "DETF name",
+        "value": "Migration DETF"
+      },
+      {
+        "trait_type": "DETF symbol",
+        "value": "DETF"
+      },
+      {
+        "trait_type": "Role",
+        "value": "Staked DETF bond"
+      },
+      {
+        "trait_type": "Purchased DETF",
+        "value": "0.699372503"
+      },
+      {
+        "trait_type": "Remaining DETF principal",
+        "value": "0.699372503"
+      },
+      {
+        "trait_type": "Claimed DETF principal",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Claimable principal sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Claimable rewards sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Total claimable sDETF",
+        "value": "0.000000000"
+      },
+      {
+        "trait_type": "Accrued rewards sDETF",
+        "value": "0.017488023"
+      },
+      {
+        "trait_type": "Reward delivery",
+        "value": "Locked until activation"
+      },
+      {
+        "trait_type": "Vesting start",
+        "display_type": "date",
+        "value": 1794964745
+      },
+      {
+        "trait_type": "Vesting end",
+        "display_type": "date",
+        "value": 1802740745
+      },
+      {
+        "trait_type": "Vesting status",
+        "value": "Vesting"
+      },
+      {
+        "trait_type": "Seconds remaining",
+        "value": "7776000"
+      }
+    ]
+  }
+}

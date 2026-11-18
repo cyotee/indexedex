@@ -1,3 +1,9 @@
+# Current status - 2026-11-18
+
+The current execution entry is [implementation-audit-20261118/verification.md](implementation-audit-20261118/verification.md). All 274 Migration hermetic cases and all 184 pinned Migration fork cases passed. The actual native deployment, paid owner bond, principal claim, activation, reward claims and two separate fee-recipient sweeps completed under the unchanged 32,000,000 node gas limit. The complete repository hermetic gate still has 1,249 independently identified ordinary V3 failures; it is not green. The coverage map, raw receipts, current source/runtime fingerprints and rendered metadata are linked from that audit. Historical counts and failed runs below retain their original meaning.
+
+## Historical body
+
 # Migration implementation verification - November 13, 2026
 
 Status: bounded integration passed; the independent whole-plan gate rejected completion with B1 indirect/nonisolated claims, B2 held-inventory recovery and B3 verification-record findings. Remediation is in progress. This is not deployment or allocation approval.

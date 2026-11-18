@@ -1,0 +1,69 @@
+{
+  "name": "Migration DETF #4",
+  "description": "Funded Migration DETF purchase with linear principal vesting. Rewards accrue while principal vests. Before activation only vested principal can be claimed; reward and combined claims are closed. After activation rewards can also be claimed. All claims pay sDETF.",
+  "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5TdGFrZWQgREVURiBib25kICM0PC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSI5NCIgZm9udC1zaXplPSIxNCI+MTAwLjAlIHZlc3RlZDwvdGV4dD48cmVjdCB4PSIyNCIgeT0iMTA4IiB3aWR0aD0iNDcyIiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSIjMzA0MjUzIi8+PHJlY3QgeD0iMjQiIHk9IjEwOCIgd2lkdGg9IjQ3MiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iIzhkZTBjNSIvPjx0ZXh0IHg9IjI0IiB5PSIxNDUiIGZvbnQtc2l6ZT0iMTEiPlN0YXJ0IDE3OTQ4NjAxODUgLyBNYXR1cml0eSAxODAyNjM2MTg1PC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIxNjciIGZvbnQtc2l6ZT0iMTIiPkZ1bGx5IHZlc3RlZDwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjA0IiBmb250LXNpemU9IjEyIj5QdXJjaGFzZWQgREVURjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjMwIiBmb250LXNpemU9IjE3Ij4wLjYzODI0OTM1NTwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjIwNCIgZm9udC1zaXplPSIxMiI+UmVtYWluaW5nIERFVEYgcHJpbmNpcGFsPC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjMwIiBmb250LXNpemU9IjE3Ij4wLjYzODI0OTM1NTwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjcxIiBmb250LXNpemU9IjEyIj5DbGFpbWFibGUgcHJpbmNpcGFsIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIyOTciIGZvbnQtc2l6ZT0iMTciPjAuNjM4MjQ5MzU1PC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMjcxIiBmb250LXNpemU9IjEyIj5DbGFpbWFibGUgcmV3YXJkcyBzREVURjwvdGV4dD48dGV4dCB4PSIyNzgiIHk9IjI5NyIgZm9udC1zaXplPSIxNyI+MC4xMjQwNTM2MzA8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjM0NCIgZm9udC1zaXplPSIxMiI+VG90YWwgY2xhaW1hYmxlIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIzNzAiIGZvbnQtc2l6ZT0iMTciPjAuNzYyMzAyOTg1PC90ZXh0Pjx0ZXh0IHg9IjI3OCIgeT0iMzQ0IiBmb250LXNpemU9IjEyIj5BY2NydWVkIHJld2FyZHMgc0RFVEY8L3RleHQ+PHRleHQgeD0iMjc4IiB5PSIzNzAiIGZvbnQtc2l6ZT0iMTciPjAuMTI0MDUzNjMwPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIzODkiIGZvbnQtc2l6ZT0iMTIiPlJld2FyZCBjbGFpbXMgb3BlbjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iNDEzIiBmb250LXNpemU9IjEyIj5DbGFpbXMgcGF5IHNERVRGLiBVbnN0YWtlIGZvciBERVRGLjwvdGV4dD48L2c+PC9zdmc+",
+  "attributes": [
+    {
+      "trait_type": "DETF name",
+      "value": "Migration DETF"
+    },
+    {
+      "trait_type": "DETF symbol",
+      "value": "DETF"
+    },
+    {
+      "trait_type": "Role",
+      "value": "Staked DETF bond"
+    },
+    {
+      "trait_type": "Purchased DETF",
+      "value": "0.638249355"
+    },
+    {
+      "trait_type": "Remaining DETF principal",
+      "value": "0.638249355"
+    },
+    {
+      "trait_type": "Claimed DETF principal",
+      "value": "0.000000000"
+    },
+    {
+      "trait_type": "Claimable principal sDETF",
+      "value": "0.638249355"
+    },
+    {
+      "trait_type": "Claimable rewards sDETF",
+      "value": "0.124053630"
+    },
+    {
+      "trait_type": "Total claimable sDETF",
+      "value": "0.762302985"
+    },
+    {
+      "trait_type": "Accrued rewards sDETF",
+      "value": "0.124053630"
+    },
+    {
+      "trait_type": "Reward delivery",
+      "value": "Open"
+    },
+    {
+      "trait_type": "Vesting start",
+      "display_type": "date",
+      "value": 1794860185
+    },
+    {
+      "trait_type": "Vesting end",
+      "display_type": "date",
+      "value": 1802636185
+    },
+    {
+      "trait_type": "Vesting status",
+      "value": "Fully vested"
+    },
+    {
+      "trait_type": "Seconds remaining",
+      "value": "0"
+    }
+  ]
+}

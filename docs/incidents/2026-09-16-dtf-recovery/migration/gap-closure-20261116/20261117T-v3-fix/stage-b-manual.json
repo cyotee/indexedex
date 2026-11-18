@@ -1,0 +1,58 @@
+[
+  {
+    "sig": "synchronizeRewards()",
+    "gas": 8000000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 767596,
+    "hash": "0x7932ff449377290fc903dc0213055a1c9d13d3cc980f90beca0d93e8cbe26e13"
+  },
+  {
+    "sig": "claimPrincipal(uint256,address)",
+    "gas": 8000000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 315507,
+    "hash": "0xa9cee445fd648b4eb9acd18296c0ace5bd2ff73cef0e59c35c9e87b5fa83116b"
+  },
+  {
+    "sig": "approve(address,uint256)",
+    "gas": 200000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 50875,
+    "hash": "0x4dc93c09bcaad536f2b6011703bad9b327cee597607ba9cf6ddde24dca699329"
+  },
+  {
+    "sig": "deposit(address,address,uint256,uint256)",
+    "gas": 15000000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 370716,
+    "hash": "0xb6629a742ec93491f300d7ab8af86b4133281d3ae6a83a08f2042eeaebe64731"
+  },
+  {
+    "sig": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+    "gas": 20000000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 277152,
+    "hash": "0xfaa5fa7195d06cdb4975e45f6b25ff8bc3e11e2eb1c49c7c022b4088ccf401c4"
+  },
+  {
+    "sig": "activate()",
+    "gas": 20000000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 2331755,
+    "hash": "0xd36b628a05dfbbc45ab82d157f1378a3d54c8151818ddbcfa8f947be6f01c625"
+  },
+  {
+    "sig": "sweepDust()",
+    "gas": 31900000,
+    "code": 0,
+    "status": "0x0",
+    "gasUsed": 31385515,
+    "hash": "0xc8a5f5b69ecf69f61801855962d5b5354283b5e570d2d382368791dc903c7b82"
+  }
+]

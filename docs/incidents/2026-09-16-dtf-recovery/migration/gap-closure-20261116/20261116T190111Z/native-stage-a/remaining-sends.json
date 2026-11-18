@@ -1,0 +1,102 @@
+[
+  {
+    "index": 223,
+    "name": "UniswapV4DetfMigrationDFPkg",
+    "fn": "prepareSyChildren(((string,string,address,bool,u",
+    "limit": 31500000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x12d4e5a",
+    "hash": "0x430b2d518cd7eef1e32d4732fc121d271caac5c2ff1caa4d9db3b9e174f9ae78"
+  },
+  {
+    "index": 224,
+    "name": "UniswapV4DetfMigrationDFPkg",
+    "fn": "deployVault(((string,string,address,bool,uint256",
+    "limit": 31500000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x1c798aa",
+    "hash": "0x2022b2a082a148252bbc6f7a1203eef4e57a3bf0a6ace05122e809a7d4909fc2"
+  },
+  {
+    "index": 225,
+    "name": "WETH9",
+    "fn": "approve(address,uint256)",
+    "limit": 103720,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0xb412",
+    "hash": "0x5408c8e9ab1465e6763e600ee35cd422efb9e6c8e8112aef0d00315c93d81497"
+  },
+  {
+    "index": 226,
+    "name": "SimpleMintableERC20",
+    "fn": "approve(address,uint256)",
+    "limit": 103774,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0xb42a",
+    "hash": "0xb6cb108fcee517af9b529c66e258af9c87da262c8a89b1113c137ddfa44550cc"
+  },
+  {
+    "index": 227,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "bind(address)",
+    "limit": 121306,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0xd29a",
+    "hash": "0xf4272f2b6b6b0c19e5e4f3b8c34129437b2d173aa65ed5850b28d3b7a4f894d1"
+  },
+  {
+    "index": 228,
+    "name": "MinimalDiamondCallBackProxy",
+    "fn": "",
+    "limit": 665920,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x4c81f",
+    "hash": "0x5ba19927ef3644b64ad89c8ac6dc85dc9221fb07174228972fabf8ad5e53330e"
+  },
+  {
+    "index": 229,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "bootstrap((address,uint256,uint256)[])",
+    "limit": 5076758,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x2493df",
+    "hash": "0x78012d2914e0c99c2230f100e51d95aa47f44408c8e9e755053752b5e0bbcd29"
+  },
+  {
+    "index": 230,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "setConfigureIssue(uint256,uint256,(uint256,uint2",
+    "limit": 5387496,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x26ba6d",
+    "hash": "0x3b33aceaba31a2f7c61efe22a24014d0348f96dbe3723461102a37f52b7d9a8e"
+  },
+  {
+    "index": 231,
+    "name": "WETH9",
+    "fn": "approve(address,uint256)",
+    "limit": 103018,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0xb2da",
+    "hash": "0x8026d56c542a351767b78e79a5b4c32608378ed979d61c6ca44101d6402d25cc"
+  },
+  {
+    "index": 232,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "buyOwnerFirstBond(address,uint256,uint256,uint25",
+    "limit": 31500000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": "0x15e9cc2",
+    "hash": "0x8e818e444603fdbf7856736b7932bfcc57026588d21d465eb6d7bddd71865fff"
+  }
+]

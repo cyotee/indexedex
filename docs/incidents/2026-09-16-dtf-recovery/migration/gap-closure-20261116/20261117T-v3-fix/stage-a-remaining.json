@@ -1,0 +1,92 @@
+[
+  {
+    "index": 226,
+    "name": "UniswapV4DetfMigrationDFPkg",
+    "fn": "deployVault(((string,string,address,bool,uint256",
+    "limit": 31900000,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 30448692,
+    "hash": "0xe78a9aff0a757b11cfa69a1d21d73f21aa7105a6ae29a2f12de14baa9c370761"
+  },
+  {
+    "index": 227,
+    "name": "WETH9",
+    "fn": "approve(address,uint256)",
+    "limit": 67418,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 46098,
+    "hash": "0xe01115c052d3e658ecfc3aa53f911cf87c5a240c8405e78c4c70124fa85ceb1f"
+  },
+  {
+    "index": 228,
+    "name": "SimpleMintableERC20",
+    "fn": "approve(address,uint256)",
+    "limit": 67453,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 46122,
+    "hash": "0xb260db96b9ee1a2f1bb2949a598d010a9f4e7eee4173ce4d42131f5ff40df570"
+  },
+  {
+    "index": 229,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "bind(address)",
+    "limit": 74499,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 53936,
+    "hash": "0x9ebc4ebc7d4b7387daa8a242cd95772167b67a2d5db5f29280423d9a185463b1"
+  },
+  {
+    "index": 230,
+    "name": "MinimalDiamondCallBackProxy",
+    "fn": "",
+    "limit": 432914,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 313423,
+    "hash": "0x89613efb6cca14a5168723d607ba2efc62d4fc614a1fc7b1852053243977487e"
+  },
+  {
+    "index": 231,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "bootstrap((address,uint256,uint256)[])",
+    "limit": 3281535,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 2249582,
+    "hash": "0xeb9db7f2a46dfe789c89d1dfe84bc6084bd9bf022dbc20ffaabd603719345e9f"
+  },
+  {
+    "index": 232,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "setConfigureIssue(uint256,uint256,(uint256,uint2",
+    "limit": 5612803,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 4066368,
+    "hash": "0x0dc2a6173ffdafe05eca56a23c368329baab3a0c26fcef7390f0e94ee6d238ad"
+  },
+  {
+    "index": 233,
+    "name": "WETH9",
+    "fn": "approve(address,uint256)",
+    "limit": 63224,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 45774,
+    "hash": "0x2c0e0ce45d8d7421fbd72a6891d312e88cc468364355971a18bdbe98e15d1a8e"
+  },
+  {
+    "index": 234,
+    "name": "MigrationCoreLocalOwner",
+    "fn": "buyOwnerFirstBond(address,uint256,uint256,uint25",
+    "limit": 29317733,
+    "code": 0,
+    "status": "0x1",
+    "gasUsed": 20049961,
+    "hash": "0x1741b7908ef1f89cd543a032abfb1ec4ce8bdb56584effab03576574dafa94e1"
+  }
+]

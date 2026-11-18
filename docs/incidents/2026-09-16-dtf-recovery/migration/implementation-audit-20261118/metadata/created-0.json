@@ -1,0 +1,25 @@
+{
+  "blockNumber": "0xeb",
+  "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54",
+  "timestamp": "0x6afcfd09",
+  "uri": "data:application/json;base64,eyJuYW1lIjoiTWlncmF0aW9uIERFVEYgIzAiLCJkZXNjcmlwdGlvbiI6IlByb3RvY29sLW93bmVkIHJlc2VydmUgbGlxdWlkaXR5LiBUaGlzIHJvbGUgaGFzIG5vIHB1cmNoYXNlZCBib25kIHByaW5jaXBhbC4iLCJpbWFnZSI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0ExTWpBZ05EUXdJajQ4Y21WamRDQjNhV1IwYUQwaU5USXdJaUJvWldsbmFIUTlJalEwTUNJZ2NuZzlJakl3SWlCbWFXeHNQU0lqTVRBeFlqSmhJaTgrUEdjZ1ptbHNiRDBpSTJVMVpqTmxaaUlnWm05dWRDMW1ZVzFwYkhrOUltMXZibTl6Y0dGalpTSStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqTTBJaUJtYjI1MExYTnBlbVU5SWpFMUlqNU5hV2R5WVhScGIyNGdSRVZVUmlBb1JFVlVSaWs4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqWXdJaUJtYjI1MExYTnBlbVU5SWpFMElqNVFjbTkwYjJOdmJDQnlaWE5sY25abElDTXdQQzkwWlhoMFBqeDBaWGgwSUhnOUlqSTBJaUI1UFNJeE16TWlJR1p2Ym5RdGMybDZaVDBpTVRZaVBsQnliM1J2WTI5c0xXOTNibVZrSUhKbGMyVnlkbVVnYkdseGRXbGthWFI1UEM5MFpYaDBQangwWlhoMElIZzlJakkwSWlCNVBTSXhOekVpSUdadmJuUXRjMmw2WlQwaU1UTWlQazV2SUhCMWNtTm9ZWE5sWkNCd2NtbHVZMmx3WVd3Z2IzSWdkbVZ6ZEdsdVp5NDhMM1JsZUhRK1BIUmxlSFFnZUQwaU1qUWlJSGs5SWpJeU5TSWdabTl1ZEMxemFYcGxQU0l4TXlJK1VtVnpaWEoyWlNCamRYTjBiMlI1SUdseklITmxjR0Z5WVhSbElHWnliMjA4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqSTBOeUlnWm05dWRDMXphWHBsUFNJeE15SStkR2hsSUVSRlZFWWdZbUZqYTJsdVp5QnpkR0ZyYVc1bklISmxZMlZwY0hSekxqd3ZkR1Y0ZEQ0OEwyYytQQzl6ZG1jKyIsImF0dHJpYnV0ZXMiOlt7InRyYWl0X3R5cGUiOiJERVRGIG5hbWUiLCJ2YWx1ZSI6Ik1pZ3JhdGlvbiBERVRGIn0seyJ0cmFpdF90eXBlIjoiREVURiBzeW1ib2wiLCJ2YWx1ZSI6IkRFVEYifSx7InRyYWl0X3R5cGUiOiJSb2xlIiwidmFsdWUiOiJQcm90b2NvbCByZXNlcnZlIn1dfQ==",
+  "metadata": {
+    "name": "Migration DETF #0",
+    "description": "Protocol-owned reserve liquidity. This role has no purchased bond principal.",
+    "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5Qcm90b2NvbCByZXNlcnZlICMwPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIxMzMiIGZvbnQtc2l6ZT0iMTYiPlByb3RvY29sLW93bmVkIHJlc2VydmUgbGlxdWlkaXR5PC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIxNzEiIGZvbnQtc2l6ZT0iMTMiPk5vIHB1cmNoYXNlZCBwcmluY2lwYWwgb3IgdmVzdGluZy48L3RleHQ+PHRleHQgeD0iMjQiIHk9IjIyNSIgZm9udC1zaXplPSIxMyI+UmVzZXJ2ZSBjdXN0b2R5IGlzIHNlcGFyYXRlIGZyb208L3RleHQ+PHRleHQgeD0iMjQiIHk9IjI0NyIgZm9udC1zaXplPSIxMyI+dGhlIERFVEYgYmFja2luZyBzdGFraW5nIHJlY2VpcHRzLjwvdGV4dD48L2c+PC9zdmc+",
+    "attributes": [
+      {
+        "trait_type": "DETF name",
+        "value": "Migration DETF"
+      },
+      {
+        "trait_type": "DETF symbol",
+        "value": "DETF"
+      },
+      {
+        "trait_type": "Role",
+        "value": "Protocol reserve"
+      }
+    ]
+  }
+}

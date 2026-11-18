@@ -1,3 +1,10 @@
+# Current package verification - 2026-11-18
+
+The [current audit](implementation-audit-20261118/verification.md) records 235
+successful native deployment/funding transactions, current runtime fingerprints,
+the subsequent lifecycle, and actual removal of all 17 administration selectors.
+The following November 15 record is historical and retains its original limits.
+
 # Package evidence
 
 Date: 2026-11-15. Worktree: `/Users/cyotee/Projects/indexedex-wt/dtf-conformance-20261115-wave-1`.

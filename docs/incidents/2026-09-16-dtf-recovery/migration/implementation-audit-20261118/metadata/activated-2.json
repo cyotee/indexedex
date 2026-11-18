@@ -1,0 +1,29 @@
+{
+  "blockNumber": "0xff",
+  "blockHash": "0x6853053e247b28a4e4af3560eefef94459c9559a77b9a6c607413c3bfceea4e8",
+  "timestamp": "0x6b73a5cf",
+  "uri": "data:application/json;base64,eyJuYW1lIjoiTWlncmF0aW9uIERFVEYgIzIiLCJkZXNjcmlwdGlvbiI6IlN0YW5kaW5nIHJld2FyZCByaWdodC4gQWxsb2NhdGlvbnMgbWFkZSBiZWZvcmUgYWN0aXZhdGlvbiBzdGF5IGluIHJlY2VpcHQgY3VzdG9keSBmb3IgdGhlaXIgYWxsb2NhdGlvbi10aW1lIGJlbmVmaWNpYXJ5LCBldmVuIGFmdGVyIHRoaXMgTkZUIHRyYW5zZmVycy4gUmV3YXJkIGRlbGl2ZXJ5IHJlcXVpcmVzIGFjdGl2YXRpb24uIFRoaXMgcm9sZSBoYXMgbm8gcHVyY2hhc2VkIHByaW5jaXBhbC4iLCJpbWFnZSI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0ExTWpBZ05EUXdJajQ4Y21WamRDQjNhV1IwYUQwaU5USXdJaUJvWldsbmFIUTlJalEwTUNJZ2NuZzlJakl3SWlCbWFXeHNQU0lqTVRBeFlqSmhJaTgrUEdjZ1ptbHNiRDBpSTJVMVpqTmxaaUlnWm05dWRDMW1ZVzFwYkhrOUltMXZibTl6Y0dGalpTSStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqTTBJaUJtYjI1MExYTnBlbVU5SWpFMUlqNU5hV2R5WVhScGIyNGdSRVZVUmlBb1JFVlVSaWs4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqWXdJaUJtYjI1MExYTnBlbVU5SWpFMElqNURjbVZoZEc5eUlISmxZMmx3YVdWdWRDQWpNand2ZEdWNGRENDhkR1Y0ZENCNFBTSXlOQ0lnZVQwaU1UTXpJaUJtYjI1MExYTnBlbVU5SWpFNElqNVRkR0Z1WkdsdVp5QnlaWGRoY21RZ2NtbG5hSFE4TDNSbGVIUStQSFJsZUhRZ2VEMGlNalFpSUhrOUlqRTRNeUlnWm05dWRDMXphWHBsUFNJeE15SStVbVYzWVhKa0lHUmxiR2wyWlhKNUlHOXdaVzR1UEM5MFpYaDBQangwWlhoMElIZzlJakkwSWlCNVBTSXlNalVpSUdadmJuUXRjMmw2WlQwaU1USWlQbEJoYzNRZ1lXeHNiMk5oZEdsdmJuTWdhMlZsY0NCMGFHVnBjaUJpWlc1bFptbGphV0Z5ZVM0OEwzUmxlSFErUEhSbGVIUWdlRDBpTWpRaUlIazlJakkwTnlJZ1ptOXVkQzF6YVhwbFBTSXhNaUkrVkhKaGJuTm1aWElnWTI5dWRtVjVjeUJtZFhSMWNtVWdZV3hzYjJOaGRHbHZibk1nYjI1c2VTNDhMM1JsZUhRK1BIUmxlSFFnZUQwaU1qUWlJSGs5SWpJNU55SWdabTl1ZEMxemFYcGxQU0l4TXlJK1RtOGdjSFZ5WTJoaGMyVmtJSEJ5YVc1amFYQmhiQ0J2Y2lCMlpYTjBhVzVuTGp3dmRHVjRkRDQ4TDJjK1BDOXpkbWMrIiwiYXR0cmlidXRlcyI6W3sidHJhaXRfdHlwZSI6IkRFVEYgbmFtZSIsInZhbHVlIjoiTWlncmF0aW9uIERFVEYifSx7InRyYWl0X3R5cGUiOiJERVRGIHN5bWJvbCIsInZhbHVlIjoiREVURiJ9LHsidHJhaXRfdHlwZSI6IlJvbGUiLCJ2YWx1ZSI6IkNyZWF0b3IgcmVjaXBpZW50In0seyJ0cmFpdF90eXBlIjoiUmV3YXJkIGRlbGl2ZXJ5IiwidmFsdWUiOiJPcGVuIn1dfQ==",
+  "metadata": {
+    "name": "Migration DETF #2",
+    "description": "Standing reward right. Allocations made before activation stay in receipt custody for their allocation-time beneficiary, even after this NFT transfers. Reward delivery requires activation. This role has no purchased principal.",
+    "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5DcmVhdG9yIHJlY2lwaWVudCAjMjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMTMzIiBmb250LXNpemU9IjE4Ij5TdGFuZGluZyByZXdhcmQgcmlnaHQ8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjE4MyIgZm9udC1zaXplPSIxMyI+UmV3YXJkIGRlbGl2ZXJ5IG9wZW4uPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIyMjUiIGZvbnQtc2l6ZT0iMTIiPlBhc3QgYWxsb2NhdGlvbnMga2VlcCB0aGVpciBiZW5lZmljaWFyeS48L3RleHQ+PHRleHQgeD0iMjQiIHk9IjI0NyIgZm9udC1zaXplPSIxMiI+VHJhbnNmZXIgY29udmV5cyBmdXR1cmUgYWxsb2NhdGlvbnMgb25seS48L3RleHQ+PHRleHQgeD0iMjQiIHk9IjI5NyIgZm9udC1zaXplPSIxMyI+Tm8gcHVyY2hhc2VkIHByaW5jaXBhbCBvciB2ZXN0aW5nLjwvdGV4dD48L2c+PC9zdmc+",
+    "attributes": [
+      {
+        "trait_type": "DETF name",
+        "value": "Migration DETF"
+      },
+      {
+        "trait_type": "DETF symbol",
+        "value": "DETF"
+      },
+      {
+        "trait_type": "Role",
+        "value": "Creator recipient"
+      },
+      {
+        "trait_type": "Reward delivery",
+        "value": "Open"
+      }
+    ]
+  }
+}

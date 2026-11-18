@@ -1,0 +1,244 @@
+{
+  "chainId": 31337,
+  "blockGasLimit": 32000000,
+  "nonForked": true,
+  "addresses": {
+    "MIGRATION_PARENT": "0xF00f15D0bfd0B9E1535b096CAc32C6465703bb0f",
+    "MIGRATION_HELPER": "0x51C816dB51D0a44E005Fa92AFF97a3C0B5Da8e20",
+    "MIGRATION_BOND": "0xeF2410bB722642355cf3a457aad8b0b56eF87a25",
+    "MIGRATION_RECEIPT": "0x6fEaea7F034F7Cd439b27d61D3C4A64a1d23d7be",
+    "MIGRATION_RAW_SY": "0xedd71A8eeD9668192d28787623b1c8cbB1EC824A",
+    "MIGRATION_STAKING_SY": "0x80F60E989A1fB4f307f9F508Fdd4a10A3f159857",
+    "MIGRATION_REWARD_TOKEN": "0xb3c2f2751E88C8C0D71d78c4432Cd3D527d07257"
+  },
+  "hook": "0x4623d819700ceC71BA769CD9E3136555Edaa6aA8",
+  "feeOracle": "0x7EDF39df6D5C5F139509FC984cAc316824113726",
+  "feeRecipientAfterConfiguration": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "deployment": {
+    "transactions": 235,
+    "successfulReceipts": 235,
+    "maxGasUsed": 30402681,
+    "maxEnvelope": 31900000
+  },
+  "lifecycle": {
+    "transactions": 16,
+    "successfulReceipts": 16,
+    "maxGasUsed": 2331755,
+    "actualBondReceiptPayments": [
+      {
+        "transactionHash": "0xa012a996bc385b7735bcf73ef9f6ab447ca34e86841b7ca3ac3fc7f4f5ee520c",
+        "amount": "1388352594"
+      },
+      {
+        "transactionHash": "0x072d3607783ff711b04ff3edebc4462a79a6887a9f35ad7ec9f04c43b8ee53c5",
+        "amount": "269877025"
+      }
+    ]
+  },
+  "maintenance": [
+    {
+      "hash": "0x6ab613284e3e507c2139dccc059bda66e18d718d1600705ca81506684c679360",
+      "status": "0x1",
+      "gasUsed": 2002343,
+      "addedLp": "77318293536970222"
+    },
+    {
+      "hash": "0x49597068adc3d6daf324d18cb56d32e0db9487c05ef9810b2b9c423ae6a10ec6",
+      "status": "0x1",
+      "gasUsed": 1508610,
+      "addedLp": "1113592255254979558"
+    }
+  ],
+  "removedAdministration": [
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x37444d48",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0xc11ab8d4",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0xcbaead69",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x69f61e45",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x12f4be5f",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x15af3f80",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x1f9aab7f",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0x3A972da52a35EeF4BAfc0A13a0A759249adbF87F",
+      "selector": "0x9fbc6598",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0xec55c474",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x43d1e0cc",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x703e5943",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x787642e8",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0xe9dc9e6d",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x3bbb46c3",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x559e5d0b",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0x653470af",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "facet": "0xE005FBA1acE469353D1f06DA8Cb78472A0E48b33",
+      "selector": "0xaaba435f",
+      "currentFacet": "0x0000000000000000000000000000000000000000"
+    }
+  ],
+  "metadata": {
+    "captures": [
+      {
+        "stage": "created",
+        "tokenId": 0,
+        "blockNumber": "0xeb",
+        "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54"
+      },
+      {
+        "stage": "created",
+        "tokenId": 1,
+        "blockNumber": "0xeb",
+        "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54"
+      },
+      {
+        "stage": "created",
+        "tokenId": 2,
+        "blockNumber": "0xeb",
+        "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54"
+      },
+      {
+        "stage": "created",
+        "tokenId": 3,
+        "blockNumber": "0xeb",
+        "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54"
+      },
+      {
+        "stage": "created",
+        "tokenId": 4,
+        "blockNumber": "0xeb",
+        "blockHash": "0x3bd211caf7c95908af72b3db2389b6a1542bb60a130137d558b7690e6de40e54"
+      },
+      {
+        "stage": "cliff-minus-one",
+        "tokenId": 3,
+        "blockNumber": "0xec",
+        "blockHash": "0x4675ee910a6c5f5a8b833f793664fb83e07fecb5961d7c662225c5b12f796eea"
+      },
+      {
+        "stage": "cliff-minus-one",
+        "tokenId": 4,
+        "blockNumber": "0xec",
+        "blockHash": "0x4675ee910a6c5f5a8b833f793664fb83e07fecb5961d7c662225c5b12f796eea"
+      },
+      {
+        "stage": "cliff-unlock",
+        "tokenId": 3,
+        "blockNumber": "0xed",
+        "blockHash": "0x8f5e39ba255084e1a193f14ca7125ced6840073cc2bc9f2b5a28726b91d7a179"
+      },
+      {
+        "stage": "cliff-unlock",
+        "tokenId": 4,
+        "blockNumber": "0xed",
+        "blockHash": "0x8f5e39ba255084e1a193f14ca7125ced6840073cc2bc9f2b5a28726b91d7a179"
+      },
+      {
+        "stage": "after-principal-closed",
+        "tokenId": 3,
+        "blockNumber": "0xf4",
+        "blockHash": "0x4f3f78cb2aed8abac75b908ef42c7de75f1c0fa7bd72a05f2304ba7d7d4e5151",
+        "transactionHash": "0xf5d87747c6c660da1562ace7023b6d7d6da7d5731e06c795089c706fdb08cc3b"
+      },
+      {
+        "stage": "after-principal-closed",
+        "tokenId": 4,
+        "blockNumber": "0xf4",
+        "blockHash": "0x4f3f78cb2aed8abac75b908ef42c7de75f1c0fa7bd72a05f2304ba7d7d4e5151",
+        "transactionHash": "0xf5d87747c6c660da1562ace7023b6d7d6da7d5731e06c795089c706fdb08cc3b"
+      },
+      {
+        "stage": "activated",
+        "tokenId": 3,
+        "blockNumber": "0xf4",
+        "blockHash": "0x4f3f78cb2aed8abac75b908ef42c7de75f1c0fa7bd72a05f2304ba7d7d4e5151",
+        "transactionHash": "0xf5d87747c6c660da1562ace7023b6d7d6da7d5731e06c795089c706fdb08cc3b"
+      },
+      {
+        "stage": "activated",
+        "tokenId": 4,
+        "blockNumber": "0xf4",
+        "blockHash": "0x4f3f78cb2aed8abac75b908ef42c7de75f1c0fa7bd72a05f2304ba7d7d4e5151",
+        "transactionHash": "0xf5d87747c6c660da1562ace7023b6d7d6da7d5731e06c795089c706fdb08cc3b"
+      },
+      {
+        "stage": "activated",
+        "tokenId": 0,
+        "blockNumber": "0xff",
+        "blockHash": "0x6853053e247b28a4e4af3560eefef94459c9559a77b9a6c607413c3bfceea4e8"
+      },
+      {
+        "stage": "activated",
+        "tokenId": 1,
+        "blockNumber": "0xff",
+        "blockHash": "0x6853053e247b28a4e4af3560eefef94459c9559a77b9a6c607413c3bfceea4e8"
+      },
+      {
+        "stage": "activated",
+        "tokenId": 2,
+        "blockNumber": "0xff",
+        "blockHash": "0x6853053e247b28a4e4af3560eefef94459c9559a77b9a6c607413c3bfceea4e8"
+      }
+    ],
+    "visualVerdict": "PASS: all 16 captured cards inspected; cliff progress jumps from 0 to 100 percent at unlock, ordinary progress remains linear, accrued rewards remain distinct from gated claimable rewards, role controls have no purchased principal, and no clipping or overlap was observed."
+  }
+}

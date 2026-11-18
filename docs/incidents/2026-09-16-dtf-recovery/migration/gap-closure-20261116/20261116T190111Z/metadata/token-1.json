@@ -1,0 +1,23 @@
+{
+  "name": "Migration DETF #1",
+  "description": "Standing reward right. Allocations made before activation stay in receipt custody for their allocation-time beneficiary, even after this NFT transfers. Reward delivery requires activation. This role has no purchased principal.",
+  "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSI+PHRleHQgeD0iMjQiIHk9IjM0IiBmb250LXNpemU9IjE1Ij5NaWdyYXRpb24gREVURiAoREVURik8L3RleHQ+PHRleHQgeD0iMjQiIHk9IjYwIiBmb250LXNpemU9IjE0Ij5Qcm90b2NvbCBmZWUgcmVjaXBpZW50ICMxPC90ZXh0Pjx0ZXh0IHg9IjI0IiB5PSIxMzMiIGZvbnQtc2l6ZT0iMTgiPlN0YW5kaW5nIHJld2FyZCByaWdodDwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMTgzIiBmb250LXNpemU9IjEzIj5SZXdhcmQgZGVsaXZlcnkgb3Blbi48L3RleHQ+PHRleHQgeD0iMjQiIHk9IjIyNSIgZm9udC1zaXplPSIxMiI+UGFzdCBhbGxvY2F0aW9ucyBrZWVwIHRoZWlyIGJlbmVmaWNpYXJ5LjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjQ3IiBmb250LXNpemU9IjEyIj5UcmFuc2ZlciBjb252ZXlzIGZ1dHVyZSBhbGxvY2F0aW9ucyBvbmx5LjwvdGV4dD48dGV4dCB4PSIyNCIgeT0iMjk3IiBmb250LXNpemU9IjEzIj5ObyBwdXJjaGFzZWQgcHJpbmNpcGFsIG9yIHZlc3RpbmcuPC90ZXh0PjwvZz48L3N2Zz4=",
+  "attributes": [
+    {
+      "trait_type": "DETF name",
+      "value": "Migration DETF"
+    },
+    {
+      "trait_type": "DETF symbol",
+      "value": "DETF"
+    },
+    {
+      "trait_type": "Role",
+      "value": "Protocol fee recipient"
+    },
+    {
+      "trait_type": "Reward delivery",
+      "value": "Open"
+    }
+  ]
+}

@@ -1,3 +1,7 @@
+# Current plan notice - 2026-11-18
+
+Current execution evidence is [implementation-audit-20261118/verification.md](implementation-audit-20261118/verification.md), including the fresh 184-case pinned source run. The hashes and route observations below remain historical provenance. Conditional legacy permissions and the admitted earlier-physical-LP custody restriction are preserved.
+
 # Recovery route disposition with authenticated source boundaries
 
 Governing specification: the confirmed amended local [MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md](../MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md), SHA-256 `93fdd2f045885e00304ec36aa62215127dc1a957f514605129751dd3ae45218e` (98213 raw bytes). Section 1.10, lines 122-134, governs manual Weighted pricing and keep-until-reloaded; sections 1.9 and 3 E1/E2 and implementation task 1 retain the source, custody, recovery and conservation obligations. Historical source archives, test names and captured snapshot wording keep their original evidence meaning; they do not override the amended pricing specification. This reference update reruns no completed recovery checks.
