@@ -78,6 +78,7 @@ contract EtherFiWeETHRebalanceTarget is
     function _stakeExcess(uint256 wethAmount) internal {
         if (wethAmount == 0) return;
         if (!_etherFiStakeOpen()) return;
+        if (_quoteStakeOut(wethAmount, true) == 0) return;
         _stakeWethToWeEth(wethAmount);
     }
 

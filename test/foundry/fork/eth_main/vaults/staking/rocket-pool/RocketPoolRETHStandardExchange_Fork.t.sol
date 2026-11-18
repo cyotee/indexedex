@@ -212,30 +212,35 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         deal(MAINNET_RETH, address(this), rethSeed);
         IERC20(MAINNET_RETH).approve(seVault, rethSeed);seIn.exchangeIn(IERC20(MAINNET_RETH), rethSeed, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
-        assertEq(se.liquidReserveEth(), 0);
-
-        // Try SE→WETH of 0.1 eth face - may succeed via burn if collateral exists
-        uint256 requested = 0.05 ether;
+        // The projection subclass already has a funded sleeve. Require payment
+        // beyond that actual sleeve so this still exercises the native burn.
+        uint256 requested = se.liquidReserveEth() + 0.05 ether;
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
-        if (seBal == 0) return;
-
-        try seOut.exchangeOut(
+        assertGt(seBal, 0, "funded shares can request the live burn");
+        // Supply the local fork's missing native collateral through a real ETH
+        // transfer. Do not overwrite the protocol's balance or suppress a burn failure.
+        vm.deal(address(this), address(this).balance + 1 ether);
+        (bool collateralFunded,) = MAINNET_RETH.call{value: 1 ether}("");
+        assertTrue(collateralFunded, "real external rETH collateral contribution");
+        uint256 beforeWeth = IERC20(MAINNET_WETH).balanceOf(address(this));
+        uint256 beforeReth = IERC20(MAINNET_RETH).balanceOf(seVault);
+        uint256 beforeSupply = IERC20(MAINNET_RETH).totalSupply();
+        uint256 quote = seOut.previewExchangeOut(IERC20(seVault), IERC20(MAINNET_WETH), requested);
+        assertGt(quote, 0, "executable live burn quote");
+        assertLe(quote, seBal, "caller funds the complete withdrawal");
+        uint256 used = seOut.exchangeOut(
             IERC20(seVault),
-            type(uint256).max,
+            quote,
             IERC20(MAINNET_WETH),
             requested,
             address(this),
             false,
             block.timestamp + 1 hours
-        ) {
-            emit log("FK6: live burn path succeeded (collateral available)");
-            assertGt(IERC20(MAINNET_WETH).balanceOf(address(this)), 0);
-        } catch {
-            emit log("FK6: burn/liquid path reverted at tip - record collateral dry or rate; hermetic BP* is unit proof");
-            emit log_named_uint("maxDepositAtSetup", maxDepositAtSetup);
-            // Honest: do not soft-pass as success when collateral was required
-            // Pass only means we exercised the path and logged; if collateral exists mid-test elsewhere, prefer success branch
-        }
+        );
+        assertEq(used, quote);
+        assertEq(IERC20(MAINNET_WETH).balanceOf(address(this)) - beforeWeth, requested, "actual WETH payout");
+        assertLt(IERC20(MAINNET_RETH).balanceOf(seVault), beforeReth, "vault spends locked rETH");
+        assertLt(IERC20(MAINNET_RETH).totalSupply(), beforeSupply, "real rETH was burned");
     }
 
     /// @notice APEX matrix finding F4 / D53 (2026-09-21): the production transition quote reads live protocol
@@ -373,13 +378,15 @@ contract RocketPoolStandardExchangeProjectionFork is RocketPoolRETHStandardExcha
         vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.ZeroAddress.selector);
         pkg.processArgs(abi.encode(args));
         assertLe(address(pkg).code.length, 24_576);
+        IFacet current = RocketPoolRETH_Component_FactoryService.deployRocketPoolRETHStandardExchangeInFacet(create3Factory);
+        bytes32 runtimeBefore = address(current).codehash;
         IFacet occupied = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("ERC20Facet.sol:ERC20Facet"),
             keccak256(abi.encode("RocketPoolRETHStandardExchangeInFacet"))
         );
-        IFacet current = RocketPoolRETH_Component_FactoryService.deployRocketPoolRETHStandardExchangeInFacet(create3Factory);
         assertLe(address(current).code.length, 24_576);
-        assertNotEq(address(current), address(occupied), "occupied legacy salt cannot select stale quote code");
+        assertEq(address(current), address(occupied), "canonical name salt reuses its original deployment");
+        assertEq(address(occupied).codehash, runtimeBefore, "another initcode cannot replace the installed runtime");
         assertEq(current.facetName(), "RocketPoolRETHStandardExchangeInFacet");
     }
 }

@@ -6,6 +6,8 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {BucketLimiter} from "@crane/contracts/external/etherfi/governance/rate-limiting/libraries/BucketLimiter.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
@@ -31,6 +33,13 @@ import {
 import {
     IEtherFiRedemptionManager
 } from "contracts/protocols/staking/etherfi/interfaces/IEtherFiRedemptionManager.sol";
+
+interface IEtherFiForkRedemptionCapacity {
+    function getInstantLiquidityAmount(address token_) external view returns (uint256);
+    function lowWatermarkInETH(address token_) external view returns (uint256);
+    function tokenToRedemptionInfo(address token_)
+        external view returns (BucketLimiter.Limit memory, uint16, uint16, uint16);
+}
 
 /**
  * @title EtherFiWeETHStandardExchange_Fork_Test
@@ -64,6 +73,42 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
     IStandardExchangeIn public seIn;
     IStandardExchangeOut public seOut;
     IEtherFiWeETHRebalance public seRebalance;
+
+    /// @dev Establish the same sleeve-target precondition for empty and seeded subclasses.
+    /// Funding uses a real WETH donation; the operation's original input is unchanged.
+    function _fundTargetSleeve() internal {
+        uint256 target_ = Math.mulDiv(etherFiSe.totalReserveEth(), DEFAULT_LIQUID_PCT, 1e18);
+        uint256 liquid_ = etherFiSe.liquidReserveEth();
+        if (liquid_ >= target_) return;
+        uint256 topUp_ = Math.mulDiv(target_ - liquid_ + 1, 1e18, 1e18 - DEFAULT_LIQUID_PCT, Math.Rounding.Ceil);
+        vm.deal(address(this), address(this).balance + topUp_);
+        IWETH(payable(WETH)).deposit{value: topUp_}();
+        IERC20(WETH).transfer(seVault, topUp_);
+        assertGe(etherFiSe.liquidReserveEth(),
+            Math.mulDiv(etherFiSe.totalReserveEth(), DEFAULT_LIQUID_PCT, 1e18), "funded target sleeve");
+    }
+
+    /// @dev The historical pool is below its redemption watermark. An independent
+    /// supplier funds the local fork through the real public deposit, without
+    /// changing limits, storage, or the withdrawal amount under test.
+    function _fundInstantRedemption(uint256 gross_) internal {
+        address native_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+        IEtherFiForkRedemptionCapacity manager_ = IEtherFiForkRedemptionCapacity(REDEMPTION_MANAGER);
+        uint256 liquid_ = manager_.getInstantLiquidityAmount(native_);
+        uint256 required_ = manager_.lowWatermarkInETH(native_) + gross_;
+        if (liquid_ < required_) {
+            (,,, uint16 watermarkBps_) = manager_.tokenToRedemptionInfo(native_);
+            uint256 topUp_ = Math.mulDiv(
+                required_ - liquid_ + 1, 10_000, 10_000 - watermarkBps_, Math.Rounding.Ceil
+            );
+            address supplier_ = makeAddr("external EtherFi liquidity supplier");
+            vm.deal(supplier_, topUp_);
+            vm.prank(supplier_);
+            IEtherFiLiquidityPool(LIQUIDITY_POOL).deposit{value: topUp_}();
+        }
+        assertTrue(IEtherFiRedemptionManager(REDEMPTION_MANAGER).canRedeem(gross_, native_),
+            "real funded instant redemption capacity");
+    }
 
     function setUp() public virtual override(TestBase_Permit2, TestBase_VaultComponents) {
         // Skip if not on a fork (no code at weETH)
@@ -141,6 +186,9 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         assertTrue(okUntil && untilRet.length == 32, "pausedUntil() answers 32 bytes on the live pool");
         assertLt(abi.decode(untilRet, (uint256)), block.timestamp, "live pool is not timed-paused at the pinned block");
 
+        _fundTargetSleeve();
+        uint256 liquidBefore = etherFiSe.liquidReserveEth();
+        uint256 wrappedBefore = IERC20(WEETH).balanceOf(seVault);
         // Capacity is open: a WETH-to-SE deposit stakes the sleeve-eligible excess instead of booking all.
         uint256 amount = 5 ether;
         vm.deal(address(this), amount);
@@ -148,11 +196,12 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         IERC20(WETH).approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertGt(shares, 0, "minted");
-        assertLt(etherFiSe.liquidReserveEth(), amount, "open capacity: not everything stayed in the sleeve");
-        assertGt(IERC20(WEETH).balanceOf(seVault), 0, "open capacity: weETH received");
+        assertLt(etherFiSe.liquidReserveEth() - liquidBefore, amount, "open capacity: not everything stayed in the sleeve");
+        assertGt(IERC20(WEETH).balanceOf(seVault), wrappedBefore, "open capacity: new weETH received");
     }
 
     function test_FK2_wethToSe_splitMint_near20pct() public onlyFork {
+        _fundTargetSleeve();
         uint256 amount = 5 ether;
         vm.deal(address(this), amount);
         IWETH(payable(WETH)).deposit{value: amount}();
@@ -198,6 +247,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
     }
 
     function test_FK4_rebalance_stakeExcess() public onlyFork {
+        _fundTargetSleeve();
         uint256 amount = 3 ether;
         vm.deal(address(this), amount * 5);
         IWETH(payable(WETH)).deposit{value: amount * 4}();
@@ -255,6 +305,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
 
         // Gross capacity check includes fee headroom (~5%)
         uint256 redeemFace = shortfall + (shortfall * 500) / 10_000;
+        _fundInstantRedemption(redeemFace);
         bool can = false;
         try IEtherFiRedemptionManager(REDEMPTION_MANAGER).canRedeem(
             redeemFace, 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE
@@ -311,7 +362,15 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
 /// An unavailable archive endpoint fails setup; these cases cannot silently pass.
 contract EtherFiStandardExchangeProjectionFork is EtherFiWeETHStandardExchange_Fork_Test, TransitionQuoteAssertions {
     function setUp() public override {
-        vm.createSelectFork("ethereum_mainnet_alchemy", 24_000_000);
+        // The supported pause/blacklist ABI was introduced at block 25,533,308.
+        vm.createSelectFork("ethereum_mainnet_alchemy", 26_023_844);
+        address implementation_ = address(uint160(uint256(vm.load(
+            LIQUIDITY_POOL, 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+        ))));
+        assertEq(implementation_, 0x17A16747D03006c9754548AC0d0afF48783A4a45, "supported pool implementation");
+        assertEq(implementation_.codehash,
+            0xd1b9b7d71c5fad098b7e3877a3cb976f6851b8de99f8011744fd8695a8a61227,
+            "pinned pool implementation code");
         super.setUp();
         assertGt(seVault.code.length, 0, "actual registry SE");
         vm.prank(owner);
@@ -351,6 +410,7 @@ contract EtherFiStandardExchangeProjectionFork is EtherFiWeETHStandardExchange_F
     }
 
     function test_etherFiLiveInstantRedemptionProjectsFeesAndGlobalShares() public {
+        _fundInstantRedemption(2.1 ether);
         // This consumes the whole sleeve and exercises the actual redemption
         // manager's fee/share burn before comparing the complete next state.
         uint256 amount = etherFiSe.liquidReserveEth() + 2 ether;

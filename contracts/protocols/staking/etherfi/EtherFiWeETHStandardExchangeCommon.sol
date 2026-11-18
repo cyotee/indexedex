@@ -719,12 +719,15 @@ abstract contract EtherFiWeETHStandardExchangeCommon is NativeStandardYieldQuote
         uint256 eligible = liquid - target;
         uint256 booked = _bookedReserve(IERC20(weth()));
         uint256 fromBooked = eligible < booked ? eligible : booked;
-        if (fromBooked > 0) {
+        if (fromBooked > 0 && _quoteStakeOut(fromBooked, true) != 0) {
             _stakeWethToWeEth(fromBooked);
         }
         liquid = liquidReserveEth();
         target = (totalReserveEth() * pct) / ONE_WAD;
         if (liquid <= target) return;
-        _stakeWethToWeEth(liquid - target);
+        uint256 excess = liquid - target;
+        // Native share rounding can leave one more unit above the recalculated
+        // target. Keep non-mintable capital liquid instead of reverting the mint.
+        if (_quoteStakeOut(excess, true) != 0) _stakeWethToWeEth(excess);
     }
 }

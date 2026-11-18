@@ -210,29 +210,32 @@ function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 m
         q.idleEShares -= wrapped;
     }
 
-    function _efStake(EtherFiQuoteState memory q, uint256 amount) private pure returns (uint256 wrapped) {
+    function _efStake(EtherFiQuoteState memory q, uint256 amount, bool sleeve) private pure returns (uint256 wrapped) {
         if (amount == 0) return 0;
         uint256 beforeBalance = _efPooled(q, q.idleEShares);
         uint256 minted = q.pooledEth == 0 ? amount : _efShares(q, amount);
-        q.pooledEth += amount;
+        uint256 pooled = q.pooledEth + amount;
+        uint256 shares = q.eShares + minted;
+        uint256 received = Math.mulDiv(q.idleEShares + minted, pooled, shares) - beforeBalance;
+        wrapped = Math.mulDiv(received, shares, pooled);
+        if (minted == 0 || received == 0 || wrapped == 0) {
+            if (sleeve) return 0;
+            revert Slippage();
+        }
+        q.pooledEth = pooled;
         q.poolLiquid += amount;
-        q.eShares += minted;
-        q.idleEShares += minted;
-        uint256 received = _efPooled(q, q.idleEShares) - beforeBalance;
-        if (received == 0) revert Slippage();
-        wrapped = _efShares(q, received);
-        if (wrapped == 0) revert Slippage();
-        q.idleEShares -= wrapped;
+        q.eShares = shares;
+        q.idleEShares = q.idleEShares + minted - wrapped;
         q.liquid -= amount;
     }
 
     function _efSplitSleeve(EtherFiQuoteState memory q) private view {
         uint256 percent = targetLiquidReservePercentage();
         uint256 target = Math.mulDiv(_efNav(q), percent, 1e18);
-        if (q.liquid > target) q.wrapped += _efStake(q, q.liquid - target);
+        if (q.liquid > target) q.wrapped += _efStake(q, q.liquid - target, true);
         target = Math.mulDiv(_efNav(q), percent, 1e18);
         if (q.liquid > target + Math.mulDiv(target, REBALANCE_BAND_WAD, 1e18)) {
-            q.wrapped += _efStake(q, q.liquid - target);
+            q.wrapped += _efStake(q, q.liquid - target, true);
         }
     }
 
@@ -374,7 +377,7 @@ function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 m
             _efPay(q, amountOut);
         } else if (tokenIn == weth()) {
             q.liquid += amount;
-            amountOut = _efStake(q, amount);
+            amountOut = _efStake(q, amount, false);
         } else if (tokenIn == eETH()) {
             (, amountOut) = _efReceiveAndWrap(q, amount);
         } else {

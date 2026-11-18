@@ -148,6 +148,16 @@ abstract contract LidoWstETHStandardExchangeCommon is NativeStandardYieldQuoteBa
         supply = st.getTotalShares();
         (bool ok, bytes memory data) = address(st).staticcall(abi.encodeWithSignature("getExternalShares()"));
         if (!ok && data.length == 0) return (pooled, supply);
+        if (!ok) {
+            // Deployed Lido V2 rejects unknown selectors with NON_EMPTY_DATA.
+            // Identify that legacy ABI explicitly; failures from newer versions
+            // still propagate instead of silently using the wrong share ratio.
+            (bool identified, bytes memory version) =
+                address(st).staticcall(abi.encodeWithSignature("getContractVersion()"));
+            if (identified && version.length == 32 && abi.decode(version, (uint256)) == 2) {
+                return (pooled, supply);
+            }
+        }
         if (!ok || data.length != 32) {
             assembly ("memory-safe") { revert(add(data, 32), mload(data)) }
         }
