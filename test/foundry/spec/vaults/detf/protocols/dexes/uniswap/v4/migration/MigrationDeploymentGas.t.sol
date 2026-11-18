@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Vm} from "forge-std/Vm.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultRegistryEvents} from "contracts/interfaces/IVaultRegistryEvents.sol";
+import {IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {TestBase_UniswapV4DetfMigration} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationDFPkg as Package} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationDFPkg.sol";
 import {IUniswapV4DetfMigrationSYDFPkg as SyPackage} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/sy/IUniswapV4DetfMigrationSYDFPkg.sol";
@@ -115,6 +120,7 @@ contract MigrationDeploymentGasTest is TestBase_UniswapV4DetfMigration {
         assertEq(stakingIn_[1], c_.receipt);
         assertEq(stakingIn_[2], pairB);
         assertEq(stakingIn_[3], pairA);
+        vm.recordLogs();
         (bool completed_,) = address(migrationPkg).call{gas: 32_000_000}(
             abi.encodeCall(Package.deployVault, (args_))
         );
@@ -124,6 +130,22 @@ contract MigrationDeploymentGasTest is TestBase_UniswapV4DetfMigration {
         assertEq(Migration(c_.parent).bondNftVault(), c_.bond);
         assertEq(Migration(c_.parent).rawSY(), raw_);
         assertEq(Migration(c_.parent).stakingSY(), staking_);
+        Vm.Log[] memory logs_ = vm.getRecordedLogs();
+        address[] memory tokens_ = IBasicVault(c_.parent).vaultTokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            uint256 occurrences_;
+            for (uint256 j_; j_ < logs_.length; ++j_) {
+                if (logs_[j_].emitter == address(indexedexManager) && logs_[j_].topics.length == 4
+                    && logs_[j_].topics[0] == IVaultRegistryEvents.NewVaultOfToken.selector
+                    && logs_[j_].topics[1] == bytes32(uint256(uint160(c_.parent)))
+                    && logs_[j_].topics[3] == bytes32(uint256(uint160(tokens_[i_])))) ++occurrences_;
+            }
+            assertEq(occurrences_, 1, "one token registration regardless of interface count");
+            address[] memory vaults_ = IVaultRegistryVaultQuery(address(indexedexManager)).vaultsOfToken(tokens_[i_]);
+            bool found_;
+            for (uint256 j_; j_ < vaults_.length; ++j_) if (vaults_[j_] == c_.parent) found_ = true;
+            assertTrue(found_, "token index retains the registered vault");
+        }
     }
 
     function test_predeployedBondAdoptionAndEarlyRoutesCannotBuyRights() public {
@@ -410,14 +432,15 @@ contract MigrationDeploymentGasTest is TestBase_UniswapV4DetfMigration {
         _reject(address(diamondPackageFactory), abi.encodeWithSignature("initAccount(address,bytes)", address(migrationPkg), abi.encode(args_)));
         _reject(detf, abi.encodeCall(IPostDeployAccountHook.postDeploy, ()));
         _reject(detf, abi.encodeCall(IDiamondFactoryPackage.initAccount, (abi.encode(args_))));
-        bytes4[16] memory removed_ = [Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
+        bytes4[17] memory removed_ = [Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.configureNftEntitlements.selector, Allocation.activateMigration.selector,
             Allocation.configureWeightedSyEntitlements.selector, Allocation.configureDtfCustodySeEntitlements.selector,
             Allocation.configureClaimedSyEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
             Allocation.configureWeightedReceiptEntitlements.selector, Allocation.configureEarlierReceiptEntitlements.selector,
             Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureEarlierLiquidEntitlements.selector,
-            Allocation.configureHeldSeLpEntitlements.selector, Allocation.configureNftContributionEntitlements.selector];
+            Allocation.configureHeldSeLpEntitlements.selector, Allocation.configureNftContributionEntitlements.selector,
+            AllocationV3.setMigrationWeightedPricingV3.selector];
         for (uint256 i_; i_ < removed_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(removed_[i_]), address(0));
         assertTrue(migration.migrationActivated());
     }
@@ -465,7 +488,7 @@ contract MigrationDeploymentGasTest is TestBase_UniswapV4DetfMigration {
     }
 }
 
-/// @notice Non-SUT external currency. Real V3 SE preview reads exercise static callback boundaries.
+/// @notice Non-SUT external currency that traps any ambient-custody read during construction.
 contract MigrationConstructionCallbackToken is ERC20 {
     address private watchedVault;
     address private target;
@@ -495,7 +518,7 @@ contract MigrationConstructionCallbackTest is TestBase_UniswapV4DetfMigration {
         );
     }
 
-    function test_realCustomRouteCallbacksCannotReenterEitherConstructionBoundary() public {
+    function test_customTokenBalanceCallbackIsAbsentAtBothConstructionBoundaries() public {
         Package.PkgArgs memory args_ = _migrationArgs(address(0xCA11));
         args_.baseArgs.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
         args_.baseArgs.mintRoutes = new IUniswapV4Detf.IoRoute[](1);
@@ -506,22 +529,18 @@ contract MigrationConstructionCallbackTest is TestBase_UniswapV4DetfMigration {
         bytes memory preparation_ = abi.encodeCall(Package.prepareSyChildren, (args_));
         token_.arm(se1, address(migrationPkg), preparation_, true);
         vm.expectRevert(MigrationConstructionCallbackToken.ConstructionReadReached.selector);
-        migrationPkg.prepareSyChildren(args_);
-        assertFalse(SyPackage(address(syPkg)).preparation(c_.constructionId).completed);
-        assertEq(c_.bond.code.length, 0);
-        token_.arm(se1, address(migrationPkg), preparation_, false);
-        vm.expectCall(pairB, abi.encodeCall(MigrationConstructionCallbackToken.probe, ()));
+        token_.balanceOf(se1);
+        // The actual V3 liquidity preview never reads ambient token custody.
+        // Keeping the trap armed proves neither construction boundary invokes it.
         migrationPkg.prepareSyChildren(args_);
         assertTrue(SyPackage(address(syPkg)).preparation(c_.constructionId).completed);
+        assertGt(c_.bond.code.length, 0);
+        assertEq(c_.parent.code.length, 0);
         assertFalse(Bond(c_.bond).reservedBondNftsWired());
         bytes memory finalization_ = abi.encodeCall(Package.deployVault, (args_));
         token_.arm(se1, address(migrationPkg), finalization_, true);
         vm.expectRevert(MigrationConstructionCallbackToken.ConstructionReadReached.selector);
-        migrationPkg.deployVault(args_);
-        assertEq(c_.parent.code.length, 0);
-        assertFalse(Bond(c_.bond).reservedBondNftsWired());
-        token_.arm(se1, address(migrationPkg), finalization_, false);
-        vm.expectCall(pairB, abi.encodeCall(MigrationConstructionCallbackToken.probe, ()));
+        token_.balanceOf(se1);
         address parent_ = migrationPkg.deployVault(args_);
         assertEq(parent_, c_.parent);
         assertEq(Migration(parent_).owner(), args_.owner);

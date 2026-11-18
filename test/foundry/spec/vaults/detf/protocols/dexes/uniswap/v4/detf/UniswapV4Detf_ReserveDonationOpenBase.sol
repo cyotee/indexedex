@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {Test} from "forge-std/Test.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
@@ -334,6 +335,15 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         uint256 lp_ = _donatePair(dnDonor, 10 ether);
         _assertR12aUnassigned(before_, lp_);
         assertEq(IERC20(detf).balanceOf(detfUser), before_.userDetf, "gift cannot pay raw DETF to bonder");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -355,6 +365,15 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         vm.stopPrank();
         assertEq(lp_, quote_, "actual SE-share donation preview");
         _assertR12aUnassigned(before_, lp_);
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -490,6 +509,15 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         vm.stopPrank();
         uint256 lpOut_ = _donatePair(dnDonor, 5 ether);
         assertGt(lpOut_, 0, "DN11 donate");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 

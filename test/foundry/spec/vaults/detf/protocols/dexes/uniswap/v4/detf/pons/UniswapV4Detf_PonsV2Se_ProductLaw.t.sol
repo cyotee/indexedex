@@ -106,6 +106,15 @@ contract UniswapV4Detf_PonsV2Se_ProductLaw is UniswapV4Detf_PonsV2Se_Stage11Help
         uint256 owned_ = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
         assertGe(owned_ - expected_.ownedLp, lpOut_, "actual LP in protocol custody");
         assertEq(IERC20(detfInfo.hook()).balanceOf(address(staking_)), 0, "staking has held DETF backing only");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -120,13 +129,31 @@ contract UniswapV4Detf_PonsV2Se_ProductLaw is UniswapV4Detf_PonsV2Se_Stage11Help
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "no LP on diamond");
         assertEq(IERC20(reserveHook).balanceOf(claim_), 0, "no LP on claim");
         assertGt(IERC20(reserveHook).balanceOf(nft_), 0, "LP on Bond NFT");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
-    function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
+    function test_T7_19_afterMint_bookedBalances_feeToSweepClearsJoinableDust() public {
         _firstBond(80 ether);
         vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");
     }
@@ -454,6 +481,15 @@ contract UniswapV4Detf_PonsV2Se_ProductLaw is UniswapV4Detf_PonsV2Se_Stage11Help
         uint256 lp_ = _donatePair(dnDonor, 10 ether);
         _assertR12aUnassigned(before_, lp_);
         assertEq(IERC20(detf).balanceOf(detfUser), before_.userDetf, "gift cannot pay raw DETF to bonder");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -474,6 +510,15 @@ contract UniswapV4Detf_PonsV2Se_ProductLaw is UniswapV4Detf_PonsV2Se_Stage11Help
         vm.stopPrank();
         assertEq(lp_, quote_, "actual SE-share donation preview");
         _assertR12aUnassigned(before_, lp_);
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -598,6 +643,15 @@ contract UniswapV4Detf_PonsV2Se_ProductLaw is UniswapV4Detf_PonsV2Se_Stage11Help
         assertEq(IERC20(hook_).balanceOf(attacker_), lpBefore_, "DN11 no third-party LP");
         uint256 lpOut_ = _donatePair(dnDonor, 5 ether);
         assertGt(lpOut_, 0, "DN11 donate");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 

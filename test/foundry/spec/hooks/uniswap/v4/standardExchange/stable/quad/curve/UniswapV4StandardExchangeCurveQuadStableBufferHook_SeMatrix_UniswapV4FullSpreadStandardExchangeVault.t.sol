@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {FullSpreadSequentialQuoteChecks as StateChecks} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/FullSpreadSequentialQuoteChecks.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -34,6 +35,17 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4Fu
     address internal raw0;
     address internal raw1;
     uint256 internal beforeLegs;
+
+    function test_sequentialQuote_externalSwapMatchesExecution() public {
+        _seedCurve();
+        _setDexFee(0.003e18);
+        StateChecks.swaps(fx, hook, raw0, quad.rateProvider(faceIdx));
+    }
+
+    function test_sequentialQuote_externalDepositJoinMatchesExecution() public {
+        _seedCurve();
+        StateChecks.join(fx, hook);
+    }
 
     function _newFixture() internal override returns (SeMatrixFixture) {
         fullSpread = new SeMatrix_FullSpreadV4Fixture(_ctx(), sharedPkg);

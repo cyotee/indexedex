@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {WETHAwareRepo} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETHAwareRepo.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -9,8 +10,44 @@ import {UniswapV4SinglePositionAwareRepo} from "@crane/contracts/protocols/dexes
 import {UniswapV4FullSpreadStandardExchangeVaultComponentBindings} from "./UniswapV4FullSpreadStandardExchangeVaultComponentBindings.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultPlanner as Planner} from "./UniswapV4FullSpreadStandardExchangeVaultPlanner.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultTypes as Types} from "./UniswapV4FullSpreadStandardExchangeVaultTypes.sol";
+import {UniswapV4FullSpreadStandardExchangeVaultProjection as Projection} from "./UniswapV4FullSpreadStandardExchangeVaultProjection.sol";
 
-contract UniswapV4FullSpreadStandardExchangeVaultQuoteTarget is UniswapV4FullSpreadStandardExchangeVaultComponentBindings {
+contract UniswapV4FullSpreadStandardExchangeVaultQuoteTarget is
+    UniswapV4FullSpreadStandardExchangeVaultComponentBindings, IStandardExchangeStateQuote
+{
+    function quoteExchangeState() external view override returns (bytes memory) {
+        return abi.encode(Projection.snapshot());
+    }
+
+    function quoteExchangeSupply(bytes calldata state_) external view override returns (uint256) {
+        return _decode(state_).supply;
+    }
+
+    function quoteExchangeIn(bytes calldata state_, IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+        external view override returns (bytes memory nextState_, uint256 amountOut_, uint256 amountRefunded_)
+    {
+        Types.QuoteState memory next_ = _decode(state_);
+        Types.Plan memory plan_ = Planner.planIn(next_, address(tokenIn_), amountIn_, address(tokenOut_));
+        if (plan_.kind == Types.Kind.Unsupported || plan_.failed) return (state_, 0, 0);
+        // A candidate swap may have been projected before the full-output-consumption
+        // check rejected the add. No action executes in that case.
+        if (plan_.actionCount == 0) return (state_, plan_.amountOut, plan_.amountRefunded);
+        return (abi.encode(next_), plan_.amountOut, plan_.amountRefunded);
+    }
+
+    function _decode(bytes calldata encoded_) private view returns (Types.QuoteState memory state_) {
+        // QuoteState v1 consists of 25 static ABI words. Reject trailing data too.
+        if (encoded_.length != 25 * 32) revert InvalidQuoteState();
+        bytes32 domain_;
+        uint256 version_;
+        assembly ("memory-safe") {
+            domain_ := calldataload(encoded_.offset)
+            version_ := calldataload(add(encoded_.offset, 32))
+        }
+        if (domain_ != Projection.domain() || version_ != 1) revert InvalidQuoteState();
+        state_ = abi.decode(encoded_, (Types.QuoteState));
+    }
+
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view

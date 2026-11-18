@@ -36,7 +36,8 @@ contract UniswapV4DetfMigrationWeightedHookTarget is UniswapV4DetfMigrationPolic
     function migrationDonationInventory(IERC20 token_) external view returns (uint256) {
         return Repo._layoutStruct().donationInventory[address(token_)];
     }
-    function migrationWeightedPricing() external view returns (Pricing.Book memory) { return Repo._weightedPricing(); }
+    function migrationWeightedPricing() external view returns (Pricing.Book memory) { return Repo._legacyWeightedPricing(); }
+    function migrationWeightedPricingV3() external view returns (Pricing.BookV3 memory) { return Repo._weightedPricing(); }
     function previewOriginalCredit(uint256 eth_, uint256 dtf_) external view returns (uint256) {
         return PricingLib.evaluateOriginals(Repo._weightedPricing(), eth_, dtf_);
     }
@@ -358,12 +359,13 @@ contract UniswapV4DetfMigrationWeightedHookTarget is UniswapV4DetfMigrationPolic
         }
         if (live_) {
             uint256 beforeLp_ = IERC20(ParentRepo._layoutStruct().hook).balanceOf(_bondLpHolder());
-            _beginBudget();
-            // Release only this call's receipts into the sweep budget, never older donations.
+            uint256[] memory residuals_ = _beginIsolatedBudget();
+            // Join only this call's receipts. Leave their refunds and all older
+            // residuals for the fee recipient's separate maintenance transaction.
             for (uint256 i_; i_ < tokens_.length; ++i_) _releaseDonation(address(tokens_[i_]), amounts_[i_]);
             if (nativeAmount_ != 0) _releaseDonation(m_.weth, nativeAmount_);
-            _sweepDustBody();
-            _endBudget();
+            _tryJoinNativeResidual(_hook().tokens());
+            _endIsolatedBudget(residuals_);
             lpOut_ = IERC20(ParentRepo._layoutStruct().hook).balanceOf(_bondLpHolder()) - beforeLp_;
             if (lpOut_ < minLpOut_) revert IStandardExchangeErrors.MinAmountNotMet(minLpOut_, lpOut_);
         }

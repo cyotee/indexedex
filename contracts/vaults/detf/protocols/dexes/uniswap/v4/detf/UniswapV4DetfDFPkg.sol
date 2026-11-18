@@ -25,6 +25,7 @@ import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {
     IUniswapV4Detf,
+    IUniswapV4DetfFirstBondShares,
     IUniswapV4DetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4DetfRepo as Repo} from
@@ -131,7 +132,7 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](12);
+        interfaces_ = new bytes4[](13);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -144,6 +145,7 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
         interfaces_[9] = type(IDETFStandardizedYield).interfaceId;
         interfaces_[10] = type(IDETFStakingPreview).interfaceId;
         interfaces_[11] = type(IDETFFundedRewards).interfaceId;
+        interfaces_[12] = type(IUniswapV4DetfFirstBondShares).interfaceId;
     }
 
     function packageMetadata()

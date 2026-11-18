@@ -13,6 +13,8 @@ import {Test} from "forge-std/Test.sol";
 import {DetfStatefulActions} from "contracts/test/bases/DetfStatefulActions.sol";
 import {HostileReentrantShare} from "contracts/test/adversarial/HostileReentrantShare.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -65,10 +67,6 @@ contract Handler_UniswapV4Detf is DetfStatefulActions {
         host = host_;
         actors = [a0, a1, address(0xCA1103)];
         attacker = attacker_;
-    }
-
-    function _lifecycleSweepsOnMint() internal pure override returns (bool) {
-        return true;
     }
 
     function _lifecycleFund(address actor_, uint256 amount_) internal override {
@@ -262,6 +260,9 @@ contract UniswapV4Detf_Invariant is TestBase_UniswapV4Detf_Adversarial, IUv4Detf
         handler = new Handler_UniswapV4Detf(
             IStandardExchangeIn(detf), pairToken, IUv4DetfInvHost(address(this)), a0, a1, att
         );
+        // The campaign includes explicit maintenance as the live fee recipient.
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setFeeTo(IFeeCollectorProxy(address(handler)));
         bytes4[] memory sels = new bytes4[](1);
         sels[0] = handler.cycle.selector;
         targetContract(address(handler));

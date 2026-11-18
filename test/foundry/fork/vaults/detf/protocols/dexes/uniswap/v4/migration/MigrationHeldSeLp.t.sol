@@ -581,9 +581,9 @@ contract MigrationWeightedLpTest is MigrationHeldSeLpTest {
             Recovery.RecoveryInventoryInsufficient.selector, _source(), 1, 0
         ));
         _run(Recovery.Stage.WeightedLpRedeem, 0, 1, 0);
-        _run(Recovery.Stage.Donate, 0, out_, 1);
+        _donateAndCheckProtected(out_, bond_, protected_);
+        assertEq(IERC20(_source()).balanceOf(detf), 100 + minted_, "legacy fee mints remain unbooked custody");
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
-        assertEq(_protected(bond_), protected_);
     }
 }
 

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 
@@ -43,6 +45,15 @@ contract UniswapV4Detf_Orbital is TestBase_UniswapV4Detf_Orbital {
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "lp");
         assertTrue(detfInfo.isReserveLive(), "live");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -51,7 +62,7 @@ contract UniswapV4Detf_Orbital is TestBase_UniswapV4Detf_Orbital {
         vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "minted");
-        detfInfo.sweepDust();
+        _sweepDustUntilSettled();
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "no hook LP");
         assertEq(IERC20(se0).balanceOf(detf), 0, "no se0");
         assertEq(IERC20(se1).balanceOf(detf), 0, "no se1");

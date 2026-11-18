@@ -20,6 +20,7 @@ import {UniswapV4DetfCommon} from "../detf/UniswapV4DetfCommon.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
     from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "./interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
 import {UniswapV4DetfMigrationWeightedPricingLib as PricingLib} from "./UniswapV4DetfMigrationWeightedPricingLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
 
@@ -52,6 +53,23 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         PricingLib.validate(book_);
         book_.id = keccak256(abi.encode("IndexedEx.manual-weighted-original-credit", book_));
         m_.weightedPricing = abi.encode(book_);
+        m_.weightedPricingVersion = 2;
+        emit Pricing.MigrationWeightedPricingSet(book_.id);
+        return book_.id;
+    }
+
+    /// @notice Replace version-three manual operands; already recorded credits remain untouched.
+    function setMigrationWeightedPricingV3(Pricing.InputsV3 calldata next_)
+        external administration nonReentrant returns (bytes32 bookId_)
+    {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Pricing.BookV3 memory book_ = Pricing.BookV3(
+            3, block.chainid, address(this), m_.weth, m_.originalDtf, bytes32(0), next_
+        );
+        PricingLib.validate(book_);
+        book_.id = keccak256(abi.encode("IndexedEx.manual-weighted-original-credit", book_));
+        m_.weightedPricing = abi.encode(book_);
+        m_.weightedPricingVersion = 3;
         emit Pricing.MigrationWeightedPricingSet(book_.id);
         return book_.id;
     }
@@ -59,7 +77,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     function configureIndependentAllocations(Migration.IndependentAllocationInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.IndependentAllocationInput calldata input_ = inputs_[i_];
@@ -152,7 +170,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     function configureWeightedSyEntitlements(Migration.WeightedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedSyEntitlementInput calldata input_ = inputs_[i_];
@@ -166,7 +184,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     function configureClaimedSyEntitlements(Migration.ClaimedSyEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.ClaimedSyEntitlementInput calldata input_ = inputs_[i_];
             if (input_.eligibleWeight == 0 || input_.eligibleWeight > input_.originalWeight) {
@@ -183,7 +201,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         }
     }
 
-    function _quoteWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, Pricing.Book memory book_)
+    function _quoteWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, Pricing.BookV3 memory book_)
         private view returns (uint256)
     {
         if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_SY) {
@@ -219,7 +237,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     function configureDtfCustodySeEntitlements(Migration.DtfCustodySeEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.DtfCustodySeEntitlementInput calldata input_ = inputs_[i_];
@@ -278,12 +296,13 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         }
         ERC2535Repo._processFacetCuts(cuts_);
         ERC165Repo._layoutStruct().isSupportedInterface[type(Allocation).interfaceId] = false;
+        ERC165Repo._layoutStruct().isSupportedInterface[type(AllocationV3).interfaceId] = false;
         Repo._layoutStruct().activated = true;
         emit Migration.MigrationActivated(msg.sender);
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](16);
+        selectors_ = new bytes4[](17);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.setMigrationWeightedPricing.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -300,6 +319,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[13] = Allocation.configureHeldSeLpEntitlements.selector;
         selectors_[14] = Allocation.configureNftContributionEntitlements.selector;
         selectors_[15] = Allocation.configureClaimedSyEntitlements.selector;
+        selectors_[16] = AllocationV3.setMigrationWeightedPricingV3.selector;
     }
 
     function bootstrapMigrationReserve(

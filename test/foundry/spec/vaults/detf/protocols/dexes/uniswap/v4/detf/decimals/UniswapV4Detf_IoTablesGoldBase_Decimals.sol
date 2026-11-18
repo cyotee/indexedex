@@ -182,6 +182,15 @@ abstract contract UniswapV4Detf_IoTablesGoldBase_Decimals is TestBase_UniswapV4D
         vm.stopPrank();
         assertEq(userDetf_, userPred_, "preview==exec");
         assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore_, userDetf_, "user DETF");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -203,7 +212,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase_Decimals is TestBase_UniswapV4D
     }
 
     /// @notice T7.18: `reservePool()==hook`. Family `pairToken` / `rateAsset` / `underlyingVault` unknown on the proxy.
-    /// @notice T7.21: Seed a non-joinable leftover; mint still succeeds; public `sweepDust` no-ops or clears joinable dust.
+    /// @notice T7.21: Seed a non-joinable leftover; mint still succeeds; feeTo `sweepDust` no-ops or clears joinable dust.
     function test_T7_21_failedDustJoin_doesNotRevertMint() public {
         SimpleMintableERC20 junk_ = new SimpleMintableERC20("Junk", "JNK");
         junk_.mint(detf, 5 ether);
@@ -212,8 +221,10 @@ abstract contract UniswapV4Detf_IoTablesGoldBase_Decimals is TestBase_UniswapV4D
         vm.stopPrank();
         assertGt(minted_, 0, "mint despite non-joinable leftover");
         assertEq(junk_.balanceOf(detf), 5 ether, "junk leftover remains");
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         detfInfo.sweepDust();
         assertEq(junk_.balanceOf(detf), 5 ether, "sweepDust no-ops junk");
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 

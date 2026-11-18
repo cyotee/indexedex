@@ -6,15 +6,13 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
 import {UniswapV3Quoter} from "@crane/contracts/utils/math/UniswapV3Quoter.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {UniswapV3FullSpreadStandardExchangeVaultCommon} from
-    "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol";
 import {TestBase_UniswapV3FullSpreadStandardExchangeVault} from
     "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
-/// @notice RC-04: exact-output quote rejection, post-swap settlement, and funded fill on the FullSpread proxy.
-/// @dev Quote-stage cases below do not reach the post-swap output-delta guard.
-///      The settlement witness is a separate case on this proxy.
+/// @notice RC-04 under V3-ACC-17: exact-out fails closed regardless of raw pool fillability.
+/// @dev Real pool quotes and an armed input token distinguish unavailable execution from settlement.
 contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpreadStandardExchangeVault {
     IUniswapV3Pool internal pool;
     IStandardExchangeProxy internal vault;
@@ -38,15 +36,14 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
         vm.label(address(pullToken), "pullToken");
     }
 
-    /// @notice Both directions reject the raw quoter's incomplete result at the vault preview.
-    function test_RC04_unfilledQuoteAndPreview_revert(bool zeroForOne_) public {
+    /// @notice An incomplete raw pool quote still produces a nonreverting zero vault preview.
+    function test_RC04_unfilledQuoteAndPreview_returnsZero(bool zeroForOne_) public {
         (IERC20 input_, IERC20 output_) = _tokens(zeroForOne_);
         uint256 requested_ = output_.balanceOf(address(pool)) + 1;
         UniswapV3Quoter.SwapQuoteResult memory quote_ = _quote(zeroForOne_, requested_);
         assertEq(quote_.fullyFilled, false, "fixture quote is incomplete");
         assertEq(quote_.amountOut < requested_, true, "quote reports actual partial output");
-        vm.expectRevert(_notFilled(requested_, quote_.amountOut));
-        vault.previewExchangeOut(input_, output_, requested_);
+        assertEq(vault.previewExchangeOut(input_, output_, requested_), 0);
     }
 
     /// @notice An incomplete execution quote leaves input, payout, pool and vault balances unchanged.
@@ -62,7 +59,7 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
             input_.balanceOf(address(vault)), output_.balanceOf(address(vault))];
 
         vm.prank(payer);
-        vm.expectRevert(_notFilled(requested_, quote_.amountOut));
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         vault.exchangeOut(input_, 1 ether, output_, requested_, recipient, false, block.timestamp + 1 hours);
 
         assertEq(input_.balanceOf(payer), 1 ether, "no input spent");
@@ -74,18 +71,16 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
         assertEq(output_.balanceOf(address(vault)), balances_[3]);
     }
 
-    /// @notice A funded request pays exactly its output and pulls only the quoted input in either direction.
-    /// @dev The non-SUT input token stays quiet, so this is not the short-payment case.
-    function test_RC04_fillableExactOutput_paysRequestedOutputWithinMaximum(bool zeroForOne_) public {
+    /// @notice Even a fully funded, fillable pool request cannot enable the retired exact-out route.
+    function test_RC04_fillableExactOutput_revertsWithoutSpendingMaximum(bool zeroForOne_) public {
         assertEq(pullToken.armed(), false);
         (IERC20 input_, IERC20 output_) = _tokens(zeroForOne_);
         uint256 requested_ = 1 ether;
         UniswapV3Quoter.SwapQuoteResult memory quote_ = _quote(zeroForOne_, requested_);
         assertEq(quote_.fullyFilled, true);
         assertEq(quote_.amountOut, requested_);
-        uint256 quotedInput_ = vault.previewExchangeOut(input_, output_, requested_);
-        assertEq(quotedInput_, quote_.amountIn);
-        uint256 maximum_ = quotedInput_ + 1 ether;
+        assertEq(vault.previewExchangeOut(input_, output_, requested_), 0);
+        uint256 maximum_ = quote_.amountIn + 1 ether;
         ERC20PermitMintableStub(address(input_)).mint(payer, maximum_);
         vm.prank(payer);
         input_.approve(address(vault), maximum_);
@@ -93,21 +88,20 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
         uint256 poolOutputBefore_ = output_.balanceOf(address(pool));
 
         vm.prank(payer);
-        uint256 used_ = vault.exchangeOut(input_, maximum_, output_, requested_, recipient, false, block.timestamp + 1 hours);
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
+        vault.exchangeOut(input_, maximum_, output_, requested_, recipient, false, block.timestamp + 1 hours);
 
-        assertEq(used_, quotedInput_);
-        assertEq(used_ <= maximum_, true, "input ceiling respected");
-        assertEq(input_.balanceOf(payer), maximum_ - used_, "unused maximum stays with payer");
-        assertEq(output_.balanceOf(recipient), requested_);
-        assertEq(input_.balanceOf(address(pool)) - poolInputBefore_, used_);
-        assertEq(poolOutputBefore_ - output_.balanceOf(address(pool)), requested_);
+        assertEq(input_.balanceOf(payer), maximum_, "the entire maximum stays with the payer");
+        assertEq(input_.allowance(payer, address(vault)), maximum_);
+        assertEq(output_.balanceOf(recipient), 0);
+        assertEq(input_.balanceOf(address(pool)), poolInputBefore_);
+        assertEq(output_.balanceOf(address(pool)), poolOutputBefore_);
         assertEq(input_.balanceOf(address(vault)), 0);
         assertEq(output_.balanceOf(address(vault)), 0);
     }
 
-    /// @notice An accepted quote whose later pool payment is short reverts at settlement and restores the caller.
-    /// @dev The revert data is the post-swap comparison, not the pre-swap quote. This is not the single-asset path.
-    function test_RC04_acceptedQuote_shortPayment_revertsSettlementAndRestoresCaller() public {
+    /// @notice An armed token cannot turn unavailable exact-out into a pool mutation or payout.
+    function test_RC04_fillableQuote_armedPullRemainsUnspent() public {
         bool zeroForOne_ = address(pullToken) == pool.token0();
         (IERC20 input_, IERC20 output_) = _tokens(zeroForOne_);
         assertEq(address(input_), address(pullToken));
@@ -116,13 +110,11 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
         UniswapV3Quoter.SwapQuoteResult memory quote_ = _quote(zeroForOne_, requested_);
         assertEq(quote_.fullyFilled, true);
         assertEq(quote_.amountOut, requested_);
-        uint256 quotedInput_ = vault.previewExchangeOut(input_, output_, requested_);
-        assertEq(quotedInput_, quote_.amountIn);
-        assertEq(quotedInput_ > 0, true);
+        assertEq(vault.previewExchangeOut(input_, output_, requested_), 0);
         (uint128 liquidity_,,,,) = pool.positions(_positionKey(address(pullToken), positionLower, positionUpper));
         assertEq(liquidity_ > 0, true);
 
-        uint256 maximum_ = quotedInput_ + 1 ether;
+        uint256 maximum_ = quote_.amountIn + 1 ether;
         pullToken.mint(payer, maximum_);
         vm.prank(payer);
         input_.approve(address(vault), maximum_);
@@ -130,12 +122,15 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
         pullToken.arm(pool, positionLower, positionUpper);
 
         vm.prank(payer);
-        vm.expectRevert(_notFilled(requested_, 0));
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         vault.exchangeOut(input_, maximum_, output_, requested_, recipient, false, block.timestamp + 1 hours);
 
         assertEq(input_.balanceOf(payer), payerBefore_, "pull rolled back");
         assertEq(input_.allowance(payer, address(vault)), maximum_, "allowance unchanged");
         assertEq(output_.balanceOf(recipient), 0, "no payout");
+        assertTrue(pullToken.armed(), "armed token state is unchanged");
+        (uint128 afterLiquidity_,,,,) = pool.positions(_positionKey(address(pullToken), positionLower, positionUpper));
+        assertEq(afterLiquidity_, liquidity_, "pool position is unchanged");
     }
 
     /// @notice The zero-output preview remains zero in both directions.
@@ -154,13 +149,6 @@ contract UniswapV3FullSpreadExactOutputFill_Test is TestBase_UniswapV3FullSpread
             sqrtPriceLimitX96: zeroForOne_ ? TickMath.MIN_SQRT_RATIO + 1 : TickMath.MAX_SQRT_RATIO - 1,
             maxSteps: 0
         }));
-    }
-
-    function _notFilled(uint256 requested_, uint256 delivered_) internal pure returns (bytes memory) {
-        return abi.encodeWithSelector(
-            UniswapV3FullSpreadStandardExchangeVaultCommon.UniswapV3Exchange_ExactOutputNotFilled.selector,
-            requested_, delivered_
-        );
     }
 
     function _seedPullOwnedLiquidity(IUniswapV3Pool pool_, uint128 liquidity_) internal {

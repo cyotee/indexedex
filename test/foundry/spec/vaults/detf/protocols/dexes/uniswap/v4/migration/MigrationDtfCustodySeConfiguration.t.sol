@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -48,7 +50,7 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         assertTrue(c_.configured);
         assertEq(c_.original.originalWallet, address(0xBEEF));
         assertEq(c_.credit, credit_);
-        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
+        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, a_[0])));
         assertEq(migration.previewDtfCustodySeSurrender(ORIGIN, 1e28), credit_ / 3);
         assertEq(migration.previewDtfCustodySeSurrender(ORIGIN, 3e28), credit_);
         Migration.DtfCustodySeSurrender memory s_ = migration.dtfCustodySeSurrender(ORIGIN);
@@ -238,9 +240,9 @@ contract MigrationDtfCustodySeConfigurationTest is TestBase_UniswapV4DetfMigrati
         bytes memory record_ = abi.encode(migration.dtfCustodySeEntitlement(ORIGIN));
         bytes memory remaining_ = abi.encode(migration.dtfCustodySeSurrender(ORIGIN));
         uint256 supply_ = IERC20(detf).totalSupply();
-        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        Pricing.InputsV3 memory next_ = PricingV3(address(migration)).migrationWeightedPricingV3().inputs;
         next_.swapFeeWad = 1e17;
-        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        vm.prank(migrationOwner); pricingId = AllocationV3(address(allocation)).setMigrationWeightedPricingV3(next_);
         assertEq(abi.encode(migration.dtfCustodySeEntitlement(ORIGIN)), record_);
         assertEq(abi.encode(migration.dtfCustodySeSurrender(ORIGIN)), remaining_);
         vm.prank(migrationOwner);

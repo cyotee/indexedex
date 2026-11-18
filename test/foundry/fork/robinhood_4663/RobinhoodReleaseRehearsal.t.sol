@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 import {FeeCollectorFactoryService as CollectorFactory} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
 import {IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbitalPkg} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalFactory} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
@@ -269,7 +270,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
             if (flags[i]) {
                 vm.startPrank(detfUser);
                 IERC20(args.tokens[i]).approve(args.standardExchanges[i], amounts[i]);
-                amounts[i] = IStandardExchangeIn(args.standardExchanges[i]).exchangeIn{gas: TX_GAS}(
+                (amounts[i],) = IStandardExchangeIn(args.standardExchanges[i]).exchangeIn{gas: TX_GAS}(
                     IERC20(args.tokens[i]), amounts[i], IERC20(args.standardExchanges[i]), 1,
                     detfUser, false, block.timestamp + 1
                 );
@@ -362,7 +363,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         uint256 beforeInput = IERC20(tokenIn).balanceOf(detfUser);
         uint256 beforeOutput = IERC20(tokenOut).balanceOf(detfUser);
         vm.prank(detfUser);
-        uint256 received = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
+        (uint256 received,) = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
             IERC20(tokenIn), 1 ether, IERC20(tokenOut), 1, detfUser, false, block.timestamp + 1
         );
         vm.prank(detfUser);
@@ -416,7 +417,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         assertGt(quote, 0);
         uint256 beforeOut = IERC20(tokenOut).balanceOf(detfUser);
         vm.prank(detfUser);
-        uint256 actual = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
+        (uint256 actual,) = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
             IERC20(tokenIn), 1 ether, IERC20(tokenOut), quote, detfUser, false, block.timestamp + 1
         );
         assertEq(actual, quote, "Balancer exact-in quote");
@@ -591,23 +592,26 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(reserveHook, 0.1e18);
         vm.prank(detfUser);
         (uint256 bondId,) = detfInfo.bond{gas: TX_GAS}(IERC20(address(pairToken)), 100 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours);
-        uint256 mintQuote = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf));
+        (uint256 mintQuote,) = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf));
         vm.prank(detfUser);
-        assertEq(detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf), mintQuote, detfUser, false, block.timestamp + 1 hours), mintQuote, "standard purchase quote");
+        (uint256 minted,) = detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf), mintQuote, detfUser, false, block.timestamp + 1 hours);
+        assertEq(minted, mintQuote, "standard purchase quote");
         uint256 burnAmount = mintQuote / 4;
-        uint256 burnQuote = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)));
+        (uint256 burnQuote,) = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)));
         vm.prank(detfUser);
-        assertEq(detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)), burnQuote, detfUser, false, block.timestamp + 1 hours), burnQuote, "standard reserve exit quote");
+        (uint256 redeemed,) = detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)), burnQuote, detfUser, false, block.timestamp + 1 hours);
+        assertEq(redeemed, burnQuote, "standard reserve exit quote");
         _checkStakeAndSyRoundTrips();
         _assertFundedMatureClaim(detf, bondId, detfUser);
         _claimAndCheckFeeBond(growthFee_);
         _checkFeeLpRedemption();
-        detfInfo.sweepDust{gas: TX_GAS}();
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager), TX_GAS);
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "reserve held in NFT custody");
         for (uint256 i; i < pairs.length; ++i) {
             assertLe(IERC20(pairs[i]).balanceOf(detf), 10, "pair dust");
             assertEq(IERC20(exchanges[i]).allowance(reserveHook, exchanges[i]), 0, "temporary SE allowance cleared");
         }
+        _assertNoJoinableDust();
     }
 
     function _checkStakeAndSyRoundTrips() internal {
@@ -620,12 +624,12 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         assertEq(previewAmountOut2, amount_);
         vm.startPrank(detfUser);
         IERC20(detf).approve(address(staking_), amount_);
-        uint256 staked_ = staking_.exchangeIn{gas: TX_GAS}(
+        (uint256 staked_,) = staking_.exchangeIn{gas: TX_GAS}(
             IERC20(detf), amount_, IERC20(address(staking_)), amount_, detfUser, false, block.timestamp
         );
         assertEq(staked_, amount_, "direct stake is one to one");
         assertEq(staking_.balanceOf(detfUser) - receiptBefore_, amount_, "actual funded staking receipt");
-        uint256 unstaked_ = staking_.exchangeIn{gas: TX_GAS}(
+        (uint256 unstaked_,) = staking_.exchangeIn{gas: TX_GAS}(
             IERC20(address(staking_)), amount_, IERC20(detf), amount_, detfUser, false, block.timestamp
         );
         vm.stopPrank();
@@ -695,7 +699,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         uint256 before_ = IERC20(se).balanceOf(reserveHook);
         vm.startPrank(detfUser);
         pairToken.approve(se, amount_);
-        uint256 shares_ = IStandardExchangeIn(se).exchangeIn{gas: TX_GAS}(
+        (uint256 shares_,) = IStandardExchangeIn(se).exchangeIn{gas: TX_GAS}(
             IERC20(address(pairToken)), amount_, IERC20(se), quote_, detfUser, false, block.timestamp
         );
         assertEq(shares_, quote_, "actual inventory-growth shares match preview");
@@ -727,14 +731,26 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         tokens_[0] = pair_ < other_ ? pair_ : other_;
         tokens_[1] = pair_ < other_ ? other_ : pair_;
         uint256[] memory amounts_ = new uint256[](2);
+        uint256[] memory before_ = new uint256[](2);
         for (uint256 i_; i_ < 2; ++i_) {
             amounts_[i_] = 10_000 ether;
             SimpleMintableERC20(tokens_[i_]).mint(address(this), amounts_[i_]);
             IERC20(tokens_[i_]).approve(vault_, amounts_[i_]);
+            before_[i_] = IERC20(tokens_[i_]).balanceOf(address(this));
         }
-        uint256 quote_ = IStandardExchangeInMulti(vault_).previewExchangeInManyToOne(tokens_, amounts_, IERC20(vault_));
-        uint256 actual_ = IStandardExchangeInMulti(vault_).exchangeInManyToOne{gas: TX_GAS}(tokens_, amounts_, IERC20(vault_), quote_, address(this), false, block.timestamp);
+        (uint256 quote_, uint256[] memory quotedRefunds_) =
+            IStandardExchangeBundleIn(vault_).previewExchangeBundleInForSingleOut(amounts_, vault_);
+        (uint256 actual_, uint256[] memory refunds_) =
+            IStandardExchangeBundleIn(vault_).exchangeBundleInForSingleOut{gas: TX_GAS}(
+                amounts_, vault_, quote_, address(this), false, block.timestamp
+            );
         assertGt(actual_, 0, "both tokens activate position SE");
         assertEq(actual_, quote_, "position activation quote");
+        assertEq(refunds_, quotedRefunds_, "position activation refund quote");
+        assertEq(refunds_.length, tokens_.length, "position activation refund count");
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(IERC20(tokens_[i_]).balanceOf(address(this)), before_[i_] - amounts_[i_] + refunds_[i_],
+                "position activation net funding");
+        }
     }
 }

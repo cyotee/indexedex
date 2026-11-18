@@ -206,7 +206,8 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
             // Success
         } catch {
             return; // Skip if deal fails
-        }uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        }
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
         if (preview == 0) return;// Skip if preview is 0
 
         (uint256 sharesOut,) = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);

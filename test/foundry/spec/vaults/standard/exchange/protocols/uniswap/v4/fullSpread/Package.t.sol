@@ -5,6 +5,12 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
+import {
+    IStandardExchangeBundleIn,
+    IStandardExchangeBundleOut
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
@@ -223,7 +229,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_Package_Test is TestBase_Unisw
                 _assertOnce(selector_);
             }
         }
-        assertEq(selectorCount_, 45);
+        assertEq(selectorCount_, 48);
         assertEq(
             IERC8109Introspection(address(vault)).facetAddress(IFullSpreadPackage.vaultTokens.selector),
             address(packageInit.basicVaultFacet)
@@ -242,7 +248,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_Package_Test is TestBase_Unisw
 
     /// @notice FS-A01: controls enumerate the public interfaces, not facetFuncs().
     function test_reviewedSelectorManifestIsComplete() public view {
-        bytes4[45] memory selectors_ = [
+        bytes4[48] memory selectors_ = [
             IERC20Metadata.name.selector,
             IERC20Metadata.symbol.selector,
             IERC20Metadata.decimals.selector,
@@ -271,6 +277,9 @@ contract UniswapV4FullSpreadStandardExchangeVault_Package_Test is TestBase_Unisw
             bytes4(keccak256("previewExchangeIn(address,uint256,address)")),
             bytes4(keccak256("previewExchangeBundleInForSingleOut(uint256[],address)")),
             bytes4(keccak256("previewExchangeBundleOut(address,uint256,address[])")),
+            IStandardExchangeStateQuote.quoteExchangeState.selector,
+            IStandardExchangeStateQuote.quoteExchangeIn.selector,
+            IStandardExchangeStateQuote.quoteExchangeSupply.selector,
             IStandardExchangeOut.previewExchangeOut.selector,
             IStandardExchangeOut.exchangeOut.selector,
             bytes4(keccak256("reserveOfToken(address)")),
@@ -293,6 +302,50 @@ contract UniswapV4FullSpreadStandardExchangeVault_Package_Test is TestBase_Unisw
             assertTrue(_cutHas(selectors_[i_]));
             _assertOnce(selectors_[i_]);
         }
+    }
+
+    function test_composableQuoteFacetAndPackageDeclarations() public {
+        bytes4[] memory selectors_ = new bytes4[](6);
+        selectors_[0] = IStandardExchangeIn.previewExchangeIn.selector;
+        selectors_[1] = IStandardExchangeBundleIn.previewExchangeBundleInForSingleOut.selector;
+        selectors_[2] = IStandardExchangeBundleOut.previewExchangeBundleOut.selector;
+        selectors_[3] = IStandardExchangeStateQuote.quoteExchangeState.selector;
+        selectors_[4] = IStandardExchangeStateQuote.quoteExchangeIn.selector;
+        selectors_[5] = IStandardExchangeStateQuote.quoteExchangeSupply.selector;
+        bytes4[] memory interfaces_ = new bytes4[](4);
+        interfaces_[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces_[1] = type(IStandardExchangeBundleIn).interfaceId;
+        interfaces_[2] = type(IStandardExchangeBundleOut).interfaceId;
+        interfaces_[3] = type(IStandardExchangeStateQuote).interfaceId;
+        IFacet facet_ = packageInit.quoteFacet;
+        Behavior_IFacet.expect_IFacet(
+            facet_, "UniswapV4FullSpreadStandardExchangeVaultQuoteFacet", interfaces_, selectors_
+        );
+        assertTrue(Behavior_IFacet.hasValid_IFacet_facetName(facet_));
+        assertTrue(Behavior_IFacet.hasValid_IFacet_facetInterfaces(facet_));
+        assertTrue(Behavior_IFacet.hasValid_IFacet_facetFuncs(facet_));
+        assertTrue(Behavior_IFacet.isValid_IFacet_facetMetadata_consistency(facet_));
+        assertEq(facet_.facetInterfaces().length, interfaces_.length);
+        assertEq(facet_.facetFuncs().length, selectors_.length);
+        bytes4[] memory advertised_ = package.facetInterfaces();
+        uint256 capabilityCount_;
+        for (uint256 i_; i_ < advertised_.length; ++i_) {
+            if (advertised_[i_] == type(IStandardExchangeStateQuote).interfaceId) ++capabilityCount_;
+        }
+        assertEq(capabilityCount_, 1);
+        for (uint256 i_; i_ < selectors_.length; ++i_) {
+            assertTrue(_cutHas(selectors_[i_]));
+            _assertOnce(selectors_[i_]);
+            assertEq(IERC8109Introspection(address(vault)).facetAddress(selectors_[i_]), address(facet_));
+        }
+        IStandardExchangeStateQuote quote_ = IStandardExchangeStateQuote(address(vault));
+        bytes memory state_ = quote_.quoteExchangeState();
+        assertEq(quote_.quoteExchangeSupply(state_), 0);
+        (bytes memory next_, uint256 out_, uint256 refund_) =
+            quote_.quoteExchangeIn(state_, IERC20(address(token0)), 1, IERC20(address(vault)));
+        assertEq(next_, state_);
+        assertEq(out_, 0);
+        assertEq(refund_, 0);
     }
 
     /// @notice FS-A01: package declarations agree with the configuration used by the factory.

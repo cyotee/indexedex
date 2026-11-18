@@ -4,6 +4,8 @@ import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
     "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -22,7 +24,6 @@ import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
-import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IRateProvider} from
@@ -392,9 +393,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookQuoteTarget is Unis
         private view returns (uint256 pairValue, uint256 purchasedDetf, uint256 liquidityDetf)
     {
         Repo.Layout storage l = Repo._layout();
-        pairValue = q.exchange.quoteAssets(q.state, q.assets);
+        pairValue = LegLib.assetsAtState(q, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
-        uint256 reservePair = l.rawReserves[i] + q.exchange.quoteAssets(q.state, l.seReserves[i]);
+        uint256 reservePair = l.rawReserves[i] + LegLib.assetsAtState(q, l.seReserves[i]);
         // Match DETF's unboosted native reserve ratio directly. LP component
         // rounding belongs to the subsequent join, not to DETF issuance.
         if (reservePair != 0) liquidityDetf = FullMath.mulDiv(l.rawReserves[j], pairValue, reservePair);
@@ -414,8 +415,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookQuoteTarget is Unis
         rated[i] = Math.scaleTo(l.rawReserves[i] + Math.ratedPairUnits(l.seReserves[i], rate, l.invScales[i], l.ratedScales[i]), l.ratedScales[i]);
         uint256 inflow = net;
         if (!ClaimLib.isDisabled(i)) {
-            (, uint256 consumed, uint256 minted,) = q.exchange.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, net);
-            inflow = net - consumed + Math.ratedPairUnits(minted, rate, l.invScales[i], l.ratedScales[i]);
+            (ExchangeInAmount.Result memory result,) = ContextQuote.conversion(address(q.exchange), l.tokens[i], net, false, q.state);
+            inflow = result.amountRefunded + Math.ratedPairUnits(result.amountOut, rate, l.invScales[i], l.ratedScales[i]);
         }
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
         return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(inflow, l.ratedScales[i]));

@@ -32,7 +32,7 @@ import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/d
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {DETF_FEE_TO_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
-import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IUniswapV4Detf, IUniswapV4DetfFirstBondShares as FirstBondShares} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4DetfCommon} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol";
 import {UniswapV4DetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
 
@@ -302,7 +302,6 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         }
         _mintDetf(recipient_, split_.userDetf);
         _fundStakingRewards(split_.inventoryDetf);
-        _trySweepDust();
         _syncAllExpectedHoldReserves();
         return split_.userDetf;
     }
@@ -458,9 +457,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         // Positive LP can still round to no recipient asset. Preserve the user's input.
         if (amountOut_ == 0) revert Repo.ZeroAmount();
         _returnLeftoverLp();
-        // Rejoin the self-token together with all unpaid exit legs. A separate
-        // self-token zap would first buy components already held by this burn.
-        _trySweepDust();
+        // Retain unpaid exit components for explicit fee-recipient maintenance.
         _syncAllExpectedHoldReserves();
     }
 
@@ -525,6 +522,96 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         uint256 pairPayment;
     }
 
+    struct FirstBondSharePlan {
+        address[] tokens;
+        uint256[] amounts;
+        MintSplit split;
+        uint256 duration;
+        uint256 lpOut;
+    }
+
+    /// @dev Value an exact share basket before intake, retaining the existing anchor pricing.
+    function _firstBondSharePlan(uint256[] calldata shareAmounts_, uint256 anchorIndex_, uint256 duration_)
+        internal view returns (FirstBondSharePlan memory plan_)
+    {
+        _requireReserveWired();
+        Repo.Storage storage s_ = Repo._layoutStruct();
+        if (s_.isReserveLive || _hook().isLive() || IERC20(s_.hook).totalSupply() != 0) revert Repo.AlreadyLive();
+        address[] memory pairs_ = _entryAcceptedBondTokens();
+        if (shareAmounts_.length != pairs_.length || anchorIndex_ >= pairs_.length) {
+            revert FirstBondShares.InvalidShareBasket();
+        }
+        plan_.duration = _effectiveLockDuration(duration_);
+        plan_.tokens = new address[](pairs_.length + 1);
+        plan_.amounts = new uint256[](pairs_.length + 1);
+        plan_.tokens[0] = address(this);
+        uint256[] memory values_ = new uint256[](pairs_.length);
+        for (uint256 i_; i_ < pairs_.length; ++i_) {
+            if (shareAmounts_[i_] == 0) revert Repo.ZeroAmount();
+            IStandardExchange vault_ = IStandardExchange(_hook().standardExchangeOf(pairs_[i_]));
+            plan_.tokens[i_ + 1] = address(vault_);
+            plan_.amounts[i_ + 1] = shareAmounts_[i_];
+            values_[i_] = _pairEq(vault_, IERC20(address(vault_)), shareAmounts_[i_]);
+        }
+        uint256 g_ = _quoteBondG(pairs_[anchorIndex_], values_[anchorIndex_]);
+        if (g_ == 0) revert Repo.FirstBondBelowMinimumLiquidity();
+        plan_.amounts[0] = g_;
+        for (uint256 i_; i_ < pairs_.length; ++i_) {
+            if (i_ == anchorIndex_) continue;
+            uint256 required_ = _firstBondOtherPayment(g_, pairs_[i_]);
+            if (values_[i_] < required_) {
+                revert FirstBondShares.InsufficientFirstBondBacking(pairs_[i_], values_[i_], required_);
+            }
+        }
+        plan_.split = _splitBondDetf(
+            _quoteBondPurchase(pairs_[anchorIndex_], values_[anchorIndex_], plan_.duration), g_
+        );
+        plan_.lpOut = _hook().previewJoinUnbalanced(plan_.tokens, plan_.amounts);
+        if (plan_.lpOut == 0) revert Repo.FirstBondBelowMinimumLiquidity();
+    }
+
+    /// @dev Only the ordinary bond facet exposes this entry; Migration keeps its admission path.
+    function _entryBondFirstShares(
+        uint256[] calldata shareAmounts_,
+        uint256 anchorIndex_,
+        uint256 duration_,
+        address recipient_,
+        uint256 minPrincipal_,
+        uint256 minLp_,
+        uint256 deadline_
+    ) internal nonReentrant returns (uint256 tokenId_, uint256 lpOut_) {
+        _requireNotDisabled();
+        if (block.timestamp > deadline_) revert Repo.DeadlineExpired(deadline_);
+        FirstBondSharePlan memory plan_ = _firstBondSharePlan(shareAmounts_, anchorIndex_, duration_);
+        if (recipient_ == address(0)) recipient_ = msg.sender;
+        uint256[] memory before_ = new uint256[](plan_.tokens.length);
+        for (uint256 i_; i_ < plan_.tokens.length; ++i_) {
+            before_[i_] = IERC20(plan_.tokens[i_]).balanceOf(address(this));
+            if (i_ != 0) _pullToken(IERC20(plan_.tokens[i_]), plan_.amounts[i_], false);
+        }
+        address holder_ = _bondLpHolder();
+        IERC20 lp_ = IERC20(Repo._layoutStruct().hook);
+        uint256 lpBefore_ = lp_.balanceOf(holder_);
+        _mintDetf(address(this), plan_.amounts[0]);
+        lpOut_ = _joinUnbalanced(plan_.tokens, plan_.amounts);
+        if (plan_.split.userDetf < minPrincipal_ || lpOut_ < minLp_) {
+            revert FirstBondShares.FirstBondMinimumNotMet(plan_.split.userDetf, minPrincipal_, lpOut_, minLp_);
+        }
+        for (uint256 i_; i_ < plan_.tokens.length; ++i_) {
+            uint256 actual_ = IERC20(plan_.tokens[i_]).balanceOf(address(this));
+            if (actual_ != before_[i_]) {
+                revert FirstBondShares.IncompleteShareIntake(plan_.tokens[i_], before_[i_], actual_);
+            }
+        }
+        uint256 lpAfter_ = lp_.balanceOf(holder_);
+        if (lpAfter_ != lpBefore_ + lpOut_) {
+            revert FirstBondShares.IncompleteShareIntake(address(lp_), lpBefore_ + lpOut_, lpAfter_);
+        }
+        if (!_hook().isLive()) revert Repo.ReserveNotLive();
+        tokenId_ = _completeBond(plan_.split, plan_.duration, recipient_, lpOut_);
+        _syncAllExpectedHoldReserves();
+    }
+
     function _entryBond(
         IERC20 tokenIn,
         uint256 amountIn,
@@ -553,7 +640,6 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         }
         BondSeat memory seat_ = _seatBond(tokenIn, amountIn, pretransferred, deadline, s.isReserveLive);
         (tokenId, shares) = _purchaseBond(seat_, lockDuration, recipient);
-        _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
 
@@ -577,14 +663,21 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     function _purchaseBond(BondSeat memory seat_, uint256 lockDuration, address recipient)
         private returns (uint256 tokenId, uint256 shares)
     {
-        Repo.Storage storage s = Repo._layoutStruct();
-        bool first_ = !s.isReserveLive;
         uint256 duration_ = _effectiveLockDuration(lockDuration);
         uint256 pairEq_ = _bondPairEq(seat_);
         uint256 g_ = _quoteBondG(seat_.pair, pairEq_);
         if (g_ == 0) revert Repo.FirstBondBelowMinimumLiquidity();
         MintSplit memory split_ = _splitBondDetf(_quoteBondPurchase(seat_.pair, pairEq_, duration_), g_);
         shares = _joinBond(g_, seat_);
+        tokenId = _completeBond(split_, duration_, recipient, shares);
+    }
+
+    /// @dev Shared completion keeps both funding routes on the same funded-principal lifecycle.
+    function _completeBond(MintSplit memory split_, uint256 duration_, address recipient, uint256 shares)
+        private returns (uint256 tokenId)
+    {
+        Repo.Storage storage s = Repo._layoutStruct();
+        bool first_ = !s.isReserveLive;
         if (first_ && shares == 0) revert Repo.FirstBondBelowMinimumLiquidity();
         if (first_) {
             Repo._setReserveLive();
@@ -749,7 +842,6 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         if (address(token) == address(this)) {
             IERC20(address(this)).safeTransferFrom(msg.sender, address(this), amount);
             lpOut = _joinShare(amount, address(this));
-            _trySweepDust();
             _syncAllExpectedHoldReserves();
             return lpOut;
         }
@@ -766,13 +858,11 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
             token.forceApprove(s.hook, amount);
             lpOut = _hook().joinSingleAssetExactIn(address(token), amount, _bondLpHolder(), 0, deadline);
             token.forceApprove(s.hook, 0);
-            _trySweepDust();
             _syncAllExpectedHoldReserves();
             return lpOut;
         }
         uint256 shareAmt_ = _toShare(v_, token, amount, deadline);
         lpOut = _joinShare(shareAmt_, address(v_));
-        _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
 
@@ -796,11 +886,11 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
 
     function _entryNotifyReserveDonated() internal {
         _requireBondNft();
-        _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
 
     function _entrySweepDust() internal nonReentrant {
+        _requireFeeTo();
         _sweepDustBody();
         _syncAllExpectedHoldReserves();
     }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 
@@ -61,6 +63,15 @@ contract UniswapV4Detf_Quad is TestBase_UniswapV4Detf_Quad {
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "lp");
         assertTrue(detfInfo.isReserveLive(), "live");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 

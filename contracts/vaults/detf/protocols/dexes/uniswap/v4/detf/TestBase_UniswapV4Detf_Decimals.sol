@@ -146,6 +146,14 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
         return human * (10 ** uint256(_rateDecimals()));
     }
 
+    /// @dev Positive accounting scenarios may prepare real supported payment
+    /// assets. Raw-payment rejection witnesses call the original token directly.
+    function _preparePositivePayment(address, IERC20 token_, uint256 amount_, address)
+        internal virtual returns (IERC20 payment_, uint256 paid_)
+    {
+        return (token_, amount_);
+    }
+
     /// @dev Fund `who` for a bond of `pairAmount_` native pair units. CP mints pairToken.
     ///      Weighted/orbital/quad hooks mint every external hook pair (skip detfToken).
     ///      Lives on this TestBase (not ProdSe) so Stage11 diamonds do not fork the function.
@@ -521,6 +529,11 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
             rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA_, tokenA_), // D60
             rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB_, tokenB_) // D60
         });
+    }
+
+    /// @notice Explicit caller-driven maintenance; final residual assertions remain independent.
+    function _sweepDustUntilSettled() internal {
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager));
     }
 
     function _assertNoJoinableDust() internal view virtual {

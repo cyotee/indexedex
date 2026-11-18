@@ -450,19 +450,11 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
         Repo._debit(token_, amount_);
         uint256 lpBefore_ = IERC20(s_.hook).balanceOf(_bondLpHolder());
         MigrationRepo.Storage storage m_ = MigrationRepo._layoutStruct();
-        address[] memory tokens_ = _budgetTokens();
-        uint256[] memory residuals_ = new uint256[](tokens_.length);
-        _beginBudget();
-        // A selected recovery donation cannot also spend an earlier operation's residuals.
-        // Preserve their bookkeeping while exposing only this donation's measured budget.
-        for (uint256 i_; i_ < tokens_.length; ++i_) {
-            residuals_[i_] = m_.residualInventory[tokens_[i_]];
-            m_.operationFloor[tokens_[i_]] = IERC20(tokens_[i_]).balanceOf(address(this));
-        }
+        uint256[] memory residuals_ = _beginIsolatedBudget();
         m_.operationFloor[token_] -= amount_;
-        _sweepDustBody();
-        _endBudget();
-        for (uint256 i_; i_ < tokens_.length; ++i_) m_.residualInventory[tokens_[i_]] += residuals_[i_];
+        // Deposit the selected recovery payment once; do not sweep its refunds.
+        _tryJoinNativeResidual(_hook().tokens());
+        _endIsolatedBudget(residuals_);
         uint256 lpOut_ = IERC20(s_.hook).balanceOf(_bondLpHolder()) - lpBefore_;
         if (lpOut_ == 0 || lpOut_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, lpOut_);
         emit MigrationRecoveryDonated(token_, amount_, lpOut_);

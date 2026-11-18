@@ -54,14 +54,16 @@ library UniswapV4FullSpreadStandardExchangeVaultComponent_FactoryService {
         bytes memory code_ = ArtifactCreationCode.creationCode(
             "UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV4FullSpreadStandardExchangeVaultDFPkg"
         );
-        instance_ = IPackage(registry_.deployPkg(code_, abi.encode(init_), abi.encode("UniswapV4FullSpreadStandardExchangeVaultDFPkg")._hash()));
+        instance_ = IPackage(registry_.deployPkg(
+            code_, abi.encode(init_), abi.encode("UniswapV4FullSpreadStandardExchangeVaultDFPkg.stateQuote.v1")._hash()
+        ));
         if (instance_.bindingHash() != keccak256(abi.encode(init_))) revert PackageBindingMismatch(address(instance_));
         VM.label(address(instance_), "UniswapV4FullSpreadStandardExchangeVaultDFPkg");
     }
 
     function _deployFamily(ICreate3FactoryProxy factory_, string memory name_) private returns (IFacet instance_) {
         bytes memory creation_ = ArtifactCreationCode.creationCode(factory_, string.concat(name_, ".sol:", name_));
-        instance_ = factory_.deployFacet(creation_, abi.encode(name_)._hash());
+        instance_ = factory_.deployFacet(creation_, abi.encode(string.concat(name_, ".stateQuote.v1"))._hash());
         _verifyLibraries(factory_, IBindings(address(instance_)).linkedComponents());
         VM.label(address(instance_), name_);
     }

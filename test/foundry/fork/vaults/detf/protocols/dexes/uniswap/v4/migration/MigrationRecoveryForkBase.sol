@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {Vm} from "forge-std/Vm.sol";
 import {MigrationNftForkBase} from "./MigrationNftForkBase.sol";
 import {IUniswapV4DetfMigrationRecovery as Recovery} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
@@ -79,13 +80,39 @@ abstract contract MigrationRecoveryForkBase is MigrationNftForkBase {
         recovery.recoverMigrationNfts(steps_, block.timestamp);
     }
 
+    /// @dev Reconcile new reserve refunds without permitting any debit of earlier self-leg custody.
+    function _donateAndCheckProtected(uint256 amount_, uint256 bond_, bytes32 protected_) internal {
+        uint256 selfBefore_ = IERC20(detf).balanceOf(detf);
+        vm.recordLogs();
+        _run(Recovery.Stage.Donate, 0, amount_, 1);
+        Vm.Log[] memory logs_ = vm.getRecordedLogs();
+        uint256 selfRefund_;
+        for (uint256 i_; i_ < logs_.length; ++i_) {
+            Vm.Log memory log_ = logs_[i_];
+            if (log_.emitter != detf || log_.topics.length != 3
+                || log_.topics[0] != keccak256("Transfer(address,address,uint256)")) continue;
+            assertNotEq(log_.topics[1], bytes32(uint256(uint160(detf))), "old self-leg custody is not spent");
+            if (log_.topics[1] == bytes32(uint256(uint160(reserveHook)))
+                && log_.topics[2] == bytes32(uint256(uint160(detf)))) {
+                selfRefund_ += abi.decode(log_.data, (uint256));
+            }
+        }
+        assertEq(IERC20(detf).balanceOf(detf), selfBefore_ + selfRefund_, "only the measured refund changes self custody");
+        assertEq(_protected(bond_, selfBefore_), protected_, "all other protected state is unchanged");
+    }
+
     function _protected(uint256 bond_) internal view returns (bytes32) {
+        return _protected(bond_, IERC20(detf).balanceOf(detf));
+    }
+
+    /// @dev A caller may reconcile newly received self-leg refunds separately from pre-existing custody.
+    function _protected(uint256 bond_, uint256 selfBalance_) internal view returns (bytes32) {
         return keccak256(abi.encode(
             bonds.positionOf(bond_), IERC721(address(bonds)).ownerOf(bond_),
             IERC20(detf).totalSupply(), IERC20(detf).balanceOf(address(receipt)),
             receipt.stakingState(), receipt.gonsOf(address(bonds)),
             receipt.gonsOf(address(stakingSy)), IERC20(detf).balanceOf(address(rawSy)),
-            IERC20(detf).balanceOf(detf), migration.migrationBootstrapSelfMinted(),
+            selfBalance_, migration.migrationBootstrapSelfMinted(),
             migration.migrationDonationInventory(IERC20(pairA)),
             migration.migrationDonationInventory(IERC20(pairB))
         ));

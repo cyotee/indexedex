@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {Vm} from "forge-std/Vm.sol";
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -38,16 +40,17 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
 
     /// @notice A zero preview retains custody and books all local tokens, including earlier retained tokens.
     function test_RC06_zeroPreview_retainsTokensAndBooksFullLocalBalance() public {
-        // Raise backing per share using only the fixture's funding tokens.
+        // Ambient custody is not the share basis. A one-unit input cannot form
+        // the fixed 49% swap, even when both vault token balances are large.
         pairToken.mint(se, 1e30);
         seOther.mint(se, 1e30);
-        pairToken.mint(detf, 100);
+        pairToken.mint(detf, 1);
         _assertZeroPreviewSweep(true);
         uint256 booked_ = IBasicVault(detf).reserveOfToken(mintToken);
-        pairToken.mint(detf, 100);
-        assertEq(pairToken.balanceOf(detf), booked_ + 100, "new residual shares the existing local balance");
+        pairToken.mint(detf, 1);
+        assertEq(pairToken.balanceOf(detf), booked_ + 1, "new residual shares the existing local balance");
         _assertZeroPreviewSweep(false);
-        assertEq(IBasicVault(detf).reserveOfToken(mintToken), booked_ + 100, "not only the latest residual");
+        assertEq(IBasicVault(detf).reserveOfToken(mintToken), booked_ + 1, "not only the latest residual");
     }
 
     /// @notice A funded one-leg residual uses the restored paid unbalanced route.
@@ -69,6 +72,7 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
             detfInfo.bondNftVault(), expectedLp_, block.timestamp + 1
         ));
         vm.recordLogs();
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         detfInfo.sweepDust{gas: 30_000_000}();
         Vm.Log[] memory logs_ = vm.getRecordedLogs();
         uint256 minted_;
@@ -94,6 +98,7 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "LP belongs in NFT custody");
         assertEq(pairToken.allowance(detf, reserveHook), 0, "join approval cleared");
         assertEq(pairToken.allowance(detf, se), 0, "SE approval cleared");
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager), 30_000_000);
         _assertNoJoinableDust();
     }
 
@@ -102,9 +107,11 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         pairToken.mint(detf, 100);
         Balances memory before_ = _balances();
         bytes memory failure_ = abi.encodeWithSignature("ResidualPreviewDependencyFailure()");
-        // Fault only a non-SUT funding token query. Both SE and DETF proxies remain real.
-        vm.mockCallRevert(address(seOther), abi.encodeWithSelector(IERC20.balanceOf.selector, se), failure_);
+        // Fault the actual pool-price dependency used by the liquidity planner.
+        // Both SE and DETF proxies remain real.
+        vm.mockCallRevert(address(univ3Pool), abi.encodeWithSignature("slot0()"), failure_);
         vm.expectRevert(failure_);IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), before_.held, IERC20(se));
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         vm.expectRevert(failure_);
         detfInfo.sweepDust{gas: 30_000_000}();
         vm.clearMockedCalls();
@@ -124,6 +131,7 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
                 IStandardExchangeExactOutputQuantityQuote.quoteInputForExactShares.selector
             ), uint64(0));
         }
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IBasicVault(detf).reserveOfToken(mintToken), before_.held, "book full local custody");
         _assertUnmoved(before_);

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
@@ -60,6 +61,7 @@ contract UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4Detf_Cp_MorphoBlueSe
         assertEq(IERC20(detf).totalSupply(), supplyBefore - (primaryBurn ? burnIn : 0), "primary burn or supply-neutral reserve swap");
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "leftover LP not on diamond");
         assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), 0, "LP on Bond NFT");
+        _sweepDustUntilSettled();
         _assertR19();
     }
 

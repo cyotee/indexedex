@@ -60,6 +60,22 @@ abstract contract UniswapV4Detf_Alignment_FeeCreatorClaimBase_Decimals is Uniswa
     function _fundedFeeBond(address d_, uint256 amount_) internal override returns (uint256, uint256) {
         return _bondOn(d_, bob, amount_);
     }
+    function _fundedFeePreparePayment(address d_, uint256 amount_)
+        internal override returns (IERC20, uint256)
+    {
+        _fundActorForDetf(d_, bob, amount_);
+        return _preparePositivePayment(d_, _leadPairOf(d_), amount_, bob);
+    }
+    function _fundedFeeBondPrepared(address d_, IERC20 payment_, uint256 amount_)
+        internal override returns (uint256 id_, uint256 lp_)
+    {
+        vm.startPrank(bob);
+        payment_.approve(d_, amount_);
+        (id_, lp_) = IUniswapV4Detf(d_).bond(
+            payment_, amount_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+    }
     function _fundedFeeLead(address d_) internal view override returns (IERC20) { return _leadPairOf(d_); }
     function _fundedFeeUnits(uint256 whole_) internal view override returns (uint256) { return _uPair(whole_); }
     function _fundedFeeLock() internal view override returns (uint256) { return DEFAULT_MIN_LOCK; }

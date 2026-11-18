@@ -104,7 +104,7 @@ contract MigrationRecoveryWeightedSyTest is MigrationRecoveryDonationForkBase {
         _run(Recovery.Stage.Donate, 0, dtf_ / 2, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtf_ - dtf_ / 2);
         assertGe(IERC20(Legacy.DTF).balanceOf(detf), before_ + dtf_ - dtf_ / 2);
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertEq(_protected(bond_), protected_);
     }
 

@@ -416,6 +416,11 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         });
     }
 
+    /// @notice Explicit caller-driven maintenance; final residual assertions remain independent.
+    function _sweepDustUntilSettled() internal {
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager));
+    }
+
     function _assertNoJoinableDust() internal view virtual {
         DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }

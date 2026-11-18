@@ -16,7 +16,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
@@ -63,8 +63,8 @@ import {IUniswapV4DetfBondNFTVaultDFPkg} from
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {MigrationSnapshotConsumer, IMigrationPairPreview, MigrationWeightedPricingFixture} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigrationSnapshot.sol";
-import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {UniswapV3FrozenQuoteFixture as V3Capture} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/UniswapV3FrozenQuoteFixture.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 
@@ -86,6 +86,7 @@ contract MigrationSnapshotLocalQA is Script {
     address pairB;
     address seA;
     address seB;
+    mapping(address => address) exchangePool;
     address detf;
     address hook;
     IUniswapV4DetfDFPkg detfPackage;
@@ -113,7 +114,10 @@ contract MigrationSnapshotLocalQA is Script {
             ArtifactCreationCode.creationCode(factory, "TestBase_UniswapV4DetfMigrationSnapshot.sol:MigrationSnapshotConsumer"),
             abi.encode(detf, pairA, pairB), keccak256("local.snapshot")
         ));
-        consumer.set(MigrationWeightedPricingFixture.observed(detf, address(manager), pairA, pairB));
+        V3Capture.Binding[] memory bindings = new V3Capture.Binding[](2);
+        bindings[0] = V3Capture.Binding(seA, exchangePool[seA], address(manager));
+        bindings[1] = V3Capture.Binding(seB, exchangePool[seB], address(manager));
+        consumer.set(MigrationWeightedPricingFixture.observed(detf, address(manager), pairA, pairB, bindings));
         uint256 ethBefore = consumer.evaluate(address(0), 2 ether).user;
         uint256 dtfBefore = consumer.evaluate(pairB, 3 ether).user;
         bytes32 bytesBefore = keccak256(consumer.snapshotBytes());
@@ -229,17 +233,17 @@ contract MigrationSnapshotLocalQA is Script {
         SimpleMintableERC20(b).mint(address(seeder), 100000000 ether);
         seeder.seedFullRange(pool, uint128(50000000 ether));
         exchange = pkg.deployVault(pool);
+        exchangePool[exchange] = address(pool);
         SimpleMintableERC20(a).mint(DEV, 1000 ether);
         SimpleMintableERC20(b).mint(DEV, 1000 ether);
         IERC20(a).approve(exchange, type(uint256).max);
         IERC20(b).approve(exchange, type(uint256).max);
-        address[] memory tokens = new address[](2);
-        tokens[0] = pool.token0();
-        tokens[1] = pool.token1();
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 ether;
         amounts[1] = 100 ether;
-        IStandardExchangeInMulti(exchange).exchangeInManyToOne(tokens, amounts, IERC20(exchange), 0, DEV, false, block.timestamp + 1 hours);
+        IStandardExchangeBundleIn(exchange).exchangeBundleInForSingleOut(
+            amounts, exchange, 1, DEV, false, block.timestamp + 1 hours
+        );
     }
 
     function _detfPackage() private {

@@ -22,7 +22,7 @@ contract TestBase_EthereumFork is Test {
     // Using the library DEFAULT ensures all required deployments (incl. Aave) are included.
     uint256 internal constant DEFAULT_FORK_BLOCK = ETHEREUM_MAIN.DEFAULT_FORK_BLOCK;
 
-    string internal constant ETH_RPC_ENDPOINT = "ethereum_mainnet_infura";
+    string internal constant ETH_RPC_ENDPOINT = "ethereum_mainnet_alchemy";
 
     uint256 internal ethForkId;
     uint256 internal forkBlock;

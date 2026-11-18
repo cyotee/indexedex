@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -69,6 +72,8 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
         _firstBond(80 ether);
         (IERC20 pair_, address se_, uint256 retained_) = _legacyZeroShareResidual();
         Uv4DetfDonateDuringUnlockHarness harness_ = new Uv4DetfDonateDuringUnlockHarness(pm);
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setFeeTo(IFeeCollectorProxy(address(harness_)));
         bytes32 before_ = _legacyResidualState(pair_, se_);
         for (uint256 i_; i_ < 2; ++i_) {
             harness_.run(detf, abi.encodeCall(IUniswapV4Detf.sweepDust, ()));
@@ -114,10 +119,12 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
         uint256 detfSupplyBefore_ = IERC20(detf).totalSupply();
         vm.prank(detfUser);
         assertTrue(pair_.transfer(detf, topUp_), "fund retry from real holder");
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         detfInfo.sweepDust();
         assertLt(pair_.balanceOf(detf), retained_ + topUp_, "retry consumes accumulated capital");
         assertGt(IERC20(se_).totalSupply(), seSupplyBefore_, "retry mints actual SE shares");
         assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "retry acquires protocol LP");
+        _sweepDustUntilSettled();
         assertEq(IERC20(detf).totalSupply(), detfSupplyBefore_, "sweep issues no DETF");
         _assertNoJoinableDust();
         assertEq(pair_.allowance(detf, reserveHook), 0, "hook allowance cleared");
@@ -138,6 +145,7 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
                 "exercise explicit unsupported inverse");
             vm.prank(detfUser);
             assertTrue(IERC20(tokens_[i_]).transfer(detf, 11), "real holder funds zero-share remainder");
+            vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
             detfInfo.sweepDust();
             assertEq(IERC20(tokens_[i_]).balanceOf(detf), balance_, "zero-share capital remains owned");
             _assertPairResidualBooked(tokens_[i_], candidateSe_);

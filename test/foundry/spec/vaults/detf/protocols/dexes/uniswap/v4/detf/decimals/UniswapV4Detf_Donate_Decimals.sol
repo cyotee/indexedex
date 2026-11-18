@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
@@ -35,6 +37,15 @@ abstract contract UniswapV4Detf_Donate_Decimals is TestBase_UniswapV4Detf_Decima
         assertEq(keccak256(abi.encode(nft.positionOf(tokenId))), positionBefore, "gift preserves purchased principal and attributed staking");
         assertGe(IERC20(reserveHook).balanceOf(address(nft)), ownedBefore + lpOut, "actual protocol custody receives donated LP");
         assertEq(keccak256(abi.encode(staking.stakingState(), IERC20(detf).totalSupply(), IERC20(detf).balanceOf(address(staking)))), fundingBefore, "reserve gift creates no staking funding");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 }

@@ -42,7 +42,9 @@ contract TestBase_AaveV3StataFork is Test, TestBase_AaveV3StataStandardExchange 
     string internal constant ETH_RPC_ENDPOINT = "ethereum_mainnet_alchemy";
 
     address public constant LIVE_POOL = ETHEREUM_MAIN.AAVE_V3_POOL;
-    address public constant LIVE_STATA_FACTORY = ETHEREUM_MAIN.AAVE_V3_STATIC_A_TOKEN_FACTORY;
+    // Aave address-book STATA_FACTORY (V2), verified at block 25,000,000.
+    // AAVE_V3_STATIC_A_TOKEN_FACTORY names the incompatible legacy generation.
+    address public constant LIVE_STATA_FACTORY = 0xCb0b5cA20b6C5C02A9A3B2cE433650768eD2974F;
 
     address public liveStata;
     address public liveUnderlying; // WETH on ETH
@@ -83,6 +85,7 @@ contract TestBase_AaveV3StataFork is Test, TestBase_AaveV3StataStandardExchange 
             liveStata = StataTokenFactory(LIVE_STATA_FACTORY).getStataToken(liveUnderlying);
         }
         require(liveStata != address(0), "Live stata must exist on fork");
+        assertEq(IStataTokenV2(liveStata).asset(), liveUnderlying, "live V2 underlying binding");
 
         liveAToken = IStataTokenV2(liveStata).aToken();
 

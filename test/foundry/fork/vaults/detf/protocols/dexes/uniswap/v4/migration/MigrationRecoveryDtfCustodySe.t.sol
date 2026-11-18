@@ -61,7 +61,7 @@ contract MigrationRecoveryDtfCustodySeTest is MigrationDtfCustodySeForkBase {
         _run(Recovery.Stage.Donate, 0, first_, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), second_);
         assertGe(IERC20(Legacy.DTF).balanceOf(detf), assets_ - first_);
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lp_);
         assertEq(_protected(bond_), protected_);
     }

@@ -48,6 +48,26 @@ abstract contract UniswapV4DetfMigrationPolicy is UniswapV4DetfCommon {
         m_.budgetOpen = false;
     }
 
+    /// @dev A new donation may spend only its selected payment, never prior residual inventory.
+    function _beginIsolatedBudget() internal returns (uint256[] memory prior_) {
+        _beginBudget();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        address[] memory tokens_ = _budgetTokens();
+        prior_ = new uint256[](tokens_.length);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            prior_[i_] = m_.residualInventory[tokens_[i_]];
+            m_.operationFloor[tokens_[i_]] = IERC20(tokens_[i_]).balanceOf(address(this));
+        }
+    }
+
+    /// @dev Keep this payment's refunds alongside the earlier residuals for explicit maintenance.
+    function _endIsolatedBudget(uint256[] memory prior_) internal {
+        _endBudget();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        address[] memory tokens_ = _budgetTokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) m_.residualInventory[tokens_[i_]] += prior_[i_];
+    }
+
     function _residualBalance(address token_) internal view virtual override returns (uint256) {
         Repo.Storage storage m_ = Repo._layoutStruct();
         if (!m_.budgetOpen) return m_.residualInventory[token_];

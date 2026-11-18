@@ -25,7 +25,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 import {HookExactNetComponentAccountingBehavior} from "../../../HookComponentAccountingBehavior.sol";
-import {Vm} from "forge-std/Vm.sol";
+import {Vm, VmSafe} from "forge-std/Vm.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as CurveMath} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault as FullSpreadRow} from "./UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol";
@@ -105,7 +105,18 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_ComponentAccounting 
         local[otherIdx] = IERC20(other).balanceOf(hook) / 100;
         local[faceIdx] = 0;
         shares[faceIdx] = quad.seBalance(faceIdx) / 2;
+        vm.startStateDiffRecording();
         uint256 predicted = quad.previewJoinNativeComponents(local, shares);
+        Vm.AccountAccess[] memory accesses = vm.stopAndReturnStateDiff();
+        uint256 conversionQuotes;
+        for (uint256 i; i < accesses.length; ++i) {
+            if (
+                accesses[i].kind == VmSafe.AccountAccessKind.StaticCall && accesses[i].accessor == hook
+                    && accesses[i].account == seUT
+                    && bytes4(accesses[i].data) == IStandardExchangeIn.previewExchangeIn.selector
+            ) ++conversionQuotes;
+        }
+        assertEq(conversionQuotes, 2, "one full sizing quote and one bounded conversion quote");
         assertGt(predicted, 0);
         ComponentSnapshot memory before_ = _hbSnapshot(HB_BOB);
         vm.prank(HB_BOB);
@@ -582,12 +593,15 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_ComponentAccounting 
         uint256[] memory amounts = _hbNativeAmounts(_hbFundPairs(HB_ALICE, 100 ether));
         uint256[4] memory pairBefore;
         for (uint256 i; i < 4; ++i) pairBefore[i] = IERC20(rowTokens[i]).balanceOf(HB_ALICE);
+        (uint256 quotedNet, uint256[] memory quotedUsed) = quad.previewJoinProportional(amounts);
+        assertGt(quotedNet, 0);
         vm.recordLogs();
         vm.prank(HB_ALICE);
         (uint256 net, uint256[] memory used) =
-            quad.joinProportional(amounts, HB_ALICE, 1, block.timestamp);
+            quad.joinProportional(amounts, HB_ALICE, quotedNet, block.timestamp);
         Vm.Log[] memory logs = vm.getRecordedLogs();
-        assertGt(net, 0);
+        assertEq(net, quotedNet);
+        assertEq(used, quotedUsed, "sequential acquisition and redemption refunds");
         bool partialRefund;
         for (uint256 i; i < 4; ++i) {
             assertEq(pairBefore[i] - IERC20(rowTokens[i]).balanceOf(HB_ALICE), used[i]);
@@ -622,9 +636,13 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_ComponentAccounting 
         bool[] memory flags = new bool[](4);
         flags[faceIdx] = true;
         pairs[faceIdx] = shares[faceIdx];
+        (uint256 quotedNet, uint256[] memory quotedUsed) = quad.previewJoinProportionalFlexible(pairs, flags);
+        assertGt(quotedNet, 0);
         vm.prank(HB_ALICE);
-        (uint256 net,) = quad.joinProportionalFlexible(pairs, flags, HB_ALICE, 1, block.timestamp);
-        assertGt(net, 0);
+        (uint256 net, uint256[] memory used) =
+            quad.joinProportionalFlexible(pairs, flags, HB_ALICE, quotedNet, block.timestamp);
+        assertEq(net, quotedNet);
+        assertEq(used, quotedUsed);
         assertEq(quad.seBalance(faceIdx), shares[faceIdx] - shares[faceIdx] / 20);
         for (uint256 i; i < 4; ++i) assertGt(quad.nativeReserve(i), 0);
     }

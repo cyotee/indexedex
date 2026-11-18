@@ -5,11 +5,22 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4Detf, IUniswapV4DetfFirstBondShares} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
+import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+import {IUniswapV4SingleStandardExchangeBufferConstantProductHook} from
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -365,9 +376,15 @@ library UniswapV4DetfProductionSeDeployLib {
     /// Generic test assets are minted; real Pons payment tokens come from the
     /// fixture's existing purchases and WETH is actually wrapped from ETH.
     function activatePositionVault(address vault, address payment, address payer, address weth) internal {
-        (IStandardizedYield.AssetType kind,,) = IStandardizedYield(vault).assetInfo();
-        if (kind != IStandardizedYield.AssetType.LIQUIDITY || IERC20(vault).totalSupply() != 0) return;
-        address[] memory discovered = IStandardizedYield(vault).getTokensIn();
+        if (IERC20(vault).totalSupply() != 0) return;
+        bool bundle = IERC165(vault).supportsInterface(type(IStandardExchangeBundleIn).interfaceId);
+        if (!bundle) {
+            (IStandardizedYield.AssetType kind,,) = IStandardizedYield(vault).assetInfo();
+            if (kind != IStandardizedYield.AssetType.LIQUIDITY) return;
+        }
+        address[] memory discovered = bundle
+            ? IBasicVault(vault).vaultTokens()
+            : IStandardizedYield(vault).getTokensIn();
         address[] memory tokens = new address[](2);
         uint256 found;
         for (uint256 i; i < discovered.length; ++i) {
@@ -389,24 +406,171 @@ library UniswapV4DetfProductionSeDeployLib {
         } else {
             IProdSeMintable(other).mint(payer, amounts[1 - paymentIndex]);
         }
-        _activateFundedPosition(vault, tokens, amounts, payer);
+        address seedHolder = address(uint160(uint256(keccak256("production-position-seed-holder"))));
+        _depositFundedPosition(vault, tokens, amounts, payer, seedHolder, bundle);
     }
 
-    /// @dev Keep the funded two-token deposit and exact custody checks together.
-    function _activateFundedPosition(
-        address vault, address[] memory tokens, uint256[] memory amounts, address payer
-    ) private {
-        address seedHolder = address(uint160(uint256(keccak256("production-position-seed-holder"))));
+    /// @dev Acquire actual bundle shares for generic lifecycle bootstrap using mintable fixture assets.
+    function acquirePositionShares(address vault, address payment, uint256 amount, address payer)
+        internal returns (uint256 minted)
+    {
+        address[] memory tokens = IBasicVault(vault).vaultTokens();
+        require(tokens.length == 2 && (tokens[0] == payment || tokens[1] == payment), "position payment leg");
+        uint256 paymentIndex = tokens[0] == payment ? 0 : 1;
+        uint256[] memory amounts = new uint256[](2);
+        amounts[paymentIndex] = amount;
+        address other = tokens[1 - paymentIndex];
+        (amounts[1 - paymentIndex],) = IStandardExchangeIn(vault).previewExchangeIn(
+            IERC20(payment), amount, IERC20(other)
+        );
+        require(amounts[0] > 0 && amounts[1] > 0, "fund both position legs");
+        IProdSeMintable(other).mint(payer, amounts[1 - paymentIndex]);
+        return _depositFundedPosition(vault, tokens, amounts, payer, payer, true);
+    }
+
+    struct FirstBondBasket {
+        address[] pairs;
+        address[] vaults;
+        uint256[] shares;
+        uint256[] values;
+        uint256[] opening;
+        uint256 anchor;
+        uint256 expectedG;
+        uint256 expectedPrincipal;
+    }
+
+    /// @dev Retain each leg's original human budget and choose its least-valued opening join.
+    function _acquireFirstBondBasket(
+        IUniswapV4Detf detf, address inputPair, uint256 budget, address payer
+    ) private returns (FirstBondBasket memory basket) {
+        basket.pairs = detf.acceptedBondTokens();
+        basket.opening = detf.openingPairPerDetfWad();
+        basket.vaults = new address[](basket.pairs.length);
+        basket.shares = new uint256[](basket.pairs.length);
+        basket.values = new uint256[](basket.pairs.length);
+        basket.expectedG = type(uint256).max;
+        IUniswapV4SeBufferHook hook = IUniswapV4SeBufferHook(detf.hook());
+        for (uint256 i; i < basket.pairs.length; ++i) {
+            address pair = basket.pairs[i];
+            address vault = hook.standardExchangeOf(pair);
+            basket.vaults[i] = vault;
+            uint256 amount = Math.mulDiv(budget, _humanUnits(pair, 1), _humanUnits(inputPair, 1));
+            uint256 balance = IERC20(pair).balanceOf(payer);
+            if (balance < amount) IProdSeMintable(pair).mint(payer, amount - balance);
+            basket.shares[i] = acquirePositionShares(vault, pair, amount, payer);
+        }
+        for (uint256 i; i < basket.pairs.length; ++i) {
+            (basket.values[i],) = IStandardExchangeIn(basket.vaults[i]).previewExchangeIn(
+                IERC20(basket.vaults[i]), basket.shares[i], IERC20(basket.pairs[i])
+            );
+            uint256 g = Math.mulDiv(
+                DETFDecimalScaleLib.nativeToWad(basket.pairs[i], basket.values[i]), 1e9, basket.opening[i]
+            );
+            if (g < basket.expectedG) {
+                basket.expectedG = g;
+                basket.anchor = i;
+            }
+        }
+        require(basket.expectedG > 0, "funded basket G");
+        for (uint256 i; i < basket.pairs.length; ++i) {
+            uint256 required = DETFDecimalScaleLib.wadToNative(
+                basket.pairs[i], Math.mulDiv(basket.expectedG, basket.opening[i], 1e9)
+            );
+            require(basket.values[i] >= required, "funded basket backing");
+        }
+    }
+
+    /// @dev Expected issuance comes from the acquired payment, opening vector and configured terms.
+    function _assertFirstBondBasketQuote(IUniswapV4Detf detf, FirstBondBasket memory basket, uint256 duration)
+        private view
+    {
+        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(
+            IUniswapV4SingleStandardExchangeBufferConstantProductHook(detf.hook()).feeOracle()
+        );
+        BondTerms memory terms = oracle.bondTermsOfVault(address(detf));
+        uint256 effectiveDuration = Math.min(duration, terms.maxLockDuration);
+        uint256 boosted = Math.mulDiv(
+            basket.values[basket.anchor], DETFBondNFTMathLib._calcBonusMultiplier(terms, effectiveDuration), 1e18
+        );
+        uint256 purchased = Math.mulDiv(
+            DETFDecimalScaleLib.nativeToWad(basket.pairs[basket.anchor], boosted),
+            1e9,
+            basket.opening[basket.anchor]
+        );
+        uint256 p = oracle.seigniorageIncentivePercentageOfVault(address(detf));
+        basket.expectedPrincipal = Math.mulDiv(purchased, 1e18 - p, 1e18);
+        uint256 expectedRewards = Math.mulDiv(purchased, p, 1e18) + Math.mulDiv(basket.expectedG, p, 1e18);
+        IUniswapV4DetfFirstBondShares entry = IUniswapV4DetfFirstBondShares(address(detf));
+        (uint256 quotedPurchase, uint256 quotedPrincipal, uint256 quotedRewards, uint256 quotedG,) =
+            entry.previewFirstBondShares(basket.shares, basket.anchor, duration);
+        require(quotedPurchase == purchased && quotedPrincipal == basket.expectedPrincipal
+            && quotedRewards == expectedRewards && quotedG == basket.expectedG, "independent basket accounting");
+    }
+
+    /// @dev Generic first-bond setup only; raw-payment witnesses keep the ordinary bond entry.
+    function bondFirstPositionBasket(
+        IUniswapV4Detf detf, address inputPair, uint256 budget, address payer, uint256 duration
+    ) internal returns (uint256 tokenId, uint256 liquidity, uint256 paid) {
+        FirstBondBasket memory basket = _acquireFirstBondBasket(detf, inputPair, budget, payer);
+        _assertFirstBondBasketQuote(detf, basket, duration);
+        paid = DETFDecimalScaleLib.wadToNative(
+            inputPair, DETFDecimalScaleLib.nativeToWad(basket.pairs[basket.anchor], basket.values[basket.anchor])
+        );
+        uint256[] memory beforeShares = new uint256[](basket.vaults.length);
+        for (uint256 i; i < basket.vaults.length; ++i) {
+            beforeShares[i] = IERC20(basket.vaults[i]).balanceOf(payer);
+        }
+        vm.startPrank(payer);
+        for (uint256 i; i < basket.vaults.length; ++i) {
+            IERC20(basket.vaults[i]).approve(address(detf), basket.shares[i]);
+        }
+        (tokenId, liquidity) = IUniswapV4DetfFirstBondShares(address(detf)).bondFirstShares(
+            basket.shares, basket.anchor, duration, payer, basket.expectedPrincipal, 0, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        for (uint256 i; i < basket.vaults.length; ++i) {
+            require(IERC20(basket.vaults[i]).balanceOf(payer) == beforeShares[i] - basket.shares[i],
+                "real shares fund first bond");
+        }
+        require(IDetfBondNFT(detf.bondNftVault()).positionOf(tokenId).principal == basket.expectedPrincipal,
+            "independent basket principal");
+        require(liquidity > 0 && detf.isReserveLive(), "share-funded reserve live");
+    }
+
+    /// @dev Keep real two-token deposits and exact custody checks together for seeds and bond funding.
+    function _depositFundedPosition(
+        address vault, address[] memory tokens, uint256[] memory amounts, address payer, address recipient, bool bundle
+    ) private returns (uint256 minted) {
+        uint256 sharesBefore = IERC20(vault).balanceOf(recipient);
         vm.startPrank(payer);
         IERC20(tokens[0]).approve(vault, type(uint256).max);
         IERC20(tokens[1]).approve(vault, type(uint256).max);
-        uint256 quote = IStandardExchangeInMulti(vault).previewExchangeInManyToOne(tokens, amounts, IERC20(vault));
-        uint256 minted = IStandardExchangeInMulti(vault).exchangeInManyToOne(
-            tokens, amounts, IERC20(vault), quote, seedHolder, false, block.timestamp + 1 hours
-        );
+        uint256 quote;
+        if (bundle) {
+            uint256[] memory balances = new uint256[](2);
+            for (uint256 i; i < tokens.length; ++i) balances[i] = IERC20(tokens[i]).balanceOf(payer);
+            uint256[] memory quotedRefunds;
+            (quote, quotedRefunds) = IStandardExchangeBundleIn(vault).previewExchangeBundleInForSingleOut(amounts, vault);
+            uint256[] memory refunds;
+            (minted, refunds) = IStandardExchangeBundleIn(vault).exchangeBundleInForSingleOut(
+                amounts, vault, quote, recipient, false, block.timestamp + 1 hours
+            );
+            require(refunds.length == tokens.length
+                && keccak256(abi.encode(refunds)) == keccak256(abi.encode(quotedRefunds)),
+                "position activation refund quote/execution");
+            for (uint256 i; i < tokens.length; ++i) {
+                require(IERC20(tokens[i]).balanceOf(payer) == balances[i] - amounts[i] + refunds[i],
+                    "position activation net funding");
+            }
+        } else {
+            quote = IStandardExchangeInMulti(vault).previewExchangeInManyToOne(tokens, amounts, IERC20(vault));
+            minted = IStandardExchangeInMulti(vault).exchangeInManyToOne(
+                tokens, amounts, IERC20(vault), quote, recipient, false, block.timestamp + 1 hours
+            );
+        }
         vm.stopPrank();
         require(minted > 0 && minted == quote, "position activation quote/execution");
-        require(IERC20(vault).balanceOf(seedHolder) == minted, "external seed shares");
+        require(IERC20(vault).balanceOf(recipient) == sharesBefore + minted, "position share receipt");
     }
 
     function deployUniv3Vault(IUniswapV3FullSpreadStandardExchangeVaultDFPkg pkg, IUniswapV3Pool pool)

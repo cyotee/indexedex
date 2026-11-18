@@ -46,13 +46,21 @@ abstract contract UniswapV4Detf_IoTablesOpenBase_Decimals is TestBase_UniswapV4D
         _firstBond(_uPair(80));
         uint256 amount_ = _uPair(20);
         IERC20 payment_ = IERC20(address(pairToken));
+        (payment_, amount_) = _preparePositivePayment(detf, payment_, amount_, detfUser);
         IStakedDETF staking_ = IStakedDETF(detfInfo.rebasingClaimToken());
         IDetfBondNFT nft_ = IDetfBondNFT(detfInfo.bondNftVault());
         IoFundedBondSnapshot memory expected_;
         (expected_.purchased, expected_.principal, expected_.rewards, expected_.liquidityDetf) =
             detfInfo.previewBond(payment_, amount_, DEFAULT_MIN_LOCK);
         uint256 p_ = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf);
-        assertEq(expected_.liquidityDetf, _unboostedBondG(address(payment_), amount_), "G uses actual unboosted payment");
+        uint256 pairValue_ = amount_;
+        if (address(payment_) != address(pairToken)) {
+            assertEq(address(payment_), IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(address(pairToken)));
+            (pairValue_,) = IStandardExchangeIn(address(payment_)).previewExchangeIn(
+                payment_, amount_, IERC20(address(pairToken))
+            );
+        }
+        assertEq(expected_.liquidityDetf, _unboostedBondG(address(pairToken), pairValue_), "G uses actual unboosted payment");
         assertEq(expected_.principal, Math.mulDiv(expected_.purchased, 1e18 - p_, 1e18), "purchased allocation split");
         assertEq(expected_.rewards,
             Math.mulDiv(expected_.purchased, p_, 1e18) + Math.mulDiv(expected_.liquidityDetf, p_, 1e18),
@@ -62,10 +70,12 @@ abstract contract UniswapV4Detf_IoTablesOpenBase_Decimals is TestBase_UniswapV4D
         expected_.gonsPerUnit = staking_.stakingState().gonsPerUnit;
         expected_.userDetf = IERC20(detf).balanceOf(detfUser);
         expected_.ownedLp = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
-        vm.prank(detfUser);
+        vm.startPrank(detfUser);
+        payment_.approve(detf, amount_);
         (uint256 id_, uint256 lpOut_) = detfInfo.bond(
             payment_, amount_, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
         );
+        vm.stopPrank();
         assertGt(id_, 2, "purchased NFT");
         assertGt(lpOut_, 0, "new liquidity acquired");
         assertEq(nft_.positionOf(id_).principal, expected_.principal, "fixed funded native DETF principal");
@@ -77,6 +87,15 @@ abstract contract UniswapV4Detf_IoTablesOpenBase_Decimals is TestBase_UniswapV4D
         uint256 owned_ = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
         assertGe(owned_ - expected_.ownedLp, lpOut_, "actual LP in protocol custody");
         assertEq(IERC20(detfInfo.hook()).balanceOf(address(staking_)), 0, "staking has held DETF backing only");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -92,14 +111,32 @@ abstract contract UniswapV4Detf_IoTablesOpenBase_Decimals is TestBase_UniswapV4D
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "no LP on diamond");
         assertEq(IERC20(reserveHook).balanceOf(claim_), 0, "no LP on claim");
         assertGt(IERC20(reserveHook).balanceOf(nft_), 0, "LP on Bond NFT");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
-    /// @notice T7.19: After mint, diamond has no joinable balances (also Stage 11 Open).
-    function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
+    /// @notice T7.19: After mint, custody is booked; explicit feeTo maintenance clears joinable balances.
+    function test_T7_19_afterMint_bookedBalances_feeToSweepClearsJoinableDust() public {
         _firstBond(_uPair(80));
         vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _uPair(10), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");
     }

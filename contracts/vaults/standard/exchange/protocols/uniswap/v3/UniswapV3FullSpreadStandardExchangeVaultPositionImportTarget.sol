@@ -1,180 +1,37 @@
 // SPDX-License-Identifier: BSL-1.1
-pragma solidity ^0.8.0;
-
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
+pragma solidity ^0.8.24;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
-import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
-import {
-    INonfungiblePositionManager
-} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/INonfungiblePositionManager.sol";
-import {UniswapV3Utils} from "@crane/contracts/utils/math/UniswapV3Utils.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {INonfungiblePositionManager} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/INonfungiblePositionManager.sol";
 import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
 import {FixedPoint128} from "@crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint128.sol";
-import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
-import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
-import {UniswapV3FullSpreadStandardExchangeVaultRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol";
-import {
-    UniswapV3FullSpreadStandardExchangeVaultCommon
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultCommon} from "./UniswapV3FullSpreadStandardExchangeVaultCommon.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultPlanner as Planner} from "./UniswapV3FullSpreadStandardExchangeVaultPlanner.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultMath as Math} from "./UniswapV3FullSpreadStandardExchangeVaultMath.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultRepo as Repo} from "./UniswapV3FullSpreadStandardExchangeVaultRepo.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as IVault} from "./interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
 
 interface IUniswapV3FullSpreadStandardExchangeVaultPositionImport {
     function previewImportPosition(INonfungiblePositionManager positionManager, uint256 positionTokenId)
-        external
-        view
-        returns (uint256 sharesOut);
+        external view returns (uint256 sharesOut, uint256 refund0, uint256 refund1);
 
     function importPosition(
-        INonfungiblePositionManager positionManager,
-        uint256 positionTokenId,
-        uint256 minSharesOut,
-        address owner,
-        address recipient,
-        uint256 deadline
+        INonfungiblePositionManager positionManager, uint256 positionTokenId, uint256 minSharesOut,
+        address owner, address recipient, uint256 deadline
     ) external returns (uint256 sharesOut);
 }
 
-/**
- * @title UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget
- * @notice Convert an NPM NFT into a vault-owned direct-pool center position.
- * @dev Leaves the empty NFT on the vault (does not burn). Collected principal and fees join the canonical full-range book (D57).
- */
+/// @notice Convert an authorized NFT's principal and fees through the ordinary proportional add.
 contract UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget is
-    UniswapV3FullSpreadStandardExchangeVaultCommon,
-    ReentrancyLockModifiers,
+    UniswapV3FullSpreadStandardExchangeVaultCommon, ReentrancyLockModifiers,
     IUniswapV3FullSpreadStandardExchangeVaultPositionImport
 {
-    using BetterSafeERC20 for IERC20;
-
-    error UniswapV3ExchangeImport_DeadlineExceeded();
-    error UniswapV3ExchangeImport_Unavailable();
     error UniswapV3ExchangeImport_InvalidImportedPool();
-    error UniswapV3ExchangeImport_ZeroLiquidity();
-    error UniswapV3ExchangeImport_SlippageExceeded();
     error UniswapV3ExchangeImport_UnauthorizedOwner();
-
-    struct ImportRemintState {
-        uint256 booked0;
-        uint256 booked1;
-        uint256 inbound0;
-        uint256 inbound1;
-    }
-
-    function previewImportPosition(INonfungiblePositionManager positionManager, uint256 positionTokenId)
-        external
-        view
-        override
-        returns (uint256 sharesOut)
-    {
-        return _quoteImportShares(positionManager, positionTokenId);
-    }
-
-    function importPosition(
-        INonfungiblePositionManager positionManager,
-        uint256 positionTokenId,
-        uint256 minSharesOut,
-        address owner,
-        address recipient,
-        uint256 deadline
-    ) external override nonReentrant returns (uint256 sharesOut) {
-        if (deadline < block.timestamp) revert UniswapV3ExchangeImport_DeadlineExceeded();
-        _requireNotDisabled();
-        _requireCanOpenBoundPoolOps();
-        IERC721 nft = IERC721(address(positionManager));
-        if (nft.ownerOf(positionTokenId) != owner || (msg.sender != owner && nft.getApproved(positionTokenId) != msg.sender
-            && !nft.isApprovedForAll(owner, msg.sender))) revert UniswapV3ExchangeImport_UnauthorizedOwner();
-
-        if (IERC20(address(this)).totalSupply() != 0 || UniswapV3FullSpreadStandardExchangeVaultRepo._isPositionCreated()) {
-            revert UniswapV3ExchangeImport_Unavailable();
-        }
-
-        (
-            ,
-            ,
-            address token0,
-            address token1,
-            uint24 fee,
-            int24 tickLower,
-            int24 tickUpper,
-            uint128 liquidity,
-            ,
-            ,
-            ,
-        ) = positionManager.positions(positionTokenId);
-
-        if (liquidity == 0) revert UniswapV3ExchangeImport_ZeroLiquidity();
-        _requireMatchingPool(token0, token1, fee);
-
-        uint256 quoted = _quoteImportShares(positionManager, positionTokenId);
-        if (quoted < minSharesOut) revert UniswapV3ExchangeImport_SlippageExceeded();
-
-        sharesOut = _exitNftAndSleeve(
-            positionManager, positionTokenId, owner, deadline, token0, token1, liquidity
-        );
-        if (sharesOut < minSharesOut) revert UniswapV3ExchangeImport_SlippageExceeded();
-        ERC20Repo._mint(recipient, sharesOut);
-        _syncVaultReserves();
-        _rebalanceLiquidReserveBestEffort();
-    }
-
-    /// @dev Exit the NFT to the sleeve, select full-range ticks, and credit only actual inbound assets.
-    function _exitNftAndSleeve(
-        INonfungiblePositionManager positionManager,
-        uint256 positionTokenId,
-        address owner,
-        uint256 deadline,
-        address token0,
-        address token1,
-        uint128 liquidity
-    ) internal returns (uint256 sharesOut) {
-        ImportRemintState memory state;
-        state.booked0 = IERC20(token0).balanceOf(address(this));
-        state.booked1 = IERC20(token1).balanceOf(address(this));
-
-        IERC721(address(positionManager)).transferFrom(owner, address(this), positionTokenId);
-
-        positionManager.decreaseLiquidity(
-            INonfungiblePositionManager.DecreaseLiquidityParams({
-                tokenId: positionTokenId,
-                liquidity: liquidity,
-                amount0Min: 0,
-                amount1Min: 0,
-                deadline: deadline
-            })
-        );
-        positionManager.collect(
-            INonfungiblePositionManager.CollectParams({
-                tokenId: positionTokenId,
-                recipient: address(this),
-                amount0Max: type(uint128).max,
-                amount1Max: type(uint128).max
-            })
-        );
-
-        ManagedTicks memory fullRange = _deriveManagedTicks();
-        UniswapV3FullSpreadStandardExchangeVaultRepo._createPositionIfNeeded(fullRange.centerLower, fullRange.centerUpper);
-
-        state.inbound0 = IERC20(token0).balanceOf(address(this)) - state.booked0;
-        state.inbound1 = IERC20(token1).balanceOf(address(this)) - state.booked1;
-
-        sharesOut = _sharesOutForDeposit(state.inbound0, state.inbound1, 0, state.booked0, state.booked1);
-        if (sharesOut == 0) revert UniswapV3Exchange_ZeroAmount();
-        ERC20Repo._mint(DEAD_SHARES_SINK, _minimumLiquidity());
-        uint256 residual = _initialResidualShares(state.inbound0, state.inbound1, state.booked0, state.booked1, sharesOut);
-        if (residual > 0) {
-            ERC20Repo._mint(DEAD_SHARES_SINK, residual);
-        }
-
-    }
 
     struct ImportedPosition {
         uint96 nonce;
@@ -191,34 +48,86 @@ contract UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget is
         uint128 owed1;
     }
 
-    function _quoteImportShares(INonfungiblePositionManager positionManager, uint256 positionTokenId)
-        internal view returns (uint256 sharesOut)
+    function previewImportPosition(INonfungiblePositionManager manager_, uint256 tokenId_)
+        external view returns (uint256 sharesOut_, uint256 refund0_, uint256 refund1_)
     {
-        (bool ok, bytes memory result) = address(positionManager).staticcall(
-            abi.encodeCall(INonfungiblePositionManager.positions, (positionTokenId))
+        ImportedPosition memory position_ = _position(manager_, tokenId_);
+        (uint160 price_,,,,,,) = _pool().slot0();
+        (uint256 amount0_, uint256 amount1_) = Math.amountsForLiquidity(
+            price_, TickMath.getSqrtRatioAtTick(position_.lower), TickMath.getSqrtRatioAtTick(position_.upper),
+            position_.liquidity
         );
-        if (!ok) assembly ("memory-safe") { revert(add(result, 32), mload(result)) }
-        ImportedPosition memory p = abi.decode(result, (ImportedPosition));
-        if (p.liquidity == 0) revert UniswapV3ExchangeImport_ZeroLiquidity();
-        _requireMatchingPool(p.token0, p.token1, p.fee);
-        if (positionManager.factory() != _pool().factory()) revert UniswapV3ExchangeImport_InvalidImportedPool();
-        (,, uint160 price,,) = _loadPoolState();
-        (uint256 amount0, uint256 amount1) = UniswapV3Utils._quoteAmountsForLiquidity(price, p.lower, p.upper, p.liquidity);
-        (uint256 growth0, uint256 growth1) = _feeGrowthInside(p.lower, p.upper);
-        uint256 fee0; uint256 fee1;
+        (uint256 growth0_, uint256 growth1_) = Planner.feesInside(position_.lower, position_.upper);
+        uint128 accrued0_;
+        uint128 accrued1_;
         unchecked {
-            fee0 = FullMath.mulDiv(growth0 - p.growth0, p.liquidity, FixedPoint128.Q128);
-            fee1 = FullMath.mulDiv(growth1 - p.growth1, p.liquidity, FixedPoint128.Q128);
+            accrued0_ = uint128(FullMath.mulDiv(growth0_ - position_.growth0, position_.liquidity, FixedPoint128.Q128));
+            accrued1_ = uint128(FullMath.mulDiv(growth1_ - position_.growth1, position_.liquidity, FixedPoint128.Q128));
         }
-        sharesOut = _quoteInitialShares(amount0 + p.owed0 + fee0, amount1 + p.owed1 + fee1);
-        if (sharesOut == 0) revert UniswapV3Exchange_ZeroAmount();
+        amount0_ += position_.owed0 + accrued0_;
+        amount1_ += position_.owed1 + accrued1_;
+        Planner.Plan memory plan_ = Planner.planImport(
+            amount0_, amount1_, position_.lower, position_.upper, position_.liquidity
+        );
+        return (plan_.failed ? 0 : plan_.amountOut, plan_.refund0, plan_.refund1);
     }
 
-    function _requireMatchingPool(address token0, address token1, uint24 fee) internal view {
-        IUniswapV3Pool pool = _pool();
-        if (pool.token0() != token0 || pool.token1() != token1 || pool.fee() != fee) {
+    function importPosition(
+        INonfungiblePositionManager manager_, uint256 tokenId_, uint256 minimum_,
+        address owner_, address recipient_, uint256 deadline_
+    ) external nonReentrant returns (uint256 sharesOut_) {
+        _deadline(deadline_);
+        _requireNotDisabled();
+        _recipient(recipient_);
+        IERC721 nft_ = IERC721(address(manager_));
+        if (nft_.ownerOf(tokenId_) != owner_ || (msg.sender != owner_ && nft_.getApproved(tokenId_) != msg.sender
+            && !nft_.isApprovedForAll(owner_, msg.sender))) {
+            revert UniswapV3ExchangeImport_UnauthorizedOwner();
+        }
+        ImportedPosition memory position_ = _position(manager_, tokenId_);
+        _requireCanOpenBoundPoolOps();
+        // Incumbent destination fees are booked before measuring the source NFT's incoming assets.
+        _collectFees();
+        uint256 before0_ = IERC20(position_.token0).balanceOf(address(this));
+        uint256 before1_ = IERC20(position_.token1).balanceOf(address(this));
+        nft_.transferFrom(owner_, address(this), tokenId_);
+        if (position_.liquidity != 0) {
+            manager_.decreaseLiquidity(INonfungiblePositionManager.DecreaseLiquidityParams({
+                tokenId: tokenId_, liquidity: position_.liquidity, amount0Min: 0, amount1Min: 0, deadline: deadline_
+            }));
+        }
+        manager_.collect(INonfungiblePositionManager.CollectParams({
+            tokenId: tokenId_, recipient: address(this), amount0Max: type(uint128).max, amount1Max: type(uint128).max
+        }));
+        // The real NPM requires both liquidity and owed balances to be zero.
+        // Any later failure rolls back this burn and the owner's original NFT transfer.
+        manager_.burn(tokenId_);
+        uint256 incoming0_ = IERC20(position_.token0).balanceOf(address(this)) - before0_;
+        uint256 incoming1_ = IERC20(position_.token1).balanceOf(address(this)) - before1_;
+        Repo._layout().reserved[0] = incoming0_;
+        Repo._layout().reserved[1] = incoming1_;
+        Planner.Plan memory plan_ = Planner.planBundleIn(incoming0_, incoming1_);
+        if (plan_.failed) revert IVault.MinLiquidityNotMet();
+        if (plan_.amountOut < minimum_) revert IStandardExchangeErrors.AmountOutNotMet(minimum_, plan_.amountOut);
+        _add(plan_);
+        _mintShares(plan_, recipient_);
+        _pay(position_.token0, 0, recipient_, plan_.refund0);
+        _pay(position_.token1, 1, recipient_, plan_.refund1);
+        _close();
+        return plan_.amountOut;
+    }
+
+    function _position(INonfungiblePositionManager manager_, uint256 tokenId_)
+        private view returns (ImportedPosition memory position_)
+    {
+        (bool ok_, bytes memory result_) = address(manager_).staticcall(
+            abi.encodeCall(INonfungiblePositionManager.positions, (tokenId_))
+        );
+        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
+        position_ = abi.decode(result_, (ImportedPosition));
+        if (position_.token0 != _token0() || position_.token1 != _token1()
+            || position_.fee != _pool().fee() || manager_.factory() != _pool().factory()) {
             revert UniswapV3ExchangeImport_InvalidImportedPool();
         }
     }
-
 }

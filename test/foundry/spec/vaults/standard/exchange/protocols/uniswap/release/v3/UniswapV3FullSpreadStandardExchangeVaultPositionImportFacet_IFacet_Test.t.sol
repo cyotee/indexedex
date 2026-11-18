@@ -13,6 +13,7 @@ import {
     TestBase_UniswapV3FullSpreadStandardExchangeVault
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
+/// @notice V3-OWN-01: import selectors survive; return-word ABI is tested on the real NFT flow.
 contract UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet_IFacet_Test is TestBase_UniswapV3FullSpreadStandardExchangeVault, TestBase_IFacet {
     function setUp() public override(TestBase_UniswapV3FullSpreadStandardExchangeVault, TestBase_IFacet) {
         TestBase_UniswapV3FullSpreadStandardExchangeVault.setUp();

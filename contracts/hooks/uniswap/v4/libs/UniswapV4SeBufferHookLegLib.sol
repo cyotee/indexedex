@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -47,6 +48,25 @@ library UniswapV4SeBufferHookLegLib {
         uint256 heldAssets;
         uint256 heldShares;
         address pair;
+        bool sequential;
+        uint256 refunded;
+    }
+
+    function stateQuoteSupported(address se) public view returns (bool) {
+        (bool ok, bytes memory data) = se.staticcall(abi.encodeCall(IERC165.supportsInterface,
+            (type(IStandardExchangeStateQuote).interfaceId)));
+        return ok && data.length == 32 && abi.decode(data, (bool));
+    }
+
+    /// @dev A valuation consumes a copy of the state; it does not burn the caller's inventory.
+    function assetsAtState(ExternalQuote memory q, uint256 shares) public view returns (uint256 assets) {
+        if (q.sequential) {
+            (, assets,) = IStandardExchangeStateQuote(address(q.exchange)).quoteExchangeIn(
+                q.state, IERC20(address(q.exchange)), shares, IERC20(q.pair)
+            );
+            return assets;
+        }
+        return q.exchange.quoteAssets(q.state, shares);
     }
 
     function afterExternalExchange(address se, address pair, address tokenIn, uint256 amountIn, address holder)
@@ -54,6 +74,17 @@ library UniswapV4SeBufferHookLegLib {
     {
         q.exchange = IStandardExchangeTransitionQuote(se);
         q.pair = pair;
+        q.sequential = stateQuoteSupported(se);
+        if (q.sequential) {
+            q.state = IStandardExchangeStateQuote(se).quoteExchangeState();
+            (q.state, q.assets, q.refunded) = IStandardExchangeStateQuote(se).quoteExchangeIn(
+                q.state, IERC20(tokenIn), amountIn, IERC20(pair)
+            );
+            // The external caller's redemption never receives or spends the hook's shares.
+            q.heldShares = IERC20(se).balanceOf(holder);
+            q.heldAssets = assetsAtState(q, q.heldShares);
+            return q;
+        }
         (q.state,) = q.exchange.quoteState(pair, holder);
         if (tokenIn == se) {
             (q.state,,,) = q.exchange.quoteTransition(
@@ -74,6 +105,16 @@ library UniswapV4SeBufferHookLegLib {
     {
         q.exchange = IStandardExchangeTransitionQuote(se);
         q.pair = pair;
+        q.sequential = stateQuoteSupported(se);
+        if (q.sequential) {
+            q.state = IStandardExchangeStateQuote(se).quoteExchangeState();
+            (q.state, q.assets, q.refunded) = IStandardExchangeStateQuote(se).quoteExchangeIn(
+                q.state, IERC20(tokenIn), amountIn, IERC20(se)
+            );
+            q.heldShares = IERC20(se).balanceOf(holder);
+            q.heldAssets = assetsAtState(q, q.heldShares);
+            return q;
+        }
         (q.state, q.heldAssets) = q.exchange.quoteState(pair, holder);
         q.heldShares = q.exchange.quoteShareBalance(q.state);
         if (amountIn == 0) return q;
@@ -92,6 +133,12 @@ library UniswapV4SeBufferHookLegLib {
     {
         if (assets == 0) return (0, q.heldAssets);
         address se = address(q.exchange);
+        if (q.sequential) {
+            (q.state, minted,) = IStandardExchangeStateQuote(se).quoteExchangeIn(
+                q.state, IERC20(q.pair), assets, IERC20(se)
+            );
+            return (minted, assetsAtState(q, q.heldShares + minted));
+        }
         if (q.pair != address(0) && q.pair != se && !_hasContextQuote(se)
                 && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(q.pair), assets, IERC20(se)) == 0
         ) {
@@ -118,7 +165,7 @@ library UniswapV4SeBufferHookLegLib {
             if (rawOut > rawCap) rawOut = rawCap;
             if (shareOut > shareCap) shareOut = shareCap;
         }
-        uint256 pairOut = q.exchange.quoteAssets(q.state, shareOut);
+        uint256 pairOut = assetsAtState(q, shareOut);
         return rawOut == 0 || pairOut == 0 ? 0 : Math.mulDiv(rawOut, pairValue, pairOut);
     }
 
@@ -140,6 +187,9 @@ library UniswapV4SeBufferHookLegLib {
         if (probeOk && probeData.length == 32) {
             projected = abi.decode(probeData, (bool));
         }
+        // A FullSpread composition has changed the backing pool. A live-only
+        // provider supplies no contract for valuing that hypothetical state.
+        if (!projected && (q.sequential || stateQuoteSupported(address(q.exchange)))) revert RateProviderFailed();
         bytes memory input = projected
             ? abi.encodeCall(IStandardExchangeRateQuote.quoteRate, (address(q.exchange), pair, q.state))
             : abi.encodeCall(IRateProvider.getRate, ());

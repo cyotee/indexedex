@@ -11,6 +11,8 @@ import {IUniswapV4DetfMigrationRecovery as Recovery}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
 
 import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
 
 /// @notice Native Foundry migration stages with explicit typed inputs.
 /// @dev Select a function with --sig; SENDER selects the account and Forge controls broadcasting.
@@ -56,6 +58,13 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
     function setPricing(Allocation proxy_, Pricing.Inputs calldata next_) external returns (bytes32 bookId_) {
         vm.startBroadcast(vm.envAddress("SENDER"));
         bookId_ = proxy_.setMigrationWeightedPricing(next_);
+        vm.stopBroadcast();
+    }
+
+    /// @notice Submit the current manual book, including versioned V3 pool and deposit operands.
+    function setPricingV3(AllocationV3 proxy_, Pricing.InputsV3 calldata next_) external returns (bytes32 bookId_) {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        bookId_ = proxy_.setMigrationWeightedPricingV3(next_);
         vm.stopBroadcast();
     }
 

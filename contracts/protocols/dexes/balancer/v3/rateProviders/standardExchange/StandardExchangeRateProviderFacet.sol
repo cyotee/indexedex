@@ -15,6 +15,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
@@ -26,6 +27,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
@@ -50,9 +52,10 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         StandardExchangeRateProviderRepo.Storage storage l = StandardExchangeRateProviderRepo._layout();
         address subject = address(l.rateSubject);
         if (subject == address(0)) subject = address(l.reserveVault);
-        // An independent subject keeps its live rate. The projected state belongs
-        // only to the supplied SE and is denominated in its selected quote asset.
-        if (exchange != address(l.reserveVault) || asset != address(l.rateTarget) || subject != exchange) {
+        // Legacy state is asset/share-specific. A global FullSpread state also
+        // describes accepted underlying-to-underlying routes for another subject.
+        if (exchange != address(l.reserveVault)
+            || (!_sequentialQuote(exchange) && (subject != exchange || asset != address(l.rateTarget)))) {
             return _getRate("");
         }
         return _getRate(state);
@@ -64,14 +67,20 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         if (address(subject_) == address(0)) {
             subject_ = IERC20(address(layoutStruct.reserveVault));
         }
-        uint256 totalShares = state.length == 0 ? subject_.totalSupply()
-            : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
+        uint256 totalShares;
+        if (state.length == 0) totalShares = subject_.totalSupply();
+        else if (_sequentialQuote(address(layoutStruct.reserveVault))) {
+            uint256 projectedSupply =
+                IStandardExchangeStateQuote(address(layoutStruct.reserveVault)).quoteExchangeSupply(state);
+            totalShares = address(subject_) == address(layoutStruct.reserveVault)
+                ? projectedSupply : subject_.totalSupply();
+        } else totalShares = IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
 
         if (totalShares == 0) {
             // D60 (2026-09-22): an empty Standard Exchange still has a well-defined initial mint rate.
             // Hooks bind fresh SEs and read the rate on the first buffer, so invert a unit target deposit
             // (shares minted for one whole target token) instead of publishing 0.
-            return _initialRate(subject_, layoutStruct);
+            return _initialRate(subject_, layoutStruct, state);
         }
 
         // Price the entire book even when settlement cannot physically exit it.
@@ -95,10 +104,18 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
 
     /// @dev Zero-supply rate: target per whole share from the SE's own mint preview of one whole target
     ///      token. Returns 0 only when the SE cannot quote that deposit, or would mint nothing.
-    function _initialRate(IERC20 subject_, StandardExchangeRateProviderRepo.Storage storage l)
+    function _initialRate(IERC20 subject_, StandardExchangeRateProviderRepo.Storage storage l, bytes memory state)
         private view returns (uint256)
     {
         uint256 targetUnit = 10 ** uint256(l.rateTargetDecimals);
+        if (state.length != 0 && _sequentialQuote(address(l.reserveVault))) {
+            try IStandardExchangeStateQuote(address(l.reserveVault)).quoteExchangeIn(state, l.rateTarget, targetUnit, subject_)
+                returns (bytes memory, uint256 shares, uint256)
+            {
+                if (shares == 0) return 0;
+                return _normalise(targetUnit, shares, IERC20Metadata(address(subject_)).decimals(), l.rateTargetDecimals);
+            } catch { return 0; }
+        }
         (bool ok, bytes memory data) = address(l.reserveVault).staticcall(
             abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (l.rateTarget, targetUnit, subject_))
         );
@@ -116,6 +133,14 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         IStandardExchange reserveVault_ = l.reserveVault;
         IERC20 subject_ = address(l.rateSubject) == address(0) ? IERC20(address(reserveVault_)) : l.rateSubject;
         IERC20 rateTarget_ = l.rateTarget;
+        if (state.length != 0 && _sequentialQuote(address(reserveVault_))) {
+            // Full-supply valuation keeps its existing normalization. The returned state is discarded.
+            try IStandardExchangeStateQuote(address(reserveVault_)).quoteExchangeIn(state, subject_, quoteAmount_, rateTarget_)
+                returns (bytes memory, uint256 out, uint256)
+            {
+                return (true, out);
+            } catch { return (false, 0); }
+        }
         bytes memory input = state.length != 0
             ? abi.encodeCall(IStandardExchangeTransitionQuote.quoteAssets, (state, quoteAmount_))
             : abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (subject_, quoteAmount_, rateTarget_));
@@ -125,6 +150,12 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         if (state.length != 0) return (true, abi.decode(data, (uint256)));
         (out_,) = abi.decode(data, (uint256, uint256));
         return (true, out_);
+    }
+
+    function _sequentialQuote(address exchange) private view returns (bool) {
+        (bool ok, bytes memory data) = exchange.staticcall(abi.encodeCall(IERC165.supportsInterface,
+            (type(IStandardExchangeStateQuote).interfaceId)));
+        return ok && data.length == 32 && abi.decode(data, (bool));
     }
 
     /* ---------------------------------------------------------------------- */

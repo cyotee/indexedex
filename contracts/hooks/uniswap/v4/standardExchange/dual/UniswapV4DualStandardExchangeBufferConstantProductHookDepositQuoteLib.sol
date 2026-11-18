@@ -9,6 +9,7 @@ import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProx
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 import {UniswapV4BufferHookLiquidityRouteLib as Components} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {UniswapV4DualStandardExchangeBufferConstantProductHookRepo as Repo} from "./UniswapV4DualStandardExchangeBufferConstantProductHookRepo.sol";
 import {UniswapV4DualStandardExchangeBufferConstantProductHookMath as Math} from "./UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol";
@@ -101,7 +102,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
 
     function _receive(Leg memory leg, uint256 amount) private view {
         if (leg.state.length != 0 && amount != 0) {
-            (leg.state,,,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.ReceiveShares, amount);
+            leg.state = ContextQuote.receiveShares(leg.se, leg.state, amount);
         }
     }
 

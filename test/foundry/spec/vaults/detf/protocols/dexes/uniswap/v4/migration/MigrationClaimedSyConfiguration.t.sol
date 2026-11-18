@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
@@ -47,7 +49,7 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         assertEq(c_.original.originalEth, 1 ether);
         assertEq(c_.original.originalDtf, 1 ether);
         assertEq(c_.original.originalUnits, 7);
-        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
+        assertEq(c_.configurationId, keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, a_[0])));
         (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(ORIGIN);
         assertEq(original_, 3 ether);
         assertEq(eligible_, 2 ether);
@@ -112,7 +114,7 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         assertEq(eligible_, 0);
         assertEq(migration.weightedSySurrender(ORIGIN).remainingCredit, full_);
         assertEq(migration.weightedSyEntitlement(ORIGIN).configurationId,
-            keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, ordinary_[0])));
+            keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, ordinary_[0])));
         assertEq(migration.weightedSySurrender(ORIGIN).deliveredCredit, 0);
         assertEq(migration.weightedSySurrender(ORIGIN).consumedUnits, 0);
         assertEq(IERC20(detf).totalSupply(), supply_);
@@ -204,9 +206,9 @@ contract MigrationClaimedSyConfigurationTest is TestBase_UniswapV4DetfMigration 
         bytes memory record_ = abi.encode(migration.weightedSyEntitlement(ORIGIN));
         bytes memory remaining_ = abi.encode(migration.weightedSySurrender(ORIGIN));
         uint256 supply_ = IERC20(detf).totalSupply();
-        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        Pricing.InputsV3 memory next_ = PricingV3(address(migration)).migrationWeightedPricingV3().inputs;
         next_.swapFeeWad = 1e17;
-        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        vm.prank(migrationOwner); pricingId = AllocationV3(address(allocation)).setMigrationWeightedPricingV3(next_);
         assertEq(abi.encode(migration.weightedSyEntitlement(ORIGIN)), record_);
         assertEq(abi.encode(migration.weightedSySurrender(ORIGIN)), remaining_);
         vm.prank(migrationOwner);

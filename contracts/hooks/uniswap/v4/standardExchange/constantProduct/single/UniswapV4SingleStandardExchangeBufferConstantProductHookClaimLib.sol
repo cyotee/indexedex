@@ -644,9 +644,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
 
     function singleShareZapState(bytes memory state, uint256 shares) external view returns (QuoteBase.SingleZapQuote memory q) {
         Repo.Layout storage l = Repo._layout();
-        Transition quote = Transition(l.standardExchange);
         q.state = state;
-        (q.state,,,) = quote.quoteTransition(q.state, Transition.Operation.ReceiveShares, shares);
+        q.state = ContextQuote.receiveShares(l.standardExchange, q.state, shares);
         Basket memory book = componentBook();
         (Basket memory available,,,) = _singleSwapAtRate(
             l.standardExchange, shares, book, _rateForState(l, q.state)
@@ -660,16 +659,19 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         if (q.localReserve != 0 && shares != 0) {
             if (q.shareReserve == 0) redeem = shares;
             else {
-                (,, uint256 quotedOut,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, shares);
-                uint256 equivalent = FullMath.mulDiv(quotedOut, q.shareReserve, shares);
+                (ExchangeInAmount.Result memory result,) = ContextQuote.conversion(
+                    l.standardExchange, l.pairToken, shares, true, q.state
+                );
+                uint256 equivalent = FullMath.mulDiv(result.amountOut, q.shareReserve, shares);
                 redeem = FullMath.mulDiv(shares, q.localReserve, q.localReserve + equivalent, FullMath.Rounding.Ceil);
             }
         }
         q.sharesAdded = shares - redeem;
         if (redeem != 0) {
-            uint256 consumed;
-            (q.state, consumed, q.pairAdded,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, redeem);
-            if (consumed != redeem) revert InsufficientTokenOut();
+            ExchangeInAmount.Result memory result;
+            (result, q.state) = ContextQuote.conversion(l.standardExchange, l.pairToken, redeem, true, q.state);
+            q.pairAdded = result.amountOut;
+            if (result.amountRefunded != 0) revert InsufficientTokenOut();
         }
         q.pairReserve = q.localReserve + _ratedWith(l, q.shareReserve, _rateForState(l, q.state));
     }
@@ -1151,14 +1153,20 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
 
     /// @notice Swap-side book at a projected external SE `state` (a route that redeems or deposits before the
     ///         hook swaps): the held shares valued at that state's rate, and the claim `assets` pair tokens add
-    ///         when buffered from that state (post-buffer projected rate), computed the way `_claimIn` does.
+    ///         when buffered from that state, using the same pricing branch as ordinary `_claimIn`.
     function projectedClaimIn(address se, bytes memory state, uint256 heldShares, uint256 assets)
         public view returns (uint256 reserveBefore, uint256 claimIn)
     {
         Repo.Layout storage l = Repo._layout();
-        reserveBefore = l.localPairReserve + _ratedWith(l, heldShares, _rateForState(l, state));
+        uint256 rate = _rateForState(l, state);
+        reserveBefore = l.localPairReserve + _ratedWith(l, heldShares, rate);
         if (assets == 0) return (reserveBefore, 0);
         if (disabled()) return (reserveBefore, assets);
+        if (LegLib.stateQuoteSupported(se)) {
+            (ExchangeInAmount.Result memory result,) = ContextQuote.conversion(se, l.pairToken, assets, false, state);
+            // FullSpread's ordinary non-transition branch prices minted shares at the pre-buffer rate.
+            return (reserveBefore, result.amountRefunded + _ratedWith(l, result.amountOut, rate));
+        }
         (bytes memory next, uint256 consumed, uint256 minted,) = IStandardExchangeTransitionQuote(se)
             .quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, assets);
         uint256 refund = ExchangeInAmount.fromConsumedInput(assets, consumed, minted).amountRefunded;

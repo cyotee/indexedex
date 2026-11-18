@@ -3,8 +3,6 @@ pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
@@ -59,7 +57,9 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
     function snapshotState(address se, address manager) public view returns (bytes memory state) {
         Leg memory leg = _leg(Repo._layout(), se);
         if (se == leg.pair) return state;
-        state = ContextQuote.snapshot(se, leg.pair, address(this), manager);
+        state = manager == address(0)
+            ? ContextQuote.compositionSnapshot(se, leg.pair, address(this))
+            : ContextQuote.snapshot(se, leg.pair, address(this), manager);
         if (state.length == 0 && BufferClaim.supportsTransitionQuote(se, leg.pair, address(this))) {
             (state,) = IStandardExchangeTransitionQuote(se).quoteState(leg.pair, address(this));
         }
@@ -77,16 +77,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
         Leg memory leg = _leg(Repo._layout(), se);
         if (amount == 0 || se == leg.pair) return (ExchangeInAmount.Result(amount, 0), state);
         if (deposit && disabled(se)) return (ExchangeInAmount.Result(0, amount), state);
-        if (state.length == 0) {
-            return (ExchangeInAmount.previewResult(IStandardExchangeIn(se),
-                IERC20(deposit ? leg.pair : se), amount, IERC20(deposit ? se : leg.pair)), state);
-        }
-        uint256 consumed;
-        uint256 output;
-        (next, consumed, output,) = IStandardExchangeTransitionQuote(se).quoteTransition(state,
-            deposit ? IStandardExchangeTransitionQuote.Operation.DepositExactIn
-                : IStandardExchangeTransitionQuote.Operation.RedeemExactIn, amount);
-        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+        return ContextQuote.conversion(se, leg.pair, amount, !deposit, state);
     }
 
     function inputGain(address se, uint256 bookedShares, uint256 amount, bytes memory state)
@@ -95,6 +86,11 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
         if (amount == 0) return 0;
         if (disabled(se)) return amount;
         (ExchangeInAmount.Result memory result, bytes memory next) = conversion(se, amount, true, state);
+        if (LegLib.stateQuoteSupported(se)) {
+            Leg memory leg = _leg(Repo._layout(), se);
+            uint256 rate = state.length == 0 ? _rate(leg, se) : _rateForState(leg, se, state);
+            return result.amountRefunded + _ratedWith(leg, se, result.amountOut, rate);
+        }
         uint256 beforeValue = ratedAt(se, bookedShares, state);
         uint256 afterValue = ratedAt(se, bookedShares + result.amountOut, next) + result.amountRefunded;
         return afterValue > beforeValue ? afterValue - beforeValue : 0;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSL-1.1
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import {StandardExchangeReleaseBehavior} from "../remediation/StandardExchangeReleaseBehavior.sol";
 import {DeliveryTestToken} from "../remediation/DeliveryTestToken.sol";
@@ -7,13 +7,12 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
+import {IStandardExchangeBundleIn, IStandardExchangeBundleOut} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as IVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {IOperable} from "@crane/contracts/access/operable/IOperable.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
-import {StandardExchangeConstantProduct} from "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol";
-import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -25,7 +24,8 @@ import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/
 /// @dev External router fixture. The payer approves this router, never the vault.
 contract FullSpreadTransferRouter {
     function deposit(IERC20 token, address vault, uint256 amount, address recipient) external returns (uint256) {
-        token.transferFrom(msg.sender, vault, amount);(uint256 quotedAmountOut,) = IStandardExchangeIn(vault).exchangeIn(token, amount, IERC20(vault), 0, recipient, true, block.timestamp);
+        token.transferFrom(msg.sender, vault, amount);(uint256 quotedAmountOut,uint256 refund) = IStandardExchangeIn(vault).exchangeIn(token, amount, IERC20(vault), 0, recipient, true, block.timestamp);
+        if (refund != 0) token.transfer(msg.sender, refund);
         return quotedAmountOut;
     }
 }
@@ -85,459 +85,215 @@ contract FullSpreadLiquidityProvider {
     }
 }
 
-/// @notice Greppable attack controls inherited by both real production package families.
-/// @dev K1 live-book stray transfers are donor loss. M1/M2 have no arbitrary-call surface;
-/// N1 has no bond hook. O1/O2 have no Permit2 user entry; share permit remains tested.
-/// M3 is closed by removing imported increases; import custody/allowance controls are family-specific.
+/// @notice A0/I/E6/J/H security controls under the V3 accounting PRD.
+/// @dev Same-pool manipulation exposure is accepted by ACC-18; booked custody
+/// cannot subsidize funding. No retired sleeve or SY route is restored.
 abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExchangeReleaseBehavior {
     function _seedMarket() internal virtual;
-    function _setDecimalFixture(uint8 da, uint8 db, bool failing) internal virtual;
+    function _setDecimalFixture(uint8 da,uint8 db,bool failing) internal virtual;
+    function _expectedAddedLiquidity(uint256 a,uint256 b) internal view virtual returns (uint128);
 
-    function test_A0_dustFirstMint_reverts_sixDecimals() public { _decimalBoundary(6,6,false,1e3); }
-    function test_A0_floor_sixEighteen() public { _decimalBoundary(6,18,false,1e9); }
-    function test_A0_floor_oddDecimalSum() public { _decimalBoundary(6,9,false,1e4); }
-    function test_A0_floor_decimalSumBelowSix() public { _decimalBoundary(2,3,false,1); }
-    /// @dev D34: no metadata fallback. A token whose `decimals()` reverts surfaces its own revert on
-    ///      the first-mint floor check, both in preview and in execution, with no state change.
-    function test_A0_revertingMetadata_propagatesDependencyRevert_D34() public {
-        _setDecimalFixture(18,18,true); _configureSleeve(1e18);
-        _fund(asset0,address(this),1e15+1); _fund(asset1,address(this),1e15+1);
-        asset0.approve(address(subject),1e15+1); asset1.approve(address(subject),1e15+1);
-        vm.expectRevert(bytes("metadata unavailable"));
-        IStandardExchangeInMulti(address(subject)).previewExchangeInManyToOne(_tokens(),_amounts(1e15,1e15),IERC20(address(subject)));
-        vm.expectRevert(bytes("metadata unavailable"));
-        IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(_tokens(),_amounts(1e15,1e15),IERC20(address(subject)),0,address(this),false,block.timestamp);
-        assertEq(subject.totalSupply(),0); _bookMatchesBalances();
+    function _join(uint256 a,uint256 b,address recipient) internal returns (uint256 shares) { (shares,)=_bundleDeposit(a,b,recipient); }
+    function _decimalBoundary(uint8 da,uint8 db,bool failing) private {
+        _setDecimalFixture(da,db,failing); _fund(asset0,address(this),1001); _fund(asset1,address(this),1001);
+        uint128 atFloor=_expectedAddedLiquidity(1000,1000); assertLe(atFloor,1000);
+        (uint256 quote,)=IStandardExchangeBundleIn(address(subject)).previewExchangeBundleInForSingleOut(_array(1000,1000),address(subject)); assertEq(quote,0);
+        asset0.approve(address(subject),1001); asset1.approve(address(subject),1001);
+        _reject(abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,(_array(1000,1000),address(subject),0,address(this),false,block.timestamp)),abi.encodeWithSelector(IVault.MinLiquidityNotMet.selector));
+        uint128 added=_expectedAddedLiquidity(1001,1001); assertGt(added,1000);
+        (quote,)=IStandardExchangeBundleIn(address(subject)).previewExchangeBundleInForSingleOut(_array(1001,1001),address(subject));
+        assertEq(quote,uint256(added)-1000); assertEq(_join(1001,1001,address(this)),quote);
+        assertEq(subject.balanceOf(address(0)),1000); assertEq(subject.balanceOf(address(0xdEaD)),0); assertEq(subject.totalSupply(),added); _assertAccounting();
     }
-    function _decimalBoundary(uint8 da,uint8 db,bool failing,uint256 minimum) private {
-        _setDecimalFixture(da,db,failing); _configureSleeve(1e18);
-        _fund(asset0,address(this),minimum+1); _fund(asset1,address(this),minimum+1);
-        asset0.approve(address(subject),minimum+1); asset1.approve(address(subject),minimum+1);
-        bytes memory expected=abi.encodeWithSelector(StandardExchangeConstantProduct.InsufficientMinimumLiquidity.selector,minimum,minimum);
-        vm.expectRevert(expected);
-        IStandardExchangeInMulti(address(subject)).previewExchangeInManyToOne(_tokens(),_amounts(minimum,minimum),IERC20(address(subject)));
-        vm.expectRevert(expected);
-        IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(_tokens(),_amounts(minimum,minimum),IERC20(address(subject)),0,address(this),false,block.timestamp);
-        assertEq(subject.totalSupply(),0); _bookMatchesBalances();
-        assertEq(IStandardExchangeInMulti(address(subject)).previewExchangeInManyToOne(_tokens(),_amounts(minimum+1,minimum+1),IERC20(address(subject))),1);
-        assertEq(_join(minimum+1,minimum+1,address(this)),1);
-        assertEq(subject.balanceOf(address(0xdEaD)),minimum); assertEq(subject.totalSupply(),minimum+1);
-    }
-
-    function _tokens() internal view returns (address[] memory tokens) {
-        tokens = new address[](2); tokens[0] = address(asset0); tokens[1] = address(asset1);
-    }
-    function _amounts(uint256 a, uint256 b) internal pure returns (uint256[] memory amounts) {
-        amounts = new uint256[](2); amounts[0] = a; amounts[1] = b;
-    }
-    function _join(uint256 a, uint256 b, address recipient) internal returns (uint256) {
-        asset0.approve(address(subject), a); asset1.approve(address(subject), b);
-        return IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(
-            _tokens(), _amounts(a,b), IERC20(address(subject)), 0, recipient, false, block.timestamp);
-    }
-    function _bookMatchesBalances() internal view {
-        assertEq(subject.reserveOfToken(address(asset0)), asset0.balanceOf(address(subject)));
-        assertEq(subject.reserveOfToken(address(asset1)), asset1.balanceOf(address(subject)));
-        assertEq(subject.reserveOfToken(address(subject)), subject.balanceOf(address(subject)));
-    }
-    function test_A0_dustFirstMint_reverts() public {
-        _fund(asset0, address(this), 1e15); _fund(asset1, address(this), 1e15);
-        asset0.approve(address(subject), 1e15); asset1.approve(address(subject), 1e15);
-        bytes memory expected = abi.encodeWithSelector(StandardExchangeConstantProduct.InsufficientMinimumLiquidity.selector, 1e15, 1e15);
-        vm.expectRevert(expected);
-        IStandardExchangeInMulti(address(subject)).previewExchangeInManyToOne(_tokens(), _amounts(1e15,1e15), IERC20(address(subject)));
-        vm.expectRevert(expected);
-        IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(_tokens(), _amounts(1e15,1e15), IERC20(address(subject)), 0, address(this), false, block.timestamp);
-        assertEq(subject.totalSupply(), 0); _bookMatchesBalances();
-    }
-    function test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked() public {
-        _activationBoundary(false);
-    }
-    function test_A0_minimumPlusOne_previewAndExecution_blocked() public {
-        _activationBoundary(true);
-    }
+    function test_A0_fixedFloor_sixDecimals() public { _decimalBoundary(6,6,false); }
+    function test_A0_fixedFloor_sixEighteen() public { _decimalBoundary(6,18,false); }
+    function test_A0_fixedFloor_oddDecimalSum() public { _decimalBoundary(6,9,false); }
+    function test_A0_fixedFloor_decimalSumBelowSix() public { _decimalBoundary(2,3,false); }
+    function test_A0_revertingDecimalsDoesNotAffectLiquidityFloor() public { _decimalBoundary(18,18,true); }
+    function test_A0_dustFirstMint_reverts() public { _decimalBoundary(18,18,false); }
     function _activationBoundary(bool blocked) private {
-        if (blocked) _seedMarket(); // V3 flash requires a live external pool.
-        uint256 amount = 1e15 + 1;
-        bytes memory preview = abi.encodeCall(IStandardExchangeInMulti.previewExchangeInManyToOne,
-            (_tokens(), _amounts(amount,amount), IERC20(address(subject))));
-        uint256 quote = blocked ? _locked(preview, asset0, 0) : _execute(preview);
-        assertEq(quote, 1); assertEq(subject.totalSupply(), 0);
-        if (blocked) {
-            _fund(asset0, address(lockedCaller), amount); _fund(asset1, address(lockedCaller), amount);
-            bytes memory data = abi.encodeCall(IStandardExchangeInMulti.exchangeInManyToOne,
-                (_tokens(), _amounts(amount,amount), IERC20(address(subject)), quote, address(this), true, block.timestamp));
-            assertEq(lockedCaller.run(address(subject), data, _tokens(), _amounts(amount,amount)), quote);
-        } else {
-            _fund(asset0, address(this), amount); _fund(asset1, address(this), amount);
-            assertEq(_join(amount, amount, address(this)), quote);
-        }
-        assertEq(subject.balanceOf(address(0xdEaD)), 1e15); assertEq(subject.totalSupply(), amount);
+        if(blocked) _seedMarket();
+        uint256 amount=1001; uint128 added=_expectedAddedLiquidity(amount,amount);
+        bytes memory preview=abi.encodeCall(IStandardExchangeBundleIn.previewExchangeBundleInForSingleOut,(_array(amount,amount),address(subject)));
+        uint256 quote=blocked?_locked(preview,asset0,0):_execute(preview); assertEq(quote,uint256(added)-1000); assertEq(subject.totalSupply(),0);
+        if(blocked) {
+            _fund(asset0,address(lockedCaller),amount); _fund(asset1,address(lockedCaller),amount);
+            bytes memory data=abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,(_array(amount,amount),address(subject),quote,address(this),true,block.timestamp));
+            bytes32 beforeState=_stateDigest(); vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_BoundPoolInteractionBlocked()"));
+            lockedCaller.run(address(subject),data,_outputTokens(),_array(amount,amount)); assertEq(_stateDigest(),beforeState);
+        } else { _fund(asset0,address(this),amount); _fund(asset1,address(this),amount); assertEq(_join(amount,amount,address(this)),quote); assertEq(subject.balanceOf(address(0)),1000); }
     }
-    function test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf() public {
-        _configureSleeve(1e18); _seedMarket();
-        address attacker = makeAddr("first-minter"); address victim = makeAddr("victim");
-        uint256 first = 1e15 + 1; uint256 donation = 1 ether;
-        _fund(asset0, attacker, first + donation); _fund(asset1, attacker, first + donation);
-        _fund(asset0, victim, donation); _fund(asset1, victim, donation);
-        uint256 before0 = asset0.balanceOf(attacker); uint256 before1 = asset1.balanceOf(attacker);
-        vm.startPrank(attacker); _join(first, first, attacker);
-        asset0.transfer(address(subject), donation); asset1.transfer(address(subject), donation); vm.stopPrank();
-        vm.startPrank(victim); _join(donation, donation, victim); vm.stopPrank();
-        (uint256 out0,uint256 out1)=_exitFirstMinter(attacker);
-        assertLe(asset0.balanceOf(attacker), before0); assertLe(asset1.balanceOf(attacker), before1);
-        assertLe(out0, first + donation); assertLe(out1, first + donation);
+    function test_A0_minimumPlusOne_previewAndExecution_idle() public { _activationBoundary(false); }
+    function test_A0_minimumPlusOne_previewAndBlockedExecutionAtomic() public { _activationBoundary(true); }
+    function test_A0_firstMintDonationVictimJoinCannotInflateAttacker() public {
+        _seedMarket(); address attacker=makeAddr("first-minter"); address victim=makeAddr("victim"); uint256 first=1001; uint256 donation=1 ether;
+        _fund(asset0,attacker,first+donation); _fund(asset1,attacker,first+donation); _fund(asset0,victim,donation); _fund(asset1,victim,donation);
+        vm.startPrank(attacker); _join(first,first,attacker); asset0.transfer(address(subject),donation); asset1.transfer(address(subject),donation); vm.stopPrank();
+        vm.startPrank(victim); _join(donation,donation,victim); vm.stopPrank();
+        uint256 shares=subject.balanceOf(attacker); assertLt(shares*2,subject.totalSupply());
+        vm.prank(attacker); (uint256[] memory paid,)=IStandardExchangeBundleOut(address(subject)).exchangeBundleOut(address(subject),shares,_outputTokens(),_array(0,0),attacker,false,block.timestamp);
+        assertEq(subject.balanceOf(attacker),0); assertLe(paid[0],first); assertLe(paid[1],first);
+        assertLe(asset0.balanceOf(attacker),first+donation); assertLe(asset1.balanceOf(attacker),first+donation); _assertAccounting();
     }
-    function _exitFirstMinter(address attacker) private returns(uint256 out0,uint256 out1) {
-        uint256 shares=subject.balanceOf(attacker);uint256 supply=subject.totalSupply();
-        assertLt(shares*2,supply);
-        out0=asset0.balanceOf(address(subject))*shares/supply;out1=asset1.balanceOf(address(subject))*shares/supply;
-        vm.startPrank(attacker);subject.approve(address(subject),shares);
-        uint256 burned=IStandardExchangeOutMulti(address(subject)).exchangeOutOneToMany(
-            IERC20(address(subject)),shares,_tokens(),_amounts(out0,out1),attacker,false,block.timestamp);
-        vm.stopPrank();assertEq(burned,shares);assertEq(subject.balanceOf(attacker),0);
-    }
-    function test_A0_residualDeadShares_firstMinterNotWhole() public {
-        _configureSleeve(1e18);
-        _fund(asset0, address(subject), 10 ether); _fund(asset1, address(subject), 10 ether);
-        _fund(asset0, address(this), 10 ether); _fund(asset1, address(this), 10 ether);
-        uint256 issued = _join(10 ether,10 ether,address(this));
-        assertEq(issued, 10 ether - 1e15);
-        assertEq(subject.balanceOf(address(0xdEaD)), issued + 1e15);
-        assertEq(subject.totalSupply(), 2 * issued + 1e15);
+    function test_A0_ambientCustodyDoesNotMintResidualDeadShares() public {
+        _stageInput(asset0,10 ether); _stageInput(asset1,10 ether); _fund(asset0,address(this),10 ether); _fund(asset1,address(this),10 ether);
+        uint128 added=_expectedAddedLiquidity(10 ether,10 ether); uint256 issued=_join(10 ether,10 ether,address(this));
+        assertEq(issued,uint256(added)-1000); assertEq(subject.totalSupply(),added); assertEq(subject.balanceOf(address(0)),1000); assertEq(subject.balanceOf(address(0xdEaD)),0);
+        assertEq(asset0.balanceOf(address(subject)),10 ether); assertEq(asset1.balanceOf(address(subject)),10 ether); assertEq(_bookedBalance(0),0); assertEq(_bookedBalance(1),0); _assertAccounting();
     }
     function test_I_routerTransferFromUserToVault() public {
-        _bootstrap(); FullSpreadTransferRouter router = new FullSpreadTransferRouter();
-        address user = makeAddr("router-user"); _fund(asset0,user,25 ether);
-        vm.startPrank(user); asset0.approve(address(router),25 ether);
-        uint256 shares = router.deposit(asset0,address(subject),25 ether,user); vm.stopPrank();
-        assertGt(shares,0); assertEq(subject.balanceOf(user),shares);
-        assertEq(asset0.balanceOf(user),0); assertEq(asset0.balanceOf(address(router)),0);
-        assertEq(subject.balanceOf(address(router)),0); _bookMatchesBalances();
+        _bootstrap(); FullSpreadTransferRouter router=new FullSpreadTransferRouter(); address user=makeAddr("router-user"); _fund(asset0,user,25 ether);
+        (uint256 quote,uint256 refund)=subject.previewExchangeIn(asset0,25 ether,IERC20(address(subject)));
+        vm.startPrank(user); asset0.approve(address(router),25 ether); uint256 issued=router.deposit(asset0,address(subject),25 ether,user); vm.stopPrank();
+        assertEq(issued,quote); assertGt(issued,0); assertEq(subject.balanceOf(user),issued); assertEq(asset0.balanceOf(user),refund); assertEq(asset0.balanceOf(address(router)),0); assertEq(subject.balanceOf(address(router)),0); _assertAccounting();
     }
-    function test_I1_pretransferredTrue_noDelivery_noFreeMint() public {
-        _bootstrap();
-        bytes memory data = _depositCall(asset0, 25 ether, FALSE_DEPOSITOR);
-        vm.startPrank(FALSE_DEPOSITOR);
-        _reject(data, abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
-        vm.stopPrank();
-        _reject(data, _deliveryError(25 ether, 0));
-        assertEq(subject.balanceOf(FALSE_DEPOSITOR),0);
+    function test_I1_pretransferredTrue_noDelivery_noFreeMint() public { _falseDeposit(true); }
+    function test_I2_shortPushRefundsWithoutShares() public { _wrongTransfer(24 ether); }
+    function test_I2_excessExactIn_creditsRequestedOnly() public { test_APEX001M_excessPushedTransferCreditsRequestedOnly(); }
+    function test_I2_bundleOneExcessLegCreditsDeclaredAmountsOnly() public {
+        _bootstrap(); AtomicPretransferCaller caller=new AtomicPretransferCaller(); _stageInput(asset0,10 ether); _stageInput(asset1,11 ether);
+        (uint256 quote,uint256[] memory refunds)=IStandardExchangeBundleIn(address(subject)).previewExchangeBundleInForSingleOut(_array(10 ether,10 ether),address(subject));
+        (uint256 issued,uint256[] memory paidRefunds)=abi.decode(caller.execute(address(subject),abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,(_array(10 ether,10 ether),address(subject),quote,FALSE_DEPOSITOR,true,block.timestamp))),(uint256,uint256[]));
+        assertEq(issued,quote); assertEq(paidRefunds,refunds); assertEq(subject.balanceOf(FALSE_DEPOSITOR),issued);
+        assertEq(asset0.balanceOf(address(caller)),refunds[0]); assertEq(asset1.balanceOf(address(caller)),refunds[1]); assertEq(asset1.balanceOf(address(subject))-_bookedBalance(1),1 ether); _assertAccounting();
     }
-    function test_I2_shortPush_pretransferred_claimedGtDelta_reverts() public { _wrongTransfer(24 ether); }
-    function test_I2_excessExactIn_creditsRequestedOnly() public {
-        _bootstrap();
-        bytes memory data = _depositCall(asset0, 25 ether, address(this));
-        _fund(asset0, address(this), 26 ether);
-        asset0.transfer(address(subject), 26 ether);
-        uint256 minted = _execute(data);
-        assertGt(minted, 0);
-        assertEq(asset0.balanceOf(address(this)), 0);
-    }
-    function test_I2_dualJoinOneExcessLeg_creditsRequestedOnly() public {
-        _bootstrap(); _fund(asset0,address(this),10 ether); _fund(asset1,address(this),11 ether);
-        asset0.transfer(address(subject),10 ether); asset1.transfer(address(subject),11 ether);
-        uint256 minted = IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(
-            _tokens(), _amounts(10 ether, 10 ether), IERC20(address(subject)), 0, address(this), true, block.timestamp);
-        assertGt(minted, 0);
-        assertEq(asset1.balanceOf(address(this)), 0);
-    }
-    function test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer() public { test_pullAndPushedDepositsAfterPriceMovement(); }
+    function test_I3_consumedPushCannotFundSecondUnpaidMint() public { test_pullAndPushedDepositsAfterPriceMovement(); }
     function test_L1_poolTradeThenFalsePretransfer_noCredit() public { _falseDeposit(true); }
     function test_L3_spotSkew_noUnfundedMint() public { _falseDeposit(false); }
-    function test_I_reserveOfTokenWrittenAfterRebalanceAndSwap() public {
-        _bootstrap(); _trade(true,10 ether); _rebalance(); _bookMatchesBalances();
-        _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);subject.exchangeIn(asset0,1 ether,asset1,0,address(this),false,block.timestamp);
-        _bookMatchesBalances(); _reject(_depositCall(asset0,1 ether,FALSE_DEPOSITOR),_deliveryError(1 ether,0));
+    function test_I_reservesExcludeCustodyAfterSwapAndFeeBooking() public {
+        _bootstrap(); _trade(true,10 ether); _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);
+        subject.exchangeIn(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp); assertGt(_bookedBalance(0),0); _assertAccounting(); _noCredit(asset0,1 ether,FALSE_DEPOSITOR);
     }
-    function test_F5_rebalancePaysCallerNothing() public {
-        _bootstrap(); uint256 free0=asset0.balanceOf(address(subject)); uint256 free1=asset1.balanceOf(address(subject));
-        vm.prank(FALSE_DEPOSITOR); _rebalance();
+    function test_F5_maintenanceUnauthorizedCannotPayCaller() public {
+        _bootstrap(); _trade(true,10 ether); vm.startPrank(FALSE_DEPOSITOR);
+        _reject(abi.encodeCall(IVault.compound,()),abi.encodeWithSelector(IOperable.NotOperator.selector,FALSE_DEPOSITOR));
+        _reject(abi.encodeCall(IVault.donate,(address(asset0),1 ether,false)),abi.encodeWithSelector(IOperable.NotOperator.selector,FALSE_DEPOSITOR)); vm.stopPrank();
         assertEq(asset0.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset1.balanceOf(FALSE_DEPOSITOR),0); assertEq(subject.balanceOf(FALSE_DEPOSITOR),0);
-        assertApproxEqAbs(asset0.balanceOf(address(subject)),200 ether,10 ether);
-        assertApproxEqAbs(asset1.balanceOf(address(subject)),200 ether,10 ether);
-        assertEq(asset0.balanceOf(address(subject)),free0); assertEq(asset1.balanceOf(address(subject)),free1); _bookMatchesBalances();
+        uint256 supply=subject.totalSupply(); vm.prank(_feeOwner()); IVault(address(subject)).compound(); assertEq(subject.totalSupply(),supply); _assertAccounting();
     }
-    function test_H_lockedExitAfterPermissionlessRebalance() public { _lockedExit(10,190 ether); }
-    function test_H_lockedExit_onePercentOfSupply() public { _lockedExit(100,19.9 ether); }
-    function _lockedExit(uint256 divisor,uint256 expected) private {
-        _bootstrap(); vm.prank(FALSE_DEPOSITOR); _rebalance();
-        uint256 shares=subject.totalSupply()/divisor; subject.transfer(address(lockedCaller),shares);
-        bytes memory data=abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (IERC20(address(subject)),shares,asset1,0,address(this),true,block.timestamp));
-        assertApproxEqAbs(_locked(data,IERC20(address(subject)),shares),expected,5);
-        assertApproxEqAbs(asset1.balanceOf(address(this)),expected,5); _bookMatchesBalances();
+    function test_H_lockedExitAfterRetiredRebalanceRollsBack() public { test_lockedExitPreviewAvailableExecutionRollsBack(); _retired(abi.encodeWithSignature("rebalanceLiquidReserve()")); }
+    function test_H_lockedExit_onePercentOfSupplyRollsBack() public { _lockedShareExit(100); }
+    function _lockedShareExit(uint256 divisor) private {
+        _bootstrap(); uint256 shares=subject.balanceOf(address(this))/divisor; subject.transfer(address(lockedCaller),shares); bytes32 beforeState=_stateDigest();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_BoundPoolInteractionBlocked()"));
+        _locked(abi.encodeCall(IStandardExchangeIn.exchangeIn,(IERC20(address(subject)),shares,asset1,0,address(this),false,block.timestamp)),asset0,0); assertEq(_stateDigest(),beforeState);
     }
-    function test_H_positiveSleeveInsufficientCapacity_rollsBack() public { _lockedInsufficient(0.2e18); }
-    function test_H_zeroSleeveCanBlockLockedExit() public { _lockedInsufficient(0); }
-    function _lockedInsufficient(uint256 pct) private {
-        _bootstrap(); _configureSleeve(pct); _rebalance();
-        uint256 shares=subject.totalSupply()/4; subject.transfer(address(lockedCaller),shares);
-        uint256 supply=subject.totalSupply(); uint256 free=asset1.balanceOf(address(subject));
-        // The forward quote itself checks sleeve capacity; use independent CP entitlement.
-        uint256 required=_independentSingleExit(shares,supply);
-        bytes memory expected=abi.encodeWithSignature(string.concat(_family(),"Exchange_InsufficientLocalReserve(address,uint256,uint256)"),address(asset1),required,free);
-        bytes memory data=abi.encodeCall(IStandardExchangeIn.exchangeIn,(IERC20(address(subject)),shares,asset1,0,address(this),true,block.timestamp));
-        vm.expectRevert(expected); _locked(data,IERC20(address(subject)),shares);
-        assertEq(subject.balanceOf(address(lockedCaller)),shares); assertEq(subject.totalSupply(),supply);
-        assertEq(asset1.balanceOf(address(subject)),free); _bookMatchesBalances();
-    }
-    function _independentSingleExit(uint256 shares,uint256 supply) private view returns (uint256) {
-        (uint256 deployed0,uint256 deployed1)=_deployed();
-        uint256 totalOut=asset1.balanceOf(address(subject))+deployed1;
-        uint256 totalOther=asset0.balanceOf(address(subject))+deployed0;
-        uint256 first=totalOut*shares/supply;
-        uint256 other=totalOther*shares/supply;
-        return first+(totalOut-first)*other/totalOther;
-    }
+    function test_H_positiveLegacySleeveCannotEnableLockedExit() public { _configureSleeve(0.2e18); _lockedShareExit(4); }
+    function test_H_zeroLegacySleeveCannotEnableLockedExit() public { _configureSleeve(0); _lockedShareExit(4); }
     function test_L2_FoT_forbidden() public {
-        _seedMarket(); DeliveryTestToken(address(asset1)).setFee(true);
-        _fund(asset0,address(this),100 ether); _fund(asset1,address(this),100 ether);
-        asset0.approve(address(subject),100 ether); asset1.approve(address(subject),100 ether);
-        bytes memory data=abi.encodeCall(IStandardExchangeInMulti.exchangeInManyToOne,
-            (_tokens(),_amounts(100 ether,100 ether),IERC20(address(subject)),0,address(this),false,block.timestamp));
-        _reject(data,_deliveryError(100 ether,99 ether));
-        assertEq(subject.totalSupply(),0); assertEq(asset0.balanceOf(address(this)),100 ether); assertEq(asset1.balanceOf(address(this)),100 ether);
-        assertEq(asset0.allowance(address(this),address(subject)),100 ether); assertEq(asset1.allowance(address(this),address(subject)),100 ether); _bookMatchesBalances();
+        DeliveryTestToken(address(asset1)).setFee(true); _fund(asset0,address(this),100 ether); _fund(asset1,address(this),100 ether); asset0.approve(address(subject),100 ether); asset1.approve(address(subject),100 ether);
+        _reject(abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,(_array(100 ether,100 ether),address(subject),0,address(this),false,block.timestamp)),_deliveryError(100 ether,99 ether));
+        assertEq(subject.totalSupply(),0); assertEq(asset0.balanceOf(address(this)),100 ether); assertEq(asset1.balanceOf(address(this)),100 ether); assertEq(asset0.allowance(address(this),address(subject)),100 ether); assertEq(asset1.allowance(address(this),address(subject)),100 ether);
     }
-    function test_C1_nestedMoneyPaths_recordedAndPropagating() public {
-        _bootstrap(); DeliveryTestToken token=DeliveryTestToken(address(asset1));
-        _fund(asset1,address(this),60 ether); asset1.approve(address(subject),60 ether);
-        bytes[3] memory calls_=[_depositCall(asset1,1 ether,FALSE_DEPOSITOR),
-            abi.encodeCall(IStandardExchangeOut.exchangeOut,(asset1,1 ether,asset0,1,FALSE_DEPOSITOR,false,block.timestamp)),
-            abi.encodeWithSignature("rebalanceLiquidReserve()")];
-        for(uint256 i;i<calls_.length;++i){
+    function test_C1_nestedCurrentMoneyPathsRecordedAndPropagating() public {
+        _bootstrap(); DeliveryTestToken token=DeliveryTestToken(address(asset1)); _fund(asset1,address(this),60 ether); asset1.approve(address(subject),60 ether);
+        bytes[3] memory calls_=[_depositCall(asset1,1 ether,FALSE_DEPOSITOR),abi.encodeCall(IStandardExchangeBundleOut.exchangeBundleOut,(address(subject),1 ether,_outputTokens(),_array(0,0),FALSE_DEPOSITOR,false,block.timestamp)),abi.encodeCall(IVault.compound,())];
+        for(uint256 i;i<calls_.length;++i) {
             token.setCallback(address(subject),calls_[i]); token.setCallbackPropagates(false);
-            (uint256 exchangeAmountOut1,) = subject.exchangeIn(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp);
-            assertGt(exchangeAmountOut1,0);
-            assertEq(token.callbackError(),abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
-            assertEq(subject.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset0.balanceOf(FALSE_DEPOSITOR),0);
+            (uint256 issued,)=subject.exchangeIn(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp); assertGt(issued,0);
+            assertEq(token.callbackError(),abi.encodeWithSelector(IReentrancyLock.IsLocked.selector)); assertEq(subject.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset0.balanceOf(FALSE_DEPOSITOR),0);
             token.setCallbackPropagates(true);
-            uint256 allowance_=asset1.allowance(address(this),address(subject)); uint256 balance_=asset1.balanceOf(address(this));
-            bytes memory outer=abi.encodeCall(IStandardExchangeIn.exchangeIn,(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp));
-            _reject(outer,abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
-            assertEq(asset1.allowance(address(this),address(subject)),allowance_); assertEq(asset1.balanceOf(address(this)),balance_); _bookMatchesBalances();
+            _reject(abi.encodeCall(IStandardExchangeIn.exchangeIn,(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp)),abi.encodeWithSelector(IReentrancyLock.IsLocked.selector)); _assertAccounting();
         }
     }
-    function test_CROPS_disableInboundStillAllowsExitAndSY() public {
+    function test_CROPS_disabledCallerExitAllowedExactOutAndSYUnavailable() public {
         _bootstrap(); _disable(true,false);
-        uint256 used=subject.exchangeOut(IERC20(address(subject)),10 ether,asset1,1 ether,address(this),false,block.timestamp);
-        assertGt(used,0); assertGt(IStandardizedYield(address(subject)).redeem(address(this),1 ether,address(asset1),0,false),0);
+        (uint256 paid,)=subject.exchangeIn(IERC20(address(subject)),1 ether,asset1,0,address(this),false,block.timestamp); assertGt(paid,0);
+        _reject(abi.encodeCall(IStandardExchangeOut.exchangeOut,(IERC20(address(subject)),10 ether,asset1,1 ether,address(this),false,block.timestamp)),abi.encodeWithSignature("VaultDisabled(address)",address(subject)));
+        _retired(abi.encodeCall(IStandardizedYield.redeem,(address(this),1 ether,address(asset1),0,false)));
         _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);
-        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)",address(subject)));subject.exchangeIn(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp);
-    }
-    struct RefundCase {
-        IERC20 input;
-        uint256 used;
-        uint256 maximum;
-        uint256 delivered;
-        uint256 booked;
-        uint256 payerAfterTransfer;
-        uint256 supply;
-        bytes data;
+        _reject(abi.encodeCall(IStandardExchangeIn.exchangeIn,(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp)),abi.encodeWithSignature("VaultDisabled(address)",address(subject)));
     }
     function _refundFixture() private {
-        _configureSleeve(1e18); _seedMarket();
-        _fund(asset0,address(this),1000 ether); _fund(asset1,address(this),1000 ether);
-        _join(1000 ether,1000 ether,address(this));
-        subject.transfer(address(subject),50 ether); _rebalance();
-        (uint256 deployed0,uint256 deployed1)=_deployed(); assertEq(deployed0,0); assertEq(deployed1,0);
-        _bookMatchesBalances();
+        _bootstrap(); _trade(true,100 ether); _trade(false,100 ether); _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);
+        subject.exchangeIn(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp); assertGt(_bookedBalance(0),0); assertGt(_bookedBalance(1),0);
     }
-    function _refundCase(uint8 route,bool blocked,uint8 deliveryCase) private {
-        RefundCase memory c;
-        c.input=route==0?asset0:IERC20(address(subject));
-        c.booked=subject.reserveOfToken(address(c.input)); c.supply=subject.totalSupply();
-        bytes memory quote=route==2?
-            abi.encodeCall(IStandardExchangeOutMulti.previewExchangeOutOneToMany,(c.input,_tokens(),_amounts(10 ether,10 ether))):
-            abi.encodeCall(IStandardExchangeOut.previewExchangeOut,(c.input,asset1,10 ether));
-        c.used=blocked?_locked(quote,asset0,0):_execute(quote); assertGt(c.used,0);
-        c.maximum=c.used*4;
-        // 0: used only; 1: used < actual < max; 2: max; 3: over max; 4: short; 5: none.
-        c.delivered=deliveryCase==0?c.used:deliveryCase==1?c.used*2:deliveryCase==2?c.maximum:deliveryCase==3?c.maximum+c.used:deliveryCase==4?c.used-1:0;
-        c.data=route==2?
-            abi.encodeCall(IStandardExchangeOutMulti.exchangeOutOneToMany,(c.input,c.maximum,_tokens(),_amounts(10 ether,10 ether),FALSE_DEPOSITOR,true,block.timestamp)):
-            abi.encodeCall(IStandardExchangeOut.exchangeOut,(c.input,c.maximum,asset1,10 ether,FALSE_DEPOSITOR,true,block.timestamp));
-        address payer=blocked?address(lockedCaller):address(this);
-        if(route==0) _fund(c.input,payer,c.delivered);
-        else if(blocked) subject.transfer(payer,c.delivered);
-        uint256 payerBefore=c.input.balanceOf(payer);
-        if(!blocked) c.input.transfer(address(subject),c.delivered);
-        c.payerAfterTransfer=payerBefore-c.delivered;
-        uint256 entryBalance0=asset0.balanceOf(address(subject)); uint256 entryBalance1=asset1.balanceOf(address(subject));
-        if(deliveryCase>=4){
-            if(blocked){vm.expectRevert(_deliveryError(c.used,c.delivered));_locked(c.data,c.input,c.delivered);}
-            else _reject(c.data,_deliveryError(c.used,c.delivered));
-            assertEq(c.input.balanceOf(payer),blocked?payerBefore:c.payerAfterTransfer);
-            assertEq(subject.totalSupply(),c.supply); assertEq(subject.reserveOfToken(address(c.input)),c.booked);
-            assertEq(asset0.balanceOf(address(subject)),entryBalance0); assertEq(asset1.balanceOf(address(subject)),entryBalance1);
-            return;
+    function _refundCase(bool blocked,uint8 mode) private {
+        uint256 maximum=25 ether; uint256 delivered=mode==0?1 ether:mode==1?12 ether:mode==2?maximum:mode==3?maximum+1 ether:mode==4?maximum-1:0;
+        uint256 booked=_bookedBalance(0); uint256 supply=subject.totalSupply();
+        bytes memory data=_depositCall(asset0,maximum,FALSE_DEPOSITOR);
+        if(blocked) {
+            _fund(asset0,address(lockedCaller),delivered); bytes32 beforeState=_stateDigest();
+            if(delivered>=maximum) { vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_BoundPoolInteractionBlocked()")); _locked(data,asset0,delivered); assertEq(_stateDigest(),beforeState); }
+            else { assertEq(_locked(data,asset0,delivered),0); assertEq(asset0.balanceOf(address(lockedCaller)),delivered); }
+            assertEq(subject.totalSupply(),supply); assertEq(_bookedBalance(0),booked);
+        } else {
+            AtomicPretransferCaller caller=new AtomicPretransferCaller(); (uint256 quote,uint256 expectedRefund)=subject.previewExchangeIn(asset0,maximum,IERC20(address(subject)));
+            (uint256 issued,uint256 refund)=_push(caller,asset0,delivered,data);
+            if(delivered<maximum) { assertEq(issued,0); assertEq(refund,delivered); assertEq(subject.totalSupply(),supply); assertEq(_bookedBalance(0),booked); }
+            else { assertEq(issued,quote); assertEq(refund,expectedRefund); assertEq(subject.balanceOf(FALSE_DEPOSITOR),quote); assertGe(_bookedBalance(0),booked); }
+            assertEq(asset0.balanceOf(address(caller)),refund,"only current input refunded");
         }
-        uint256 used=blocked?_locked(c.data,c.input,c.delivered):_execute(c.data);
-        assertEq(used,c.used);
-        uint256 capped=c.delivered<c.maximum?c.delivered:c.maximum;
-        assertEq(c.input.balanceOf(payer),c.payerAfterTransfer+capped-c.used,"refund is this-call unused inbound capped by max");
-        assertGe(asset1.balanceOf(FALSE_DEPOSITOR),10 ether);
-        if(route==2) assertEq(asset0.balanceOf(FALSE_DEPOSITOR),10 ether);
-        assertEq(subject.reserveOfToken(address(c.input)),c.booked+c.delivered-capped,"booked inventory intact");
-        assertEq(c.input.balanceOf(address(subject)),c.booked+c.delivered-capped);
-        if(route!=0) assertEq(subject.totalSupply(),c.supply-c.used);
-        _bookMatchesBalances();
-        uint256 nextUsed=blocked?_locked(quote,asset0,0):_execute(quote);
-        if(blocked){vm.expectRevert(_deliveryError(nextUsed,0));_locked(c.data,c.input,0);}
-        else _reject(c.data,_deliveryError(nextUsed,0));
+        _assertAccounting();
     }
-    function _refundMatrix(uint8 route,bool blocked) private {
-        _refundFixture();
-        for(uint8 i;i<4;++i){uint256 snap=vm.snapshotState();_refundCase(route,blocked,i);assertTrue(vm.revertToState(snap));}
-    }
-    function test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked() public { _refundMatrix(0,false); }
-    function test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered() public {
-        _refundFixture(); uint256 snap=vm.snapshotState(); _refundCase(1,false,4); assertTrue(vm.revertToState(snap)); _refundCase(1,true,4);
-    }
-    function test_E6_zapOut_refundMatrix_idle() public { _refundMatrix(1,false); }
-    function test_E6_zapOut_refundMatrix_blocked() public { _refundMatrix(1,true); }
-    function test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked() public { _refundMatrix(2,false); }
-    function test_E6_dualExit_refundMatrix_blocked() public { _refundMatrix(2,true); }
-    function test_E6_dualExit_shortShares_idleAndBlocked() public {
-        _refundFixture(); uint256 snap=vm.snapshotState(); _refundCase(2,false,4); assertTrue(vm.revertToState(snap)); _refundCase(2,true,4);
-    }
-    /// @dev D9 on the zap-out execution delegate: resting self-shares from an EOA are never credited.
-    function test_APEX005_zapOut_pretransferred_eoaRejected() public {
-        _refundFixture();
-        subject.transfer(FALSE_DEPOSITOR,100 ether);
-        vm.startPrank(FALSE_DEPOSITOR);
-        subject.transfer(address(subject),100 ether);
-        bytes memory data=abi.encodeCall(IStandardExchangeOut.exchangeOut,(IERC20(address(subject)),100 ether,asset1,1 ether,FALSE_DEPOSITOR,true,block.timestamp));
-        _reject(data,abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
-        vm.stopPrank();
-        assertEq(subject.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset1.balanceOf(FALSE_DEPOSITOR),0);
-    }
-
-    function test_I1_exchangeOut_pretransferredTrue_noDelivery() public {
-        _refundFixture(); uint256 snap=vm.snapshotState();
-        _refundCase(0,false,5); assertTrue(vm.revertToState(snap)); _refundCase(1,false,5);
-    }
-    function test_I2_exchangeOut_usedGtActualIn_reverts() public {
-        _refundFixture(); uint256 snap=vm.snapshotState();
-        _refundCase(0,false,4); assertTrue(vm.revertToState(snap)); _refundCase(1,false,4);
-    }
-    function test_I3_exchangeOut_residualAfterSuccessfulPush() public { _refundFixture(); _refundCase(0,false,3); }
-
-    function test_J1_TargetSelectorsMatchFacetDeclarations() public view {
-        string[10] memory targets=[string("InTarget"),"InQueryTarget","InMultiTarget","InMultiQueryTarget","OutExecuteTarget","OutQueryTarget","OutMultiTarget","OutMultiQueryTarget","LiquidReserveTarget","PositionImportTarget"];
-        for(uint256 i;i<targets.length;++i){
-            string memory name=string.concat(_family(),"FullSpreadStandardExchangeVault",targets[i]);
-            string memory artifact=vm.readFile(string.concat("out/",name,".sol/",name,".json"));
-            string[] memory signatures=vm.parseJsonKeys(artifact,".methodIdentifiers");
-            for(uint256 j;j<signatures.length;++j){
-                bytes4 selector=bytes4(keccak256(bytes(signatures[j])));
-                if (_assertImplementationOnlySelector(selector)) continue;
-                address facet=IDiamondLoupe(address(subject)).facetAddress(selector); assertTrue(facet!=address(0),signatures[j]);
-                assertEq(IFacet(facet).facetName(), _expectedFacet(i, targets[i], selector), signatures[j]);
-                bytes4[] memory declared=IFacet(facet).facetFuncs(); bool found;
-                for(uint256 k;k<declared.length;++k) if(declared[k]==selector) found=true;
-                assertTrue(found,signatures[j]);
+    function _refundMatrix(bool blocked) private { _refundFixture(); for(uint8 i;i<6;++i) { uint256 snap=vm.snapshotState(); _refundCase(blocked,i); assertTrue(vm.revertToState(snap)); } }
+    function test_E6_oneTokenFatMaximumCannotRefundBookedCustody() public { _refundFixture(); _refundCase(false,0); }
+    function test_E6_vaultHeldSharesCannotAuthorizeCallerBurn() public { test_vaultHeldSharesCannotFundCallerWithdrawal(); }
+    function test_E6_oneTokenRefundMatrix_idle() public { _refundMatrix(false); }
+    function test_E6_oneTokenRefundMatrix_blocked() public { _refundMatrix(true); }
+    function _bundleRefund(bool shortLeg,bool blocked) private {
+        _refundFixture(); uint256 a=100 ether; uint256 b=50 ether; uint256 supply=subject.totalSupply(); uint256 booked0=_bookedBalance(0); uint256 booked1=_bookedBalance(1);
+        bytes memory data=abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,(_array(a,b),address(subject),0,FALSE_DEPOSITOR,true,block.timestamp));
+        if(blocked) {
+            _fund(asset0,address(lockedCaller),a); _fund(asset1,address(lockedCaller),b); bytes32 beforeState=_stateDigest();
+            if(shortLeg) vm.expectRevert(bytes(""));
+            else vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_BoundPoolInteractionBlocked()"));
+            lockedCaller.run(address(subject),data,_outputTokens(),_array(a,shortLeg?b-1:b)); assertEq(_stateDigest(),beforeState);
+        } else {
+            AtomicPretransferCaller caller=new AtomicPretransferCaller(); _stageInput(asset0,a); _stageInput(asset1,shortLeg?b-1:b);
+            if(shortLeg) {
+                bytes32 beforeState=_stateDigest(); (bool ok,bytes memory reason)=address(caller).call(abi.encodeCall(AtomicPretransferCaller.execute,(address(subject),data))); assertFalse(ok); assertEq(reason,bytes("")); assertEq(_stateDigest(),beforeState);
+                assertEq(subject.totalSupply(),supply); assertEq(_bookedBalance(0),booked0); assertEq(_bookedBalance(1),booked1);
+            } else {
+                (uint256 quote,uint256[] memory refunds)=IStandardExchangeBundleIn(address(subject)).previewExchangeBundleInForSingleOut(_array(a,b),address(subject));
+                (uint256 issued,uint256[] memory actual)=abi.decode(caller.execute(address(subject),data),(uint256,uint256[])); assertEq(issued,quote); assertEq(actual,refunds);
+                assertEq(asset0.balanceOf(address(caller)),refunds[0]); assertEq(asset1.balanceOf(address(caller)),refunds[1]); assertGe(_bookedBalance(0),booked0); assertGe(_bookedBalance(1),booked1);
             }
         }
+        _assertAccounting();
     }
-    function _expectedFacet(uint256 index, string memory target, bytes4 selector) private pure returns (string memory) {
-        string memory suffix = index == 4 ? "OutFacet" : string.concat(_withoutTarget(target), "Facet");
-        // Common exposes these inherited methods on every Target ABI. The package
-        // assigns each shared selector once, to its canonical facet.
-        if (selector == bytes4(keccak256("canOpenBoundPoolOps()"))
-            || selector == bytes4(keccak256("canOpenPoolManagerUnlock()"))
-            || selector == bytes4(keccak256("twapOracle()"))) suffix = "LiquidReserveFacet";
-        if (selector == bytes4(keccak256("uniswapV3MintCallback(uint256,uint256,bytes)"))
-            || selector == bytes4(keccak256("uniswapV3SwapCallback(int256,int256,bytes)"))
-            || selector == bytes4(keccak256("unlockCallback(bytes)"))) suffix = "InFacet";
-        return string.concat(_family(), "FullSpreadStandardExchangeVault", suffix);
+    function test_E6_bundleRefundCannotPayBookedCustody() public { _bundleRefund(false,false); }
+    function test_E6_bundleBlockedRefundIsAtomic() public { _bundleRefund(false,true); }
+    function test_E6_bundleShortLegRejectsBeforeEitherLeg() public {
+        uint256 snapshot=vm.snapshotState(); _bundleRefund(true,false); assertTrue(vm.revertToState(snapshot)); _bundleRefund(true,true);
     }
-    function _withoutTarget(string memory name) private pure returns (string memory) {
-        bytes memory original = bytes(name);
-        bytes memory stem = new bytes(original.length - 6);
-        for (uint256 i; i < stem.length; ++i) stem[i] = original[i];
-        return string(stem);
+    function test_APEX005_callerShareExit_pretransferredEoaRejected() public {
+        _bootstrap(); subject.transfer(FALSE_DEPOSITOR,100 ether); vm.startPrank(FALSE_DEPOSITOR); subject.transfer(address(subject),100 ether);
+        _reject(abi.encodeCall(IStandardExchangeIn.exchangeIn,(IERC20(address(subject)),100 ether,asset1,0,FALSE_DEPOSITOR,true,block.timestamp)),abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector)); vm.stopPrank(); assertEq(asset1.balanceOf(FALSE_DEPOSITOR),0);
     }
-    function test_J2_allTargetSelectorsInstalledOnProxy() public view { test_everyTargetSelectorIsInstalledOnRegistryProxy(); }
+    function test_I1_exactOutputNoDeliveryUnavailable() public { _bootstrap(); _unavailableOut(asset0,asset1,true); _unavailableOut(IERC20(address(subject)),asset1,true); }
+    function test_I2_oversizedOneTokenMaximumRefundsActualOnly() public { _refundFixture(); _refundCase(false,4); }
+    function test_I3_exactOutputCannotReplayStagedInput() public { _bootstrap(); _stageInput(asset0,25 ether); _unavailableOut(asset0,asset1,true); _unavailableOut(asset0,asset1,true); }
+    function test_J1_currentTargetSelectorsHaveUniqueFacetOwners() public view { test_everyCurrentTargetSelectorIsInstalledOnRegistryProxy(); }
+    function test_J2_allCurrentTargetSelectorsInstalledOnProxy() public view { test_everyCurrentTargetSelectorIsInstalledOnRegistryProxy(); }
     function test_J3_proxyFundedMoneyPathsAndRemovedPrepare() public {
-        test_proxyRemovedPreparationSurface(); _bootstrap();
-        _fund(asset0,address(this),10 ether); asset0.approve(address(subject),10 ether);(uint256 quote,) = subject.previewExchangeIn(asset0,10 ether,IERC20(address(subject)));
-        (uint256 exchangeAmountOut2,) = subject.exchangeIn(asset0,10 ether,IERC20(address(subject)),quote,address(this),false,block.timestamp);
-        assertEq(exchangeAmountOut2,quote);
-        uint256 used=subject.previewExchangeOut(IERC20(address(subject)),asset1,1 ether);
-        assertEq(subject.exchangeOut(IERC20(address(subject)),used,asset1,1 ether,address(this),false,block.timestamp),used);
-        _bookMatchesBalances();
+        test_proxyRemovedPreparationSurface(); _bootstrap(); _fund(asset0,address(this),10 ether); asset0.approve(address(subject),10 ether);
+        (uint256 quote,)=subject.previewExchangeIn(asset0,10 ether,IERC20(address(subject))); (uint256 issued,)=subject.exchangeIn(asset0,10 ether,IERC20(address(subject)),quote,address(this),false,block.timestamp); assertEq(issued,quote);
+        (uint256 exitQuote,)=subject.previewExchangeIn(IERC20(address(subject)),issued,asset1); (uint256 paid,)=subject.exchangeIn(IERC20(address(subject)),issued,asset1,exitQuote,FALSE_DEPOSITOR,false,block.timestamp); assertEq(paid,exitQuote); _unavailableOut(IERC20(address(subject)),asset1,false); _assertAccounting();
     }
-
-    function test_J3_queryAndNativeSYProductSelectors() public {
-        _bootstrap();
-        string[13] memory views_ = [string("assetInfo()"), "deployedReserve()", "exchangeRate()",
-            "getRewardTokens()", "getTokensIn()", "getTokensOut()", "rewardIndexesCurrent()",
-            "rewardIndexesStored()", "targetLiquidReservePercentage()", "yieldToken()",
-            "totalSupply()", "name()", "symbol()"];
-        for (uint256 i; i < views_.length; ++i) _surfaceCall(abi.encodeWithSignature(views_[i]));
-        _surfaceCall(abi.encodeWithSignature("accruedRewards(address)", address(this)));
-        _surfaceCall(abi.encodeWithSignature("claimRewards(address)", address(this)));
-        _surfaceCall(abi.encodeWithSignature("actualLiquidReservePercentage(address)", address(asset0)));
-        _surfaceCall(abi.encodeWithSignature("localReserve(address)", address(asset0)));
-        _surfaceCall(abi.encodeWithSignature("isValidTokenIn(address)", address(asset0)));
-        _surfaceCall(abi.encodeWithSignature("isValidTokenOut(address)", address(asset1)));
-        _surfaceCall(abi.encodeWithSignature("previewDeposit(address,uint256)", address(asset0), 1 ether));
-        _surfaceCall(abi.encodeWithSignature("previewRedeem(address,uint256)", address(asset1), 1 ether));
-        bytes memory encoded = _surfaceCall(abi.encodeWithSignature("quoteState(address,address)", address(asset0), address(this)));
-        (bytes memory state,) = abi.decode(encoded, (bytes,uint256));
-        _surfaceCall(abi.encodeWithSignature("quoteTotalSupply(bytes)", state));
-        _surfaceCall(abi.encodeWithSignature("quoteShareBalance(bytes)", state));
-        _surfaceCall(abi.encodeWithSignature("quoteAssets(bytes,uint256)", state, 1 ether));
-        _surfaceCall(abi.encodeWithSignature("quoteExternalDeposit(bytes,address,uint256)", state, address(asset0), 1 ether));
-        _surfaceCall(abi.encodeWithSignature("quoteExternalExchange(bytes,address,uint256)", state, address(asset1), 1 ether));
-        _surfaceCall(abi.encodeWithSignature("quoteTransition(bytes,uint8,uint256)", state, uint8(0), 1 ether));
-        bool v3 = keccak256(bytes(_family())) == keccak256("UniswapV3");
-        _surfaceCall(abi.encodeWithSignature(v3 ? "canOpenBoundPoolOps()" : "canOpenPoolManagerUnlock()"));
-        if (!v3) _surfaceCall(abi.encodeWithSignature("twapOracle()"));
-        _fund(asset0,address(this),1 ether);asset0.approve(address(subject),1 ether);
-        assertGt(IStandardizedYield(address(subject)).deposit(address(this),address(asset0),1 ether,0),0);
-        assertGt(IStandardizedYield(address(subject)).redeem(address(this),1 ether,address(asset1),0,false),0);
-        _bookMatchesBalances();
+    function test_J3_retiredSYAndQuoteSelectorsAbsentCurrentQueriesCallable() public {
+        _bootstrap(); bytes4[16] memory removed=[IStandardizedYield.deposit.selector,IStandardizedYield.redeem.selector,IStandardizedYield.rewardIndexesCurrent.selector,IStandardizedYield.claimRewards.selector,IStandardizedYield.exchangeRate.selector,IStandardizedYield.yieldToken.selector,IStandardizedYield.assetInfo.selector,IStandardizedYield.getTokensIn.selector,IStandardizedYield.getTokensOut.selector,IStandardizedYield.isValidTokenIn.selector,IStandardizedYield.isValidTokenOut.selector,IStandardizedYield.previewDeposit.selector,IStandardizedYield.previewRedeem.selector,IStandardizedYield.getRewardTokens.selector,IStandardizedYield.accruedRewards.selector,IStandardizedYield.rewardIndexesStored.selector];
+        for(uint256 i;i<removed.length;++i) _retired(abi.encodeWithSelector(removed[i]));
+        string[13] memory old=[string("deployedReserve()"),"targetLiquidReservePercentage()","actualLiquidReservePercentage(address)","localReserve(address)","quoteState(address,address)","quoteTotalSupply(bytes)","quoteShareBalance(bytes)","quoteAssets(bytes,uint256)","quoteExternalDeposit(bytes,address,uint256)","quoteExternalExchange(bytes,address,uint256)","quoteTransition(bytes,uint8,uint256)","rebalanceLiquidReserve()","unlockCallback(bytes)"];
+        for(uint256 i;i<old.length;++i) _retired(abi.encodeWithSelector(bytes4(keccak256(bytes(old[i])))));
+        assertGt(bytes(subject.name()).length,0); assertGt(bytes(subject.symbol()).length,0);
+        (bool reservesOk,bytes memory reservesData)=address(subject).staticcall(abi.encodeWithSignature("reserves()"));
+        assertTrue(reservesOk); uint256[] memory reserves=abi.decode(reservesData,(uint256[])); assertEq(reserves.length,2);
+        assertEq(reserves[0],subject.reserveOfToken(address(asset0))); assertEq(reserves[1],subject.reserveOfToken(address(asset1)));
+        (bool ok,bytes memory data)=address(subject).staticcall(abi.encodeWithSignature("canOpenBoundPoolOps()")); assertTrue(ok); assertTrue(abi.decode(data,(bool))); _assertAccounting();
     }
-    function _surfaceCall(bytes memory data) private returns (bytes memory result) {
-        bool ok;
-        (ok,result) = address(subject).call(data);
-        assertTrue(ok, "retained query/product selector must execute through proxy");
+    function _callerBundleExit(bool blocked) private {
+        _bootstrap(); uint256 shares=subject.balanceOf(address(this))/10;
+        if(blocked) {
+            subject.transfer(address(lockedCaller),shares); bytes memory data=abi.encodeCall(IStandardExchangeBundleOut.exchangeBundleOut,(address(subject),shares,_outputTokens(),_array(0,0),FALSE_DEPOSITOR,false,block.timestamp)); bytes32 beforeState=_stateDigest();
+            vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_BoundPoolInteractionBlocked()")); _locked(data,asset0,0); assertEq(_stateDigest(),beforeState);
+        } else {
+            // Caller-held exact shares need no transferFrom allowance, even if a larger allowance exists.
+            subject.approve(address(subject),shares*4); uint256 held=subject.balanceOf(address(this));
+            (uint256[] memory paid,)=IStandardExchangeBundleOut(address(subject)).exchangeBundleOut(address(subject),shares,_outputTokens(),_array(0,0),FALSE_DEPOSITOR,false,block.timestamp);
+            assertEq(subject.balanceOf(address(this)),held-shares); assertEq(subject.allowance(address(this),address(subject)),shares*4); assertEq(asset0.balanceOf(FALSE_DEPOSITOR),paid[0]); assertEq(asset1.balanceOf(FALSE_DEPOSITOR),paid[1]); _assertAccounting();
+        }
     }
-
-    function test_pullDualExit_maxAllowanceAndBalance_idle() public { _pullMatrix(false); }
-    function test_pullDualExit_maxAllowanceAndBalance_blocked() public { _pullMatrix(true); }
-    function _pullMatrix(bool blocked) private {
-        _refundFixture();
-        for(uint8 mode;mode<4;++mode){uint256 snap=vm.snapshotState();_pullCase(blocked,mode);assertTrue(vm.revertToState(snap));}
-    }
-    function _pullCase(bool blocked,uint8 mode) private {
-        RefundCase memory c; c.input=IERC20(address(subject)); c.booked=subject.reserveOfToken(address(subject)); c.supply=subject.totalSupply();
-        bytes memory quote=mode==3?
-            abi.encodeCall(IStandardExchangeOut.previewExchangeOut,(c.input,asset1,10 ether)):
-            abi.encodeCall(IStandardExchangeOutMulti.previewExchangeOutOneToMany,(c.input,_tokens(),_amounts(10 ether,10 ether)));
-        c.used=blocked?_locked(quote,asset0,0):_execute(quote); c.maximum=c.used*4;
-        address payer=blocked?address(lockedCaller):address(this);
-        uint256 payerBalance=mode>=2?c.used:c.maximum;
-        if(blocked) subject.transfer(payer,payerBalance);
-        else subject.transfer(makeAddr("other-holder"),subject.balanceOf(address(this))-payerBalance);
-        uint256 allowed=mode==3?0:mode==1?c.used:c.maximum;
-        vm.prank(payer);subject.approve(address(subject),allowed);
-        c.data=mode==3?
-            abi.encodeCall(IStandardExchangeOut.exchangeOut,(c.input,c.maximum,asset1,10 ether,FALSE_DEPOSITOR,false,block.timestamp)):
-            abi.encodeCall(IStandardExchangeOutMulti.exchangeOutOneToMany,(c.input,c.maximum,_tokens(),_amounts(10 ether,10 ether),FALSE_DEPOSITOR,false,block.timestamp));
-        uint256 used=blocked?_locked(c.data,c.input,0):_execute(c.data);
-        assertEq(used,c.used);
-        assertEq(subject.balanceOf(payer),payerBalance-c.used);
-        assertEq(subject.totalSupply(),c.supply-c.used);
-        assertEq(
-            subject.allowance(payer,address(subject)),
-            mode==3?allowed:allowed-used,
-            "false-flag spends quoted used via transferFrom except single-share burn"
-        );
-        assertGe(asset1.balanceOf(FALSE_DEPOSITOR),10 ether);
-        assertEq(subject.reserveOfToken(address(subject)),c.booked);assertEq(subject.balanceOf(address(subject)),c.booked);_bookMatchesBalances();
-    }
+    function test_callerBundleExitExactBurnLeavesAllowance_idle() public { _callerBundleExit(false); }
+    function test_callerBundleExitExactBurnBlockedAtomic() public { _callerBundleExit(true); }
 }

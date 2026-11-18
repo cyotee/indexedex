@@ -11,7 +11,8 @@ abstract contract MigrationLegacyClaimHandler is MigrationLegacyHandler {
     uint256 public claimActions;
     uint256 public bondTransfers;
 
-    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) MigrationLegacyHandler(m_, n_, c_) {}
+    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_, uint256 protectedDtf_)
+        MigrationLegacyHandler(m_, n_, c_, protectedDtf_) {}
 
     function positionCount() external view returns (uint256) { return funded.length; }
     function positionStart(uint256 i_) external view returns (uint256) { return funded[i_].start; }

@@ -154,8 +154,10 @@ contract UniswapV4DetfMigrationSYDFPkg is IUniswapV4DetfMigrationSYDFPkg, IStand
                 symbol: Metadata.resolveClaimSymbol(a_.claimSymbol, a_.symbol),
                 optionalSalt: keccak256(abi.encode(c_.parent))
             })));
-        address[] memory inputs_ = _routeTokens(a_.hook, c_.parent, a_.mintRouteMode, a_.mintRoutes);
-        address[] memory outputs_ = _routeTokens(a_.hook, c_.parent, a_.burnRouteMode, a_.burnRoutes);
+        IUniswapV4Detf.IoRoute[] memory checked_ = new IUniswapV4Detf.IoRoute[](0);
+        address[] memory inputs_ = _routeTokens(a_.hook, c_.parent, a_.mintRouteMode, a_.mintRoutes, checked_);
+        if (a_.mintRouteMode == IUniswapV4Detf.RouteTableMode.Custom) checked_ = a_.mintRoutes;
+        address[] memory outputs_ = _routeTokens(a_.hook, c_.parent, a_.burnRouteMode, a_.burnRoutes, checked_);
         c_.rawArgs = IDETFSYDFPkg.PkgArgs(IERC20(c_.parent), IStakedDETF(c_.receipt), false,
             string.concat("SY ", a_.name), string.concat("SY-", a_.symbol), inputs_, outputs_);
         c_.stakingArgs = IDETFSYDFPkg.PkgArgs(IERC20(c_.parent), IStakedDETF(c_.receipt), true,
@@ -164,7 +166,8 @@ contract UniswapV4DetfMigrationSYDFPkg is IUniswapV4DetfMigrationSYDFPkg, IStand
 
     /// @dev Memory counterpart of ArgsLib's ordered sets; never writes package/factory routes.
     function _routeTokens(address hook_, address parent_, IUniswapV4Detf.RouteTableMode mode_,
-        IUniswapV4Detf.IoRoute[] memory rows_) private view returns (address[] memory tokens_)
+        IUniswapV4Detf.IoRoute[] memory rows_, IUniswapV4Detf.IoRoute[] memory checked_)
+        private view returns (address[] memory tokens_)
     {
         address[] memory pairs_ = IUniswapV4SeBufferHook(hook_).tokens();
         if (mode_ == IUniswapV4Detf.RouteTableMode.Custom) {
@@ -174,22 +177,33 @@ contract UniswapV4DetfMigrationSYDFPkg is IUniswapV4DetfMigrationSYDFPkg, IStand
                 address vault_ = address(rows_[i_].vault);
                 if (token_ == address(0) || vault_ == address(0)) revert IUniswapV4DetfDFPkg.ZeroAddress();
                 if (token_ == parent_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
-                bool member_;
-                for (uint256 j_; j_ < pairs_.length; ++j_) {
-                    if (pairs_[j_] != parent_ && IUniswapV4SeBufferHook(hook_).standardExchangeOf(pairs_[j_]) == vault_) {
-                        member_ = true; break;
+                bool validated_;
+                for (uint256 j_; j_ < checked_.length; ++j_) {
+                    if (address(checked_[j_].token) == token_ && address(checked_[j_].vault) == vault_) {
+                        validated_ = true;
+                        break;
                     }
                 }
-                if (!member_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
-                if (token_ == vault_) {
-                    IStandardExchange(vault_).previewExchangeIn(IERC20(vault_), 1e18, IERC20(vault_));
-                } else {
-                    address[] memory listed_ = IBasicVault(vault_).vaultTokens();
-                    bool listedToken_;
-                    for (uint256 j_; j_ < listed_.length; ++j_) if (listed_[j_] == token_) { listedToken_ = true; break; }
-                    if (!listedToken_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
-                    (uint256 out_,) = IStandardExchangeIn(vault_).previewExchangeIn(IERC20(token_), 1e18, IERC20(vault_));
-                    if (out_ == 0) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+                // Reuse only an identical pair validated in this view invocation.
+                // Each direction still builds its own ordered, duplicate-free table.
+                if (!validated_) {
+                    bool member_;
+                    for (uint256 j_; j_ < pairs_.length; ++j_) {
+                        if (pairs_[j_] != parent_ && IUniswapV4SeBufferHook(hook_).standardExchangeOf(pairs_[j_]) == vault_) {
+                            member_ = true; break;
+                        }
+                    }
+                    if (!member_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+                    if (token_ == vault_) {
+                        IStandardExchange(vault_).previewExchangeIn(IERC20(vault_), 1e18, IERC20(vault_));
+                    } else {
+                        address[] memory listed_ = IBasicVault(vault_).vaultTokens();
+                        bool listedToken_;
+                        for (uint256 j_; j_ < listed_.length; ++j_) if (listed_[j_] == token_) { listedToken_ = true; break; }
+                        if (!listedToken_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+                        (uint256 out_,) = IStandardExchangeIn(vault_).previewExchangeIn(IERC20(token_), 1e18, IERC20(vault_));
+                        if (out_ == 0) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+                    }
                 }
                 for (uint256 j_; j_ < i_; ++j_) {
                     if (tokens_[j_] == token_) revert IUniswapV4DetfDFPkg.DuplicateRoute(token_);

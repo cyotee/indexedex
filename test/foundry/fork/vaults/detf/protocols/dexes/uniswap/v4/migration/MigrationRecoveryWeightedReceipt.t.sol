@@ -35,10 +35,10 @@ contract MigrationRecoveryWeightedReceiptTest is MigrationWeightedReceiptForkBas
         assertGt(dtf_, 0);
         _run(Recovery.Stage.Donate, 0, dtf_, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
-        // Existing reserve residuals may be consumed by its existing sweep. The separately
-        // booked donor budget is the protected floor, not an immutable raw residual balance.
+        // Donation invests its selected recovery payment and retains its refunds.
+        // Earlier residuals and the separately booked donor budget remain protected.
         assertGe(IERC20(Legacy.DTF).balanceOf(detf), migration.migrationDonationInventory(IERC20(Legacy.DTF)));
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertEq(migration.weightedReceiptEntitlement(WS_ORIGIN).credit, c0_);
         assertEq(migration.weightedReceiptSurrender(WS_ORIGIN).deliveredCredit, c0_);
         assertEq(_protected(bond_), protected_);
@@ -88,13 +88,12 @@ contract MigrationRecoveryWeightedReceiptTest is MigrationWeightedReceiptForkBas
         uint256 wd_ = recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF);
         _run(Recovery.Stage.WeightedConvert, 0, wd_, 1);
         uint256 dtf_ = recovery.migrationRecoveryInventory(Legacy.DTF);
-        _run(Recovery.Stage.Donate, 0, dtf_, 1);
+        _donateAndCheckProtected(dtf_, bond_, protected_);
         assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 7);
         assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
         assertGe(IERC20(Legacy.DTF).balanceOf(detf), 7 ether);
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertEq(abi.encode(recovery.migrationNftRecovery(WEIGHTED, 4)), nft_);
-        assertEq(_protected(bond_), protected_);
     }
 
     function test_lateSelectedFailureRevertsSourceGrowthUnstakeConversionAndBookkeeping() public {

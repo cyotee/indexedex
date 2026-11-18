@@ -18,14 +18,12 @@ import {
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
-import {IERC4626} from '@crane/contracts/interfaces/IERC4626.sol';
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol';
 import {IDiamondPackageCallBackFactory} from '@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol';
-import {
-    ERC4626RateProviderFactoryService,
-    IERC4626RateProviderFacetDFPkg
-} from '@crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFactoryService.sol';
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {StandardExchangeRateProvider_FactoryService as RateProviderFactory} from
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -48,12 +46,6 @@ import {
 import {
     BalancerV3ConstantProductPool_FactoryService
 } from 'contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol';
-import {DefaultPoolInfoFacet} from
-    'contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol';
-import {StandardSwapFeePercentageBoundsFacet} from
-    'contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol';
-import {StandardUnbalancedLiquidityInvariantRatioBoundsFacet} from
-    'contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol';
 
 /**
  * @title Fork_StandardExchangeBufferPool
@@ -78,6 +70,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
     using BalancerV3ConstantProductPool_FactoryService for ICreate3FactoryProxy;
     using StandardExchangeBufferPool_FactoryService for ICreate3FactoryProxy;
     using StandardExchangeBufferPool_FactoryService for IVaultRegistryDeployment;
+    using RateProviderFactory for ICreate3FactoryProxy;
 
     /* ---------------------------------------------------------------------- */
     /*                              Test Constants                             */
@@ -90,7 +83,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
     /*                             Buffer Pool State                           */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Rate provider wrapping the Aerodrome DAI/USDC SE vault (ERC4626).
+    /// @notice The actual native-unit rate provider installed on the buffer pool.
     IRateProvider public seRateProvider;
 
     // Buffer pool facets
@@ -131,12 +124,6 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         tta    = IERC20(address(dai));
         shares = IERC20(address(daiUsdcVault));
 
-        // 3. Deploy ERC4626 rate provider for the SE vault.
-        IERC4626RateProviderFacetDFPkg rpDFPkg =
-            ERC4626RateProviderFactoryService.initER4626RateProvicerDFPkg(create3Factory);
-        seRateProvider = rpDFPkg.deployRateProvider(IERC4626(address(daiUsdcVault)));
-        vm.label(address(seRateProvider), 'Fork_SEVaultRateProvider');
-
         // 4. Deploy buffer pool facets.
         _deployBufferPoolFacets();
 
@@ -150,6 +137,8 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
             tta
         );
         vm.label(bufferPool, 'Fork_StandardExchangeBufferPool');
+        seRateProvider = IStandardExchangeBufferPool(bufferPool).rateProvider();
+        assertGt(address(seRateProvider).code.length, 0, "actual bound rate provider");
 
         // 7. Approve tokens for all users so the live router can pull via permit2.
         _approveBufferPoolTokensForAllUsers();
@@ -169,14 +158,22 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         betterBalancerV3PoolTokenFacet     = create3Factory.deployBalancerV3PoolTokenFacet();
         balancerV3AuthenticationFacet      = create3Factory.deployBalancerV3AuthenticationFacet();
 
-        defaultPoolInfoFacet = IFacet(address(new DefaultPoolInfoFacet()));
+        defaultPoolInfoFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(create3Factory, "DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"),
+            keccak256(abi.encode("DefaultPoolInfoFacet"))
+        );
         vm.label(address(defaultPoolInfoFacet), 'Fork_DefaultPoolInfoFacet');
 
-        standardSwapFeePercentageBoundsFacet = IFacet(address(new StandardSwapFeePercentageBoundsFacet()));
+        standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(create3Factory, "StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"),
+            keccak256(abi.encode("StandardSwapFeePercentageBoundsFacet"))
+        );
         vm.label(address(standardSwapFeePercentageBoundsFacet), 'Fork_StandardSwapFeePercentageBoundsFacet');
 
-        unbalancedLiquidityInvariantRatioBoundsFacet =
-            IFacet(address(new StandardUnbalancedLiquidityInvariantRatioBoundsFacet()));
+        unbalancedLiquidityInvariantRatioBoundsFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(create3Factory, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"),
+            keccak256(abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet"))
+        );
         vm.label(
             address(unbalancedLiquidityInvariantRatioBoundsFacet),
             'Fork_StandardUnbalancedLiquidityInvariantRatioBoundsFacet'
@@ -210,6 +207,9 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         pkgInit.vaultFeeOracle    = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault   = vault;   // live forked vault from TestBase_BalancerV3Fork
         pkgInit.diamondFactory    = diamondPackageFactory;
+        pkgInit.rateProviderPkg = create3Factory.deployStandardExchangeRateProviderDFPkg(
+            create3Factory.deployStandardExchangeRateProviderFacet(), diamondPackageFactory
+        );
 
         vm.startPrank(owner);
         bufferPoolPkg = StandardExchangeBufferPool_FactoryService.deployBufferPoolPkg(

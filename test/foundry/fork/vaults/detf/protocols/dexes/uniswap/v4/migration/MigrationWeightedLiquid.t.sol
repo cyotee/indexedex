@@ -262,7 +262,7 @@ contract MigrationWeightedLiquidTest is MigrationRecoveryDonationForkBase {
         _run(Recovery.Stage.Donate, 0, 1 ether, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), output_ - 1 ether);
         assertGe(IERC20(Legacy.DTF).balanceOf(detf), output_ + 7 ether);
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertEq(_protected(bond_), protected_);
         vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector, Legacy.WEIGHTED_DETF, 1, 0));
         _run(Recovery.Stage.WeightedConvert, 0, 1, 1);

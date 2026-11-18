@@ -94,8 +94,12 @@ contract MigrationOwnerBondCallbacksTest is TestBase_UniswapV4DetfMigration_Adve
         uint256[] memory amounts_ = new uint256[](1);
         amounts_[0] = 7 ether;
         migration.donateMigrationCapital(tokens_, amounts_, 0, 0, block.timestamp);
+        uint256 heldBefore_ = IERC20(pairB).balanceOf(detf);
+        (, uint256 genesisRefund_) = IStandardExchangeIn(se1).previewExchangeIn(IERC20(pairB), 100 ether, IERC20(se1));
+        uint256 booked_ = 7 ether + genesisRefund_;
         _fundAndCapture();
-        assertEq(migration.migrationDonationInventory(IERC20(pairB)), 7 ether, "actual booked inventory");
+        assertEq(IERC20(pairB).balanceOf(detf), heldBefore_ + genesisRefund_, "actual genesis refund custody");
+        assertEq(migration.migrationDonationInventory(IERC20(pairB)), booked_, "donation plus actual genesis refund");
         PaidOwnerWallet wallet_ = new PaidOwnerWallet(migration, IERC20(pairB));
         vm.prank(migrationOwner);
         migration.initiateOwnershipTransfer(address(wallet_));
@@ -118,6 +122,6 @@ contract MigrationOwnerBondCallbacksTest is TestBase_UniswapV4DetfMigration_Adve
         // below the old floor nor create more residual than the exact one-ether inbound.
         assertGe(IERC20(pairB).balanceOf(detf), held_, "booked and unbooked floors retained");
         assertLe(IERC20(pairB).balanceOf(detf) - held_, 1 ether, "residual capped to actual new payment");
-        assertEq(migration.migrationDonationInventory(IERC20(pairB)), 7 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(pairB)), booked_);
     }
 }

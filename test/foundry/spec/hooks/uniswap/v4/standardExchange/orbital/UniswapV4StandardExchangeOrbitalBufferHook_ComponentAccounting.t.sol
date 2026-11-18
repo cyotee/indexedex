@@ -559,6 +559,28 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_ComponentAccounting is FullS
         _hbAssertFee(mintBoundary, after_, net);
     }
 
+    function test_component_pairGenesisQuotesActualAcquisitionAndSeedRedemption() public {
+        _hbSetFee(HB_FEE);
+        uint256[] memory amounts = _hbFundPairs(HB_ALICE, 100 ether);
+        ComponentSnapshot memory before_ = _hbSnapshot(HB_ALICE);
+        (uint256 quoted, uint256 q0, uint256 q1, uint256 q2) =
+            orbital.previewDepositFlexible(amounts[0], false, amounts[1], false, amounts[2], false);
+        assertGt(quoted, 0);
+        vm.prank(HB_ALICE);
+        (uint256 net, uint256 used0, uint256 used1, uint256 used2) = orbital.depositFlexible(
+            amounts[0], false, amounts[1], false, amounts[2], false, HB_ALICE, quoted, block.timestamp
+        );
+        assertEq(net, quoted);
+        assertEq(used0, q0);
+        assertEq(used1, q1);
+        assertEq(used2, q2);
+        ComponentSnapshot memory after_ = _hbSnapshot(HB_ALICE);
+        assertEq(before_.userPairs[0] - after_.userPairs[0], used0);
+        assertEq(before_.userPairs[1] - after_.userPairs[1], used1);
+        assertEq(before_.userPairs[2] - after_.userPairs[2], used2);
+        _hbAssertFee(before_, after_, net);
+    }
+
     function test_component_crossLegExitBurnsOnlyCallerLp() public {
         _hbSetFee(HB_FEE);
         _hbBootstrap();
@@ -567,11 +589,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_ComponentAccounting is FullS
         ComponentSnapshot memory before_ = _hbSnapshot(HB_ALICE);
         uint256 bobLp = IERC20(hook).balanceOf(HB_BOB);
         uint256 burn = before_.userLp / 10;
-        vm.expectRevert(bytes4(keccak256("InvalidQuoteState()")));
-        orbital.previewExitSingleAssetExactBptIn(face2, burn);
+        uint256 quoted = orbital.previewExitSingleAssetExactBptIn(face2, burn);
+        assertGt(quoted, 0);
         vm.prank(HB_ALICE);
-        uint256 received = orbital.exitSingleAssetExactBptIn(face2, burn, HB_ALICE, 1, block.timestamp);
-        assertGt(received, 0);
+        uint256 received = orbital.exitSingleAssetExactBptIn(face2, burn, HB_ALICE, quoted, block.timestamp);
+        assertEq(received, quoted);
         assertEq(IERC20(face2).balanceOf(HB_ALICE) - before_.userPairs[2], received);
         assertEq(IERC20(hook).balanceOf(HB_BOB), bobLp);
         assertEq(IERC20(hook).totalSupply(), before_.supply - burn);

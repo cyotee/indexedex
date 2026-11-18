@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 
@@ -348,6 +349,11 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4WingsSeSu
         }
     }
 
+    /// @notice Explicit caller-driven maintenance using the current live fee recipient.
+    function _sweepDustUntilSettled() internal {
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager));
+    }
+
     function _assertR19() internal {
         address hook_ = detfInfo.hook();
         address[] memory toks = IUniswapV4SeBufferHook(hook_).tokens();
@@ -357,7 +363,9 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4WingsSeSu
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) {
+            _sweepDustUntilSettled();
+        }
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

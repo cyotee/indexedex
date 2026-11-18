@@ -66,7 +66,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         leg.local -= localOut;
         leg.withdrawn = localOut;
         if (leg.se != address(0)) {
-            leg.state = ContextQuote.snapshot(leg.se, leg.asset, address(this), address(0));
+            leg.state = ContextQuote.compositionSnapshot(leg.se, leg.asset, address(this));
             leg.shares = l.seShares[leg.se];
             uint256 removed = LiquidityRoute.componentAllocation(lp, leg.shares, supply);
             leg.shares -= removed;
@@ -201,9 +201,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     {
         Repo.Layout storage l = Repo._layout();
         if (stateIndex < 3 && flags[stateIndex] && state.length != 0) {
-            (state,,,) = Transition(Repo._seAt(l, stateIndex)).quoteTransition(
-                state, Transition.Operation.ReceiveShares, amounts[stateIndex]
-            );
+            state = ContextQuote.receiveShares(Repo._seAt(l, stateIndex), state, amounts[stateIndex]);
         }
         for (uint8 i; i < 3; ++i) {
             address se = Repo._seAt(l, i);
@@ -394,7 +392,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         private view returns (LegLib.ExternalQuote memory q)
     {
         if (tokenIn != se && Repo._isDisabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
-        if (tokenIn == se) {
+        if (tokenIn == se && !LegLib.stateQuoteSupported(se)) {
             // Transferring already-owned shares does not change the SE's global state.
             q.exchange = Transition(se);
             q.pair = pair;

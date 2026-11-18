@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
@@ -52,6 +53,15 @@ contract UniswapV4Detf_Mint is TestBase_UniswapV4Detf {
         assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore, userPred, "D11 user Gross split");
         assertEq(IERC20(detf).totalSupply() - supplyBefore, userDetf + reward, "D11 exact new issuance; no matching liquidity DETF");
         assertEq(IERC20(detf).balanceOf(detfInfo.rebasingClaimToken()) - backingBefore, reward, "ordinary reward pot actually funds staking");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 }

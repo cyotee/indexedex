@@ -506,6 +506,8 @@ interface IUniswapV4DetfMigration is
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
     event MigrationCapitalRetained(address indexed token, uint256 amount);
+    /// @notice Transfers booked donation units to spendable residuals; does not report liquidity consumption.
+    event MigrationCapitalReleasedToResidual(address indexed token, uint256 amount);
     event MigrationReserveBootstrapped(uint256 selfMinted, uint256 lpOut, uint256 timestamp);
     event IndependentAllocationConfigured(
         address indexed recipient, bytes32 indexed configurationId, bytes32 evidenceId, uint256 totalCredit

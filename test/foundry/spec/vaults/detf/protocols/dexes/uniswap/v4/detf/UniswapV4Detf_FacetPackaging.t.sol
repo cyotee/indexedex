@@ -25,7 +25,7 @@ import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
-import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IUniswapV4Detf, IUniswapV4DetfFirstBondShares} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {
     IUniswapV4DetfSelfCall
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
@@ -161,7 +161,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IDiamond.FacetCut[] memory cuts = detfPkg.facetCuts();
         assertEq(cuts.length, 10, "five shared facets plus five product facets");
         uint256 count;
-        bytes4[] memory seen = new bytes4[](47);
+        bytes4[] memory seen = new bytes4[](48);
         for (uint256 i; i < detfProductFacets.length; ++i) {
             assertEq(cuts[i + 5].facetAddress, address(detfProductFacets[i]), "package facet order");
             bytes4[] memory selectors = detfProductFacets[i].facetFuncs();
@@ -175,8 +175,12 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
                 seen[count++] = selectors[j];
             }
         }
-        assertEq(count, 47, "funded product selector count");
+        assertEq(count, 48, "funded product selector count");
         assertTrue(IERC165(detf).supportsInterface(type(IUniswapV4Detf).interfaceId), "composed DETF interface");
+        assertTrue(
+            IERC165(detf).supportsInterface(type(IUniswapV4DetfFirstBondShares).interfaceId),
+            "first-bond basket extension"
+        );
         assertTrue(
             IERC165(detf).supportsInterface(type(IStandardExchangeIn).interfaceId), "composed exchange interface"
         );
@@ -191,7 +195,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
 
     /// @notice Retired product routes cannot bypass the standard exchange or funded staking APIs.
     function test_splitFacets_retiredProductSelectorsAreAbsent() public view {
-        bytes4[10] memory retired_ = [
+        bytes4[11] memory retired_ = [
             bytes4(keccak256("mint(address,uint256,uint256,address,bool,uint256)")),
             bytes4(keccak256("burn(uint256,address,uint256,address,uint256)")),
             bytes4(keccak256("previewMint(address,uint256)")),
@@ -201,6 +205,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
             bytes4(keccak256("closeRoutes()")),
             bytes4(keccak256("compoundProtocolRewards()")),
             bytes4(keccak256("compoundProtocolRewardsAtomic()")),
+            bytes4(keccak256("sweepDustAtomic()")),
             bytes4(keccak256("closeBondMature(uint256,uint256[],address,uint256)"))
         ];
         for (uint256 i_; i_ < retired_.length; ++i_) {
@@ -216,8 +221,6 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
 
     function _assertAtomicCallerRejected(address target) internal {
         bytes memory expectedError_ = abi.encodeWithSelector(UniswapV4DetfRepo.NotAuthorized.selector, address(this));
-        vm.expectRevert(expectedError_);
-        IUniswapV4DetfSelfCall(target).sweepDustAtomic();
         vm.expectRevert(expectedError_);
         IUniswapV4DetfSelfCall(target).sweepPairToShare(address(0), address(0), 1);
         vm.expectRevert(expectedError_);

@@ -43,7 +43,7 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         _assertOracle(address(0), pairA, 2 ether);
         _assertOracle(pairB, pairB, 3 ether);
         bytes memory beforeBook = consumer.snapshotBytes();
-        Pricing.Book memory captured = abi.decode(beforeBook, (Pricing.Book));
+        Pricing.BookV3 memory captured = abi.decode(beforeBook, (Pricing.BookV3));
         uint256 inputIndex = captured.inputs.ethIndex;
         assertEq(captured.inputs.legs[inputIndex].weight, 3e17, "general exponent numerator");
         for (uint256 i; i < captured.inputs.legs.length; ++i) {
@@ -67,7 +67,7 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertEq(consumer.evaluate(pairB, 3 ether).user, beforeDtf, "frozen DTF");
         assertEq(consumer.snapshotBytes(), beforeBook, "book unchanged");
         emit log_named_bytes("manual inputs and results", abi.encode(captured, consumer.evaluate(address(0), 2 ether), consumer.evaluate(pairB, 3 ether)));
-        emit log_named_bytes32("manual book id", abi.decode(beforeBook, (Pricing.Book)).id);
+        emit log_named_bytes32("manual book id", abi.decode(beforeBook, (Pricing.BookV3)).id);
         emit log_named_uint("frozen ETH user", beforeEth);
         emit log_named_uint("frozen DTF user", beforeDtf);
         emit log_named_uint("changed live ETH user", _oracle(pairA, 2 ether).user);
@@ -178,25 +178,26 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         consumer.set(_observedInputs());
         bytes memory bytesBefore = consumer.snapshotBytes();
         uint256 frozen = consumer.evaluateOriginals(2 ether, 3 ether);
-        Frozen.Request memory request = Frozen.Request(pairA, se0, reserveHook, Frozen.Mode.OrdinaryDeposit);
-        Frozen.Inputs memory beforeInputs = Frozen(se0).captureFrozenQuoteInputs(request);
+        Pricing.InputsV3 memory beforeInputs = _observedInputs();
+        bytes memory beforeDeposit = beforeInputs.legs[beforeInputs.ethIndex].deposit.data;
+        uint256 beforeSupply = IERC20(se0).totalSupply();
         uint256 liveBefore = _oracle(pairA, 2 ether).user;
         vm.prank(detfUser);
         IERC20(pairA).transfer(se0, 10 ether);
-        Frozen.Inputs memory afterInputs = Frozen(se0).captureFrozenQuoteInputs(request);
-        assertNotEq(afterInputs.reserve0 + afterInputs.reserve1, beforeInputs.reserve0 + beforeInputs.reserve1);
-        assertNotEq(_oracle(pairA, 2 ether).user, liveBefore, "donation changes live quote");
+        Pricing.InputsV3 memory afterInputs = _observedInputs();
+        assertEq(afterInputs.legs[afterInputs.ethIndex].deposit.data, beforeDeposit, "stray custody is not a sizing operand");
+        assertEq(_oracle(pairA, 2 ether).user, liveBefore, "stray custody does not change live issuance");
         assertEq(consumer.evaluateOriginals(2 ether, 3 ether), frozen);
         vm.prank(detfUser);
         IStandardExchangeIn(se0).exchangeIn(IERC20(pairA), 10 ether, IERC20(se0), 0, detfUser, false, block.timestamp);
-        assertNotEq(IERC20(se0).totalSupply(), beforeInputs.supply, "real SE deposit changes supply");
+        assertNotEq(IERC20(se0).totalSupply(), beforeSupply, "real SE deposit changes supply");
         assertEq(consumer.evaluateOriginals(2 ether, 3 ether), frozen);
         assertEq(consumer.snapshotBytes(), bytesBefore);
     }
 
     function test_InvalidManual_UnsupportedRoleAtomic() public {
         MigrationSnapshotConsumer unsupported = _consumer(se0, pairB, bytes32("unsupported"));
-        Pricing.Inputs memory inputs_ = _observedInputs();
+        Pricing.InputsV3 memory inputs_ = _observedInputs();
         vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
         unsupported.set(inputs_);
         assertEq(unsupported.snapshotBytes().length, 0);
@@ -208,14 +209,20 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         assertNotEq(IDiamondLoupe(reserveHook).facetAddress(Capture.captureWeightedMintBook.selector), address(0));
         assertTrue(IERC165(reserveHook).supportsInterface(type(Capture).interfaceId));
         assertTrue(IERC165(reserveHook).supportsInterface(type(IStandardExchangeIn).interfaceId));
-        assertNotEq(IDiamondLoupe(se0).facetAddress(Frozen.captureFrozenQuoteInputs.selector), address(0));
-        assertTrue(IERC165(se0).supportsInterface(type(Frozen).interfaceId));
+        assertEq(IDiamondLoupe(se0).facetAddress(Frozen.captureFrozenQuoteInputs.selector), address(0));
+        assertFalse(IERC165(se0).supportsInterface(type(Frozen).interfaceId));
         assertTrue(IERC165(se0).supportsInterface(type(IStandardExchangeIn).interfaceId));
         Capture.Book memory book = Capture(reserveHook).captureWeightedMintBook();
         assertEq(book.legs.length, 3);
         for (uint256 i; i < 3; ++i) {
             assertLe(book.legs[i].captureFacet.code.length, 24576);
+            if (book.legs[i].standardExchange != address(0)) {
+                assertFalse(book.legs[i].depositSupported, "legacy capture does not describe the new vault");
+            }
         }
+        Pricing.InputsV3 memory current = _observedInputs();
+        assertEq(current.legs[current.ethIndex].deposit.version, 2);
+        assertEq(current.legs[current.dtfIndex].deposit.version, 2);
         assertLe(IDiamondLoupe(reserveHook).facetAddress(Capture.captureWeightedMintBook.selector).code.length, 24576);
     }
 
@@ -249,7 +256,7 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setVaultDexSwapFee(reserveHook, 1e18);
         MigrationSnapshotConsumer invalidFee = _consumer(pairA, pairB, bytes32("invalidFee"));
-        Pricing.Inputs memory invalid_ = _observedInputs();
+        Pricing.InputsV3 memory invalid_ = _observedInputs();
         vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
         invalidFee.set(invalid_);
     }
@@ -289,15 +296,12 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
             bytes32("snapshotMath")
         ));
         assertEq(math.net(1050, 3e15), 1047);
-        math.requireRecognized(
-            IDiamondLoupe(se0).facetAddress(Frozen.captureFrozenQuoteInputs.selector),
-            IDiamondLoupe(se0).facetAddress(IStandardExchangeIn.previewExchangeIn.selector)
-        );
-        address captureFacet = IDiamondLoupe(se0).facetAddress(Frozen.captureFrozenQuoteInputs.selector);
-        vm.expectRevert(abi.encodeWithSelector(
-            FrozenQuote.UnrecognizedFrozenImplementation.selector, captureFacet, captureFacet
-        ));
-        math.requireRecognized(captureFacet, captureFacet);
+        Pricing.InputsV3 memory current = _observedInputs();
+        Frozen.VersionedInputs memory deposit = current.legs[current.ethIndex].deposit;
+        math.requireSupported(deposit);
+        deposit.version = 99;
+        vm.expectRevert(abi.encodeWithSelector(Frozen.UnsupportedFrozenVersion.selector, 99));
+        math.requireSupported(deposit);
         (uint256 user, uint256 pot) = DETFMintSplitLib._splitLiveGross(3, 5e17);
         assertEq(user, 1);
         assertEq(pot, 1);
@@ -320,16 +324,20 @@ contract UniswapV4DetfMigrationSnapshotTest is TestBase_UniswapV4DetfMigrationSn
 
     /// @dev Unit-only malformed outcome vectors. No production proxy storage is modified.
     function test_InvalidManual_ProviderOperandsAndInactiveFields() public {
-        Pricing.Inputs memory inputs_ = _observedInputs();
+        Pricing.InputsV3 memory inputs_ = _observedInputs();
         inputs_.legs[inputs_.dtfIndex].rate = 0;
         vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
         consumer.set(inputs_);
         inputs_ = _observedInputs();
-        inputs_.legs[inputs_.dtfIndex].deposit.request.holder = reserveHook;
-        vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
+        Frozen.SwapDepositV2 memory deposit = abi.decode(
+            inputs_.legs[inputs_.dtfIndex].deposit.data, (Frozen.SwapDepositV2)
+        );
+        deposit.request.holder = reserveHook;
+        inputs_.legs[inputs_.dtfIndex].deposit.data = abi.encode(deposit);
+        vm.expectRevert(Frozen.InvalidFrozenDeposit.selector);
         consumer.set(inputs_);
         inputs_ = _observedInputs();
-        inputs_.legs[inputs_.detfIndex].deposit.supply = 1;
+        inputs_.legs[inputs_.detfIndex].deposit = inputs_.legs[inputs_.dtfIndex].deposit;
         vm.expectRevert(Pricing.MigrationWeightedPricingInvalid.selector);
         consumer.set(inputs_);
     }

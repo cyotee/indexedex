@@ -105,9 +105,9 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         for (uint8 i; i < amounts.length; ++i) {
             address se = l.standardExchanges[i];
             if (se == address(0)) continue;
-            book.states[i] = ContextQuote.snapshot(se, l.tokens[i], address(this), address(0));
+            book.states[i] = ContextQuote.compositionSnapshot(se, l.tokens[i], address(this));
             if (flags[i] && amounts[i] != 0 && book.states[i].length != 0) {
-                (book.states[i],,,) = Transition(se).quoteTransition(book.states[i], Transition.Operation.ReceiveShares, amounts[i]);
+                book.states[i] = ContextQuote.receiveShares(se, book.states[i], amounts[i]);
             }
         }
     }
@@ -132,12 +132,9 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         }
         address se = Repo._layout().standardExchanges[i];
         if (!redeem && _disabled(i)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
-        uint256 consumed;
-        uint256 output;
-        (basket.states[i], consumed, output,) = Transition(se).quoteTransition(
-            basket.states[i], redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
+        (result, basket.states[i]) = ContextQuote.conversion(
+            se, Repo._layout().tokens[i], amount, redeem, basket.states[i]
         );
-        return ExchangeInAmount.fromConsumedInput(amount, consumed, output);
     }
 
     /// @dev Forward sizing only selects caller funds; acceptance never uses this estimate as backing.
@@ -169,10 +166,7 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         if (book.states[i].length == 0) return _previewConversion(i, redeem, amount);
         address se = Repo._layout().standardExchanges[i];
         if (!redeem && _disabled(i)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
-        (, uint256 consumed, uint256 output,) = Transition(se).quoteTransition(
-            book.states[i], redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
-        );
-        return ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+        (result,) = ContextQuote.conversion(se, Repo._layout().tokens[i], amount, redeem, book.states[i]);
     }
 
     function _previewBasket(uint256[] memory amounts, bool[] memory flags, Basket memory book, bool first)

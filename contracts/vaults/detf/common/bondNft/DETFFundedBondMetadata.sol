@@ -38,6 +38,8 @@ library DETFFundedBondMetadata {
                 : "Funded DETF purchase with linear principal vesting. Funded staking rewards are claimable during vesting. All claims pay sDETF.";
         if (v_.migrationCliff) {
             description_ = "Funded Migration DETF principal unlocks in full 90 days after creation. No principal vests before the cliff. Rewards accrue from creation. Before activation only principal-only claims are available after the cliff; reward and combined claims are closed. Claims pay sDETF.";
+        } else if (v_.migrationPresentation && v_.tokenId >= 3) {
+            description_ = "Funded Migration DETF purchase with linear principal vesting. Rewards accrue while principal vests. Before activation only vested principal can be claimed; reward and combined claims are closed. After activation rewards can also be claimed. All claims pay sDETF.";
         } else if (v_.migrationPresentation && v_.tokenId > 0 && v_.tokenId < 3) {
             description_ = "Standing reward right. Allocations made before activation stay in receipt custody for their allocation-time beneficiary, even after this NFT transfers. Reward delivery requires activation. This role has no purchased principal.";
         }
@@ -93,10 +95,10 @@ library DETFFundedBondMetadata {
         );
         return string.concat(progressSvg_, timing_,
             _positionValues(v_),
-            v_.migrationCliff
+            v_.migrationPresentation
                 ? _text(v_.rewardsClosed ? "Reward claims locked until activation" : "Reward claims open", 24, 389, 12)
                 : "",
-            _text(v_.migrationCliff && v_.rewardsClosed
+            _text(v_.migrationPresentation && v_.rewardsClosed
                 ? "Principal-only claims pay sDETF."
                 : "Claims pay sDETF. Unstake for DETF.", 24, 413, 12)
         );
@@ -113,7 +115,7 @@ library DETFFundedBondMetadata {
         );
         return string.concat(principal_, claims_,
             _value("Total claimable sDETF", v_.claim.principalDue + _claimableRewards(v_), 24, 344),
-            v_.migrationCliff ? _value("Accrued rewards sDETF", v_.claim.rewardsDue, 278, 344) : ""
+            v_.migrationPresentation ? _value("Accrued rewards sDETF", v_.claim.rewardsDue, 278, 344) : ""
         );
     }
 
@@ -169,7 +171,7 @@ library DETFFundedBondMetadata {
             _trait("Claimable rewards sDETF", _amount(_claimableRewards(v_))), ",",
             _trait("Total claimable sDETF", _amount(v_.claim.principalDue + _claimableRewards(v_)))
         );
-        return v_.migrationCliff ? string.concat(claims_, ",",
+        return v_.migrationPresentation ? string.concat(claims_, ",",
             _trait("Accrued rewards sDETF", _amount(v_.claim.rewardsDue)), ",",
             _trait("Reward delivery", v_.rewardsClosed ? "Locked until activation" : "Open")
         ) : claims_;

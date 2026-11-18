@@ -6,6 +6,10 @@ import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {DETFFundedBondTarget} from "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as FullSpread} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -604,12 +608,14 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         uint256 receipts_ = IERC20(se).balanceOf(detfUser);
         // Position reserveOfToken includes deployed liquidity and is not a
         // liquid-balance checkpoint. Claim one more than the actual delivery.
+        // Require a receipt: a vault that refunds short input must also reject
+        // this minimum atomically rather than count the refund as a deposit.
         uint256 claimOver_ = dust_ + 1;
         vm.expectRevert();
         vm.prank(detfUser);IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             claimOver_,
             IERC20(se),
-            0,
+            1,
             detfUser,
             true,
             _deadline()
@@ -618,7 +624,7 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         vm.prank(address(apexCaller));IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             claimOver_,
             IERC20(se),
-            0,
+            1,
             address(apexCaller),
             true,
             _deadline()
@@ -631,16 +637,43 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         _goLive(500 ether);
         _mintPairTo(detf, detfUser, 40 ether);
         IERC20 tokenIn_ = IERC20(address(pairToken));
-        uint256 Rh = IBasicVault(se).reserveOfToken(address(tokenIn_));
-        uint256 Bh = tokenIn_.balanceOf(se);
-        uint256 U = Bh >= Rh ? Bh - Rh : 0;
-        uint256 claim_ = U >= 1 ? U + 1 : uint256(1);
+        address host_;
+        IUniswapV4Detf.IoRoute[] memory routes_ = detfInfo.mintRoutes();
+        for (uint256 i_; i_ < routes_.length; ++i_) {
+            if (address(routes_[i_].token) == address(tokenIn_)) host_ = address(routes_[i_].vault);
+        }
+        assertNotEq(host_, address(0), "host is the actual payment route");
+        uint256 claim_;
+        uint256 minimum_;
+        if (IERC165(host_).supportsInterface(type(IStandardExchangeBundleIn).interfaceId)) {
+            _fundPair(address(this), 1000 ether);
+            address authority_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+            assertNotEq(authority_, address(0));
+            vm.prank(authority_);
+            FullSpread(host_).setOperatorFor(FullSpread.donate.selector, address(this), true);
+            tokenIn_.approve(host_, 1000 ether);
+            FullSpread(host_).donate(address(tokenIn_), 1000 ether, false);
+            vm.prank(authority_);
+            FullSpread(host_).setOperatorFor(FullSpread.donate.selector, address(this), false);
+            claim_ = 1 ether;
+            assertGe(tokenIn_.balanceOf(host_), claim_, "booked custody could fund the attempted theft");
+            (uint256 fundedQuote_,) = IStandardExchangeIn(host_).previewExchangeIn(tokenIn_, claim_, IERC20(host_));
+            assertGt(fundedQuote_, 0, "funded counterfactual can mint");
+            minimum_ = 1;
+        } else {
+            uint256 Rh = IBasicVault(host_).reserveOfToken(address(tokenIn_));
+            uint256 Bh = tokenIn_.balanceOf(host_);
+            uint256 U = Bh >= Rh ? Bh - Rh : 0;
+            claim_ = U >= 1 ? U + 1 : uint256(1);
+        }
+        uint256 held_ = tokenIn_.balanceOf(host_);
         vm.expectRevert();
-        vm.prank(detfUser);IStandardExchangeIn(se).exchangeIn(tokenIn_, claim_, IERC20(se), 0, detfUser, true, _deadline()
+        vm.prank(detfUser);IStandardExchangeIn(host_).exchangeIn(tokenIn_, claim_, IERC20(host_), minimum_, detfUser, true, _deadline()
         );
         vm.expectRevert();
-        vm.prank(address(apexCaller));IStandardExchangeIn(se).exchangeIn(tokenIn_, claim_, IERC20(se), 0, address(apexCaller), true, _deadline()
+        vm.prank(address(apexCaller));IStandardExchangeIn(host_).exchangeIn(tokenIn_, claim_, IERC20(host_), minimum_, address(apexCaller), true, _deadline()
         );
+        assertEq(tokenIn_.balanceOf(host_), held_, "no delivery cannot consume the existing book");
     }
 
     function _assertT_LOCAL_I1() internal {

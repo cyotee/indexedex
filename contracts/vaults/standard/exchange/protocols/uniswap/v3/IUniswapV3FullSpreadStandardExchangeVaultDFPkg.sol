@@ -14,6 +14,7 @@ interface IUniswapV3FullSpreadStandardExchangeVaultDFPkg is IDiamondFactoryPacka
     error NotCalledByRegistry(address caller);
     error InvalidPoolFactory(address poolFactory, address expectedFactory);
 
+    /// @dev Preserve field order and types for existing source and ABI consumers.
     struct PkgInit {
         IFacet erc20Facet;
         IFacet erc5267Facet;
@@ -25,11 +26,11 @@ interface IUniswapV3FullSpreadStandardExchangeVaultDFPkg is IDiamondFactoryPacka
         IFacet uniswapV3StandardExchangeOutFacet;
         IFacet uniswapV3StandardExchangeOutQueryFacet;
         IFacet uniswapV3StandardExchangePositionImportFacet;
-        IFacet uniswapV3StandardExchangeLiquidReserveFacet;
-        IFacet uniswapV3StandardExchangeInMultiFacet;
-        IFacet uniswapV3StandardExchangeInMultiQueryFacet;
-        IFacet uniswapV3StandardExchangeOutMultiFacet;
-        IFacet uniswapV3StandardExchangeOutMultiQueryFacet;
+        IFacet uniswapV3StandardExchangeLiquidReserveFacet; // ReserveFacet
+        IFacet uniswapV3StandardExchangeInMultiFacet; // BundleFacet
+        IFacet uniswapV3StandardExchangeInMultiQueryFacet; // BundleQueryFacet
+        IFacet uniswapV3StandardExchangeOutMultiFacet; // MaintenanceFacet
+        IFacet uniswapV3StandardExchangeOutMultiQueryFacet; // Retained, not installed
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;

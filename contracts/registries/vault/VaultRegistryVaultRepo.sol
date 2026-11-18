@@ -133,17 +133,18 @@ library VaultRegistryVaultRepo {
             layoutStruct.vaultsOfContentsIdOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.contentsId]._add(vault);
             emit IVaultRegistryEvents.NewVaultOfType(vault, pkg, vaultConfig.vaultTypes[typesCursor]);
             for (uint256 tokensCursor; tokensCursor < vaultConfig.tokens.length; tokensCursor++) {
-                // VaultRegistryLayout.tokens
-                layoutStruct.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
-                // VaultRegistryLayout.vaultsOfToken
-                layoutStruct.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._add(vault);
+                // These indices and this event do not depend on the vault type.
+                // Register them once, rather than once for every advertised interface.
+                if (typesCursor == 0) {
+                    layoutStruct.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
+                    layoutStruct.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._add(vault);
+                    layoutStruct.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._add(vault);
+                    emit IVaultRegistryEvents.NewVaultOfToken(vault, pkg, vaultConfig.tokens[tokensCursor]);
+                }
                 // VaultRegistryLayout.vaultsOfTokenOfTypeId
                 layoutStruct.vaultsOfTokenOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.tokens[tokensCursor]]._add(
                     vault
                 );
-                // VaultRegistryLayout.vaultsOfTokenOfPkg
-                layoutStruct.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._add(vault);
-                emit IVaultRegistryEvents.NewVaultOfToken(vault, pkg, vaultConfig.tokens[tokensCursor]);
             }
         }
     }

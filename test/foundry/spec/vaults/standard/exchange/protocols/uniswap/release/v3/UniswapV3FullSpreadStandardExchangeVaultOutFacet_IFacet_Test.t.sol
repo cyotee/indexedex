@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
     UniswapV3FullSpreadStandardExchangeVaultOutFacet
@@ -12,6 +11,7 @@ import {
     TestBase_UniswapV3FullSpreadStandardExchangeVault
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
+/// @notice V3-ACC-17: fail-closed exact-out remains installed without a delegate constructor.
 contract UniswapV3FullSpreadStandardExchangeVaultOutFacet_IFacet_Test is TestBase_UniswapV3FullSpreadStandardExchangeVault, TestBase_IFacet {
     function setUp() public override(TestBase_UniswapV3FullSpreadStandardExchangeVault, TestBase_IFacet) {
         TestBase_UniswapV3FullSpreadStandardExchangeVault.setUp();

@@ -42,14 +42,9 @@ abstract contract UniswapV4DetfMaintenanceTarget is UniswapV4DetfTarget {
         _entryNotifyReserveDonated();
     }
 
-    /// @notice Joins residual diamond inventory into the live reserve under the unassigned-LP policy.
+    /// @notice The live fee recipient performs one reserve join; refunds remain for a later call.
     function sweepDust() external {
         _entrySweepDust();
-    }
-
-    /// @notice Executes one atomic dust-sweep attempt; only the diamond itself may call.
-    function sweepDustAtomic() external {
-        _entrySweepDustAtomic();
     }
 
     /// @notice Performs one self-only residual join without a duplicate preview.

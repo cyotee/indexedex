@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol";
@@ -404,9 +405,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         private view returns (uint256 pairValue, uint256 purchasedDetf, uint256 liquidityDetf)
     {
         Repo.Layout storage l = Repo._layout();
-        pairValue = q.exchange.quoteAssets(q.state, q.assets);
+        pairValue = LegLib.assetsAtState(q, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
-        uint256 pairClaim = l.rawReserves[i] + q.exchange.quoteAssets(q.state, l.seReserves[i]);
+        uint256 pairClaim = l.rawReserves[i] + LegLib.assetsAtState(q, l.seReserves[i]);
         liquidityDetf = pairClaim == 0 ? 0 : FullMath.mulDiv(l.rawReserves[j], pairValue, pairClaim);
         q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);
         purchasedDetf = _swapAtExternalState(q, i, j);
@@ -422,9 +423,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         uint256 minted;
         uint256 local = netInput;
         if (!ClaimLib.disabled(i)) {
-            uint256 consumed;
-            (, consumed, minted,) = q.exchange.quoteTransition(q.state, Transition.Operation.DepositExactIn, netInput);
-            local -= consumed;
+            (ExchangeInAmount.Result memory result,) = ContextQuote.conversion(address(q.exchange), l.tokens[i], netInput, false, q.state);
+            minted = result.amountOut;
+            local = result.amountRefunded;
         }
         uint256[4] memory rated = _ratedWadAll();
         if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();

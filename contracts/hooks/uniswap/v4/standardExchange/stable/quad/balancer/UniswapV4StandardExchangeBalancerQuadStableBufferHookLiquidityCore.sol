@@ -172,7 +172,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
         for (uint256 i; i < remaining.inventory.length; ++i) {
             remaining.inventory[i] -= allocation.inventory[i]; remaining.local[i] -= allocation.local[i];
             if (l.standardExchanges[i] != address(0)) {
-                allocation.states[i] = ContextQuote.snapshot(l.standardExchanges[i], l.tokens[i], address(this), address(0));
+                allocation.states[i] = ContextQuote.compositionSnapshot(l.standardExchanges[i], l.tokens[i], address(this));
             }
         }
         remaining.states = allocation.states;

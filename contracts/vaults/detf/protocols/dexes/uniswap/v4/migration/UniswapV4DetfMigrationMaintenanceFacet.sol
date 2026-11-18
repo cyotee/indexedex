@@ -7,7 +7,7 @@ import {UniswapV4DetfTarget} from "../detf/UniswapV4DetfTarget.sol";
 import {UniswapV4DetfRepo as ParentRepo} from "../detf/UniswapV4DetfRepo.sol";
 import {UniswapV4DetfMigrationPolicy} from "./UniswapV4DetfMigrationPolicy.sol";
 import {UniswapV4DetfMigrationRepo as Repo} from "./UniswapV4DetfMigrationRepo.sol";
-import {IUniswapV4DetfMigrationAccounting as Accounting} from "./interfaces/IUniswapV4DetfMigration.sol";
+import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAccounting as Accounting} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4Detf} from "../detf/interfaces/IUniswapV4Detf.sol";
 import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {IUniswapV4DetfSelfCall} from "../detf/interfaces/IUniswapV4DetfSelfCall.sol";
@@ -66,15 +66,25 @@ function facetName() public pure override returns (string memory) { return "Unis
         _entryNotifyReserveDonated();
     }
 
-    /// @notice Joins residual diamond inventory into the live reserve under the unassigned-LP policy.
-    function sweepDust() external {
+    /// @notice The live fee recipient releases booked donations and performs at most one reserve join.
+    function sweepDust() external nonReentrant {
+        _requireFeeTo();
         _requireIdleChildren();
-        _entrySweepDust();
-    }
-
-    /// @notice Executes one atomic dust-sweep attempt; only the diamond itself may call.
-    function sweepDustAtomic() external {
-        _entrySweepDustAtomic();
+        if (ParentRepo._layoutStruct().isReserveLive) {
+            Repo.Storage storage m_ = Repo._layoutStruct();
+            address[] memory tokens_ = _budgetTokens();
+            for (uint256 i_; i_ < tokens_.length; ++i_) {
+                address token_ = tokens_[i_];
+                if (token_ == address(this)) continue;
+                uint256 amount_ = m_.donationInventory[token_];
+                if (amount_ == 0) continue;
+                m_.donationInventory[token_] = 0;
+                m_.residualInventory[token_] += amount_;
+                emit Migration.MigrationCapitalReleasedToResidual(token_, amount_);
+            }
+        }
+        _sweepDustBody();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @notice Performs one self-only residual join without a duplicate preview.
@@ -87,14 +97,13 @@ function facetName() public pure override returns (string memory) { return "Unis
         return _entrySweepPairToShare(se_, pair_, amount_);
     }
     function facetFuncs() public pure override returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](8);
+        funcs_ = new bytes4[](7);
         funcs_[0] = IUniswapV4Detf.donate.selector;
         funcs_[1] = IUniswapV4Detf.sweepDust.selector;
         funcs_[2] = IUniswapV4Detf.joinDonatedCapital.selector;
         funcs_[3] = IUniswapV4Detf.notifyReserveDonated.selector;
-        funcs_[4] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
-        funcs_[5] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
-        funcs_[6] = IDETFFundedRewards.synchronizeRewards.selector;
-        funcs_[7] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
+        funcs_[4] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
+        funcs_[5] = IDETFFundedRewards.synchronizeRewards.selector;
+        funcs_[6] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
     }
 }

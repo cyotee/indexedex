@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 
 import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 
-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
-import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
+import {IStandardExchangeBundleIn, IStandardExchangeBundleOut} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -32,10 +30,8 @@ import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/P
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -57,7 +53,16 @@ import {
 
 /**
  * @title UniswapV3FullSpreadStandardExchangeVaultDFPkg
- * @notice Diamond Factory Package for Uniswap V3 Standard Exchange vaults (15 cuts).
+ * @notice New-vault accounting package, with 14 disjoint facet cuts.
+ * @dev Retired selectors: localReserve, deployedReserve, actualLiquidReservePercentage,
+ * targetLiquidReservePercentage, rebalanceLiquidReserve, exchangeInManyToOne,
+ * previewExchangeInManyToOne, exchangeOutOneToMany, previewExchangeOutOneToMany,
+ * quoteState, quoteTransition, quoteShareBalance, quoteTotalSupply, quoteAssets,
+ * quoteExternalDeposit, quoteExternalExchange, captureFrozenQuoteInputs,
+ * exchangeRate, assetInfo, deposit, redeem, claimRewards, accruedRewards,
+ * rewardIndexesCurrent, rewardIndexesStored, getRewardTokens, isValidTokenIn,
+ * isValidTokenOut, yieldToken, getTokensIn, getTokensOut, previewDeposit,
+ * previewRedeem. No getRate or unlockCallback is installed.
  */
 contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadStandardExchangeVaultDFPkg {
     using BetterEfficientHashLib for bytes;
@@ -72,11 +77,10 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_OUT_FACET;
     IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_OUT_QUERY_FACET;
     IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_POSITION_IMPORT_FACET;
-    IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET;
-    IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_FACET;
-    IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET;
-    IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_FACET;
-    IFacet immutable UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET;
+    IFacet immutable RESERVE_FACET;
+    IFacet immutable BUNDLE_FACET;
+    IFacet immutable BUNDLE_QUERY_FACET;
+    IFacet immutable MAINTENANCE_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
@@ -93,11 +97,10 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
         UNISWAP_V3_STANDARD_EXCHANGE_OUT_FACET = pkgInit.uniswapV3StandardExchangeOutFacet;
         UNISWAP_V3_STANDARD_EXCHANGE_OUT_QUERY_FACET = pkgInit.uniswapV3StandardExchangeOutQueryFacet;
         UNISWAP_V3_STANDARD_EXCHANGE_POSITION_IMPORT_FACET = pkgInit.uniswapV3StandardExchangePositionImportFacet;
-        UNISWAP_V3_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET = pkgInit.uniswapV3StandardExchangeLiquidReserveFacet;
-        UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_FACET = pkgInit.uniswapV3StandardExchangeInMultiFacet;
-        UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET = pkgInit.uniswapV3StandardExchangeInMultiQueryFacet;
-        UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_FACET = pkgInit.uniswapV3StandardExchangeOutMultiFacet;
-        UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET = pkgInit.uniswapV3StandardExchangeOutMultiQueryFacet;
+        RESERVE_FACET = pkgInit.uniswapV3StandardExchangeLiquidReserveFacet;
+        BUNDLE_FACET = pkgInit.uniswapV3StandardExchangeInMultiFacet;
+        BUNDLE_QUERY_FACET = pkgInit.uniswapV3StandardExchangeInMultiQueryFacet;
+        MAINTENANCE_FACET = pkgInit.uniswapV3StandardExchangeOutMultiFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
@@ -109,6 +112,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     }
 
     function vaultFeeTypeIds() public pure override returns (bytes32 vaultFeeTypeIds_) {
+        // Historical fee identity only: its sleeve API is deliberately not installed.
         return VaultTypeUtils._insertFeeTypeId(
             vaultFeeTypeIds_, VaultFeeType.USAGE, type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId
         );
@@ -123,7 +127,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](16);
+        interfaces = new bytes4[](14);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20).interfaceId ^ type(IERC20Metadata).interfaceId;
@@ -133,96 +137,34 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
         interfaces[6] = type(IStandardExchangeIn).interfaceId;
         interfaces[7] = type(IStandardExchangeOut).interfaceId;
         interfaces[8] = type(IUniswapV3FullSpreadStandardExchangeVaultPositionImport).interfaceId;
-        interfaces[9] = type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId;
-        interfaces[10] = type(IStandardExchangeInMulti).interfaceId;
-        interfaces[11] = type(IStandardExchangeOutMulti).interfaceId;
-        interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
-        interfaces[13] = type(IStandardizedYield).interfaceId;
-        interfaces[14] = type(IStandardExchangeExternalQuote).interfaceId;
-        interfaces[15] = type(Frozen).interfaceId;
+        interfaces[9] = type(IBasicVault).interfaceId;
+        interfaces[10] = type(IStandardExchangeBundleIn).interfaceId;
+        interfaces[11] = type(IStandardExchangeBundleOut).interfaceId;
+        interfaces[12] = type(IUniswapV3FullSpreadStandardExchangeVault).interfaceId;
+        interfaces[13] = type(IStandardExchangeStateQuote).interfaceId;
     }
 
     function packageName() public pure override returns (string memory) {
-        return type(UniswapV3FullSpreadStandardExchangeVaultDFPkg).name;
+        return "UniswapV3FullSpreadStandardExchangeVaultDFPkg.v4Accounting.v2";
     }
 
     function facetCuts() public view override returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](15);
-        facetCuts_[0] = IDiamond.FacetCut({
-            facetAddress: address(ERC20_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC20_FACET.facetFuncs()
-        });
-        facetCuts_[1] = IDiamond.FacetCut({
-            facetAddress: address(ERC5267_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC5267_FACET.facetFuncs()
-        });
-        facetCuts_[2] = IDiamond.FacetCut({
-            facetAddress: address(ERC2612_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC2612_FACET.facetFuncs()
-        });
-        facetCuts_[3] = IDiamond.FacetCut({
-            facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
-        });
-        facetCuts_[4] = IDiamond.FacetCut({
-            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
-        });
-        facetCuts_[5] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_IN_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_IN_FACET.facetFuncs()
-        });
-        facetCuts_[6] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_IN_QUERY_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_IN_QUERY_FACET.facetFuncs()
-        });
-        facetCuts_[7] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_OUT_FACET.facetFuncs()
-        });
-        facetCuts_[8] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_QUERY_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_OUT_QUERY_FACET.facetFuncs()
-        });
-        facetCuts_[9] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_POSITION_IMPORT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_POSITION_IMPORT_FACET.facetFuncs()
-        });
-        facetCuts_[10] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET.facetFuncs()
-        });
-        facetCuts_[11] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_FACET.facetFuncs()
-        });
-        facetCuts_[12] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET.facetFuncs()
-        });
-        facetCuts_[13] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_FACET.facetFuncs()
-        });
-        facetCuts_[14] = IDiamond.FacetCut({
-            facetAddress: address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET.facetFuncs()
-        });
+        address[] memory facets = facetAddresses();
+        facetCuts_ = new IDiamond.FacetCut[](facets.length);
+        for (uint256 i; i < facets.length; ++i) {
+            bytes4[] memory selectors;
+            if (i == 3) {
+                selectors = new bytes4[](1);
+                selectors[0] = IBasicVault.vaultTokens.selector;
+            } else {
+                selectors = IFacet(facets[i]).facetFuncs();
+            }
+            facetCuts_[i] = IDiamond.FacetCut({
+                facetAddress: facets[i],
+                action: IDiamond.FacetCutAction.Add,
+                functionSelectors: selectors
+            });
+        }
     }
 
     function diamondConfig() public view override returns (DiamondConfig memory config) {
@@ -277,7 +219,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](15);
+        facetAddresses_ = new address[](14);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -288,11 +230,10 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
         facetAddresses_[7] = address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_FACET);
         facetAddresses_[8] = address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_QUERY_FACET);
         facetAddresses_[9] = address(UNISWAP_V3_STANDARD_EXCHANGE_POSITION_IMPORT_FACET);
-        facetAddresses_[10] = address(UNISWAP_V3_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET);
-        facetAddresses_[11] = address(UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_FACET);
-        facetAddresses_[12] = address(UNISWAP_V3_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET);
-        facetAddresses_[13] = address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_FACET);
-        facetAddresses_[14] = address(UNISWAP_V3_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET);
+        facetAddresses_[10] = address(RESERVE_FACET);
+        facetAddresses_[11] = address(BUNDLE_FACET);
+        facetAddresses_[12] = address(BUNDLE_QUERY_FACET);
+        facetAddresses_[13] = address(MAINTENANCE_FACET);
     }
 
     function packageMetadata()

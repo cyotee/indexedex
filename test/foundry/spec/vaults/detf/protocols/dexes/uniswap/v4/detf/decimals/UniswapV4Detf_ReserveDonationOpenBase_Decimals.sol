@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {V4FundedDonationAssertions} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
@@ -8,6 +9,7 @@ import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.
 
 import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {ISignatureTransfer} from
@@ -165,14 +167,33 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         return requested_;
     }
 
+    /// @dev V3 adapters may prepare real SE shares from this unchanged pair budget.
+    ///      Quote and settlement must use this same payment; DN23 independently exercises raw pairs.
+    function _prepareDnPayment(address payer_, uint256 budget_)
+        internal virtual returns (IERC20 token_, uint256 amount_)
+    {
+        token_ = _openPairToken();
+        amount_ = budget_;
+        _fundOpenPair(payer_, amount_);
+        return _preparePositivePayment(detf, token_, amount_, payer_);
+    }
+
     function _donatePair(address from_, uint256 amount_) internal virtual returns (uint256 lpOut_) {
-        amount_ = _dnDonateAmt(amount_);
+        (IERC20 token_, uint256 funded_) = _prepareDnPayment(from_, _dnDonateAmt(amount_));
+        return _donatePrepared(from_, token_, funded_, 0);
+    }
+
+    function _donatePrepared(address from_, IERC20 token_, uint256 amount_, uint256 minimum_)
+        internal returns (uint256 lpOut_)
+    {
         IDETFNFTVault nft_ = _nft();
-        IERC20 tok_ = _openPairToken();
+        uint256 balance_ = token_.balanceOf(from_);
         vm.startPrank(from_);
-        tok_.approve(address(nft_), amount_);
-        lpOut_ = IDetfNftReserveDonation(address(nft_)).donate(tok_, amount_, 0, false, _deadline());
+        token_.approve(address(nft_), amount_);
+        lpOut_ = IDetfNftReserveDonation(address(nft_)).donate(token_, amount_, minimum_, false, _deadline());
         vm.stopPrank();
+        assertGt(lpOut_, 0, "funded donation acquires real LP");
+        assertEq(token_.balanceOf(from_), balance_ - amount_, "donor pays prepared payment");
     }
 
     function _bondAs(address bonder_, uint256 pairAmount_)
@@ -250,13 +271,25 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         revert("pair not in tokens()");
     }
 
-    /// @notice Pair donation increases protocol LP without changing funded positions.
+    /// @notice A funded pair-budget donation increases protocol LP without changing funded positions.
+    /// @dev Lower-precision V3 fixtures prepare shares; DN23 retains independent raw-pair coverage.
     function test_DN1_donate_pair_Ogt0_unassignedLp() public {
         _ensureLiveBond();
+        // Establish the same cleaned initial reserve as the former automatic first-bond sweep.
+        _sweepDustUntilSettled();
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 lp_ = _donatePair(dnDonor, _uPair(10));
         _assertR12aUnassigned(before_, lp_);
         assertEq(IERC20(detf).balanceOf(detfUser), before_.userDetf, "gift cannot pay raw DETF to bonder");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -266,9 +299,7 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         IERC20 payment_ = _openPairToken();
         address se_ = IUniswapV4SeBufferHook(detfInfo.hook()).standardExchangeOf(address(payment_));
         _fundOpenPair(dnDonor, _uPair(20));
-        vm.startPrank(dnDonor);
-        payment_.approve(se_, _uPair(20));(uint256 shares_,) = IStandardExchangeIn(se_).exchangeIn(payment_, _uPair(20), IERC20(se_), 1, dnDonor, false, _deadline());
-        vm.stopPrank();
+        uint256 shares_ = _acquireDonationShares(se_, payment_, _uPair(20), dnDonor);
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(IERC20(se_), shares_);
         assertGt(quote_, 0, "SE-share donation quote");
@@ -278,7 +309,27 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         vm.stopPrank();
         assertEq(lp_, quote_, "actual SE-share donation preview");
         _assertR12aUnassigned(before_, lp_);
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
+    }
+
+    function _acquireDonationShares(address se_, IERC20 payment_, uint256 amount_, address payer_)
+        internal virtual returns (uint256 shares_)
+    {
+        vm.startPrank(payer_);
+        payment_.approve(se_, amount_);
+        (shares_,) = IStandardExchangeIn(se_).exchangeIn(
+            payment_, amount_, IERC20(se_), 1, payer_, false, _deadline()
+        );
+        vm.stopPrank();
     }
 
     /// @notice Existing raw DETF can fund the reserve self-leg without new issuance.
@@ -331,16 +382,17 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
     /// @notice Forwarded donation identifies the original EOA and exact received LP.
     function test_DN7_detf_donate_forwardsToNft() public {
         _ensureLiveBond();
-        IERC20 token_ = _openPairToken();
-        uint256 amount_ = _uPair(8);
-        _fundOpenPair(dnDonor, amount_);
+        (IERC20 token_, uint256 amount_) = _prepareDnPayment(dnDonor, _uPair(8));
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
+        assertGt(quote_, 0, "forwarded donation has funded payment");
+        uint256 balance_ = token_.balanceOf(dnDonor);
         vm.startPrank(dnDonor);
         token_.approve(address(_nft()), amount_);
         vm.recordLogs();
         detfInfo.donate(token_, amount_, false);
         vm.stopPrank();
+        assertEq(token_.balanceOf(dnDonor), balance_ - amount_, "forwarded donor pays actual token");
         Vm.Log[] memory logs_ = vm.getRecordedLogs();
         bool found_;
         for (uint256 i_; i_ < logs_.length; ++i_) {
@@ -388,31 +440,40 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
     /// @notice Supported donation preview equals the actual issued LP.
     function test_DN10_previewEqualsExecute() public {
         _ensureLiveBond();
-        uint256 amount_ = _dnDonateAmt(_uPair(7));
-        IERC20 token_ = _openPairToken();
+        (IERC20 token_, uint256 amount_) = _prepareDnPayment(dnDonor, _dnDonateAmt(_uPair(7)));
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
         assertGt(quote_, 0, "supported donation must preview");
         assertEq(quote_, detfInfo.previewJoinDonatedCapital(token_, amount_), "NFT and DETF donation previews agree");
-        uint256 lp_ = _donatePair(dnDonor, amount_);
+        uint256 lp_ = _donatePrepared(dnDonor, token_, amount_, quote_);
         assertEq(lp_, quote_, "donation preview equals execution");
     }
 
     /// @notice Third-party hook add reverts; donate still succeeds.
     function test_DN11_ownerOnlyLiquidity_donateStillWorks() public {
         _ensureLiveBond();
+        _sweepDustUntilSettled();
         address attacker = makeAddr("dn11");
         address hook_ = detfInfo.hook();
-        IERC20 tok_ = _openPairToken();
-        _fundOpenPair(attacker, _uPair(5));
+        (IERC20 tok_, uint256 amount_) = _prepareDnPayment(attacker, _uPair(5));
+        assertGt(_nftDonate().previewDonate(tok_, amount_), 0, "external liquidity attempt has funded payment");
         vm.startPrank(attacker);
-        tok_.approve(hook_, _uPair(5));
+        tok_.approve(hook_, amount_);
         vm.expectRevert();
         IUniswapV4SeBufferHook(hook_).joinSingleAssetExactIn(
-            address(tok_), _uPair(5), attacker, 0, _deadline()
+            address(tok_), amount_, attacker, 0, _deadline()
         );
         vm.stopPrank();
         uint256 lpOut_ = _donatePair(dnDonor, _uPair(5));
         assertGt(lpOut_, 0, "DN11 donate");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -468,6 +529,11 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
 
     /// @notice After all prior claims, a new bond receives only its funded purchase.
     function test_DN16_lastClose_thenDonate_nextBondDoesNotCapture() public virtual {
+        _dnLastCloseThenDonate();
+    }
+
+    /// @dev Also used by V3 adapters whose Stage11 parent otherwise requotes an unfunded raw pair.
+    function _dnLastCloseThenDonate() internal {
         _ensureLiveBond();
         address bob_ = makeAddr("donation last prior holder");
         address carol_ = makeAddr("donation next holder");
@@ -478,8 +544,14 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         _donatePair(dnDonor, _uPair(20));
         uint256 lp_ = _lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf);
         assertGt(lp_, 0, "all prior claims preserve donated protocol liquidity");
-        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), _uPair(10), DEFAULT_MIN_LOCK);
-        (uint256 nextId_,) = _bondAs(carol_, _uPair(10));
+        (IERC20 payment_, uint256 amount_) = _prepareDnPayment(carol_, _uPair(10));
+        (, uint256 principal_,,) = detfInfo.previewBond(payment_, amount_, DEFAULT_MIN_LOCK);
+        vm.startPrank(carol_);
+        payment_.approve(detf, amount_);
+        (uint256 nextId_, uint256 addedLp_) =
+            detfInfo.bond(payment_, amount_, DEFAULT_MIN_LOCK, carol_, false, _deadline());
+        vm.stopPrank();
+        assertGt(addedLp_, 0, "next funded bond acquires LP");
         assertEq(IDetfBondNFT(address(_nft())).positionOf(nextId_).principal, principal_, "next bond only receives its quoted funded purchase");
         assertGe(_lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf), lp_, "new bond cannot capture old LP");
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
@@ -565,36 +637,38 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
     /// @notice Actual Permit2 allowance donation with exact preview and custody.
     function test_DN19_permit2_allowance() public {
         _ensureLiveBond();
-        IERC20 token_ = _openPairToken();
-        uint256 amount_ = _uPair(5);
+        (IERC20 token_, uint256 amount_) = _prepareDnPayment(dnDonor, _uPair(5));
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
         assertGt(quote_, 0, "Permit2 donation preview");
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
+        uint256 balance_ = token_.balanceOf(dnDonor);
         vm.startPrank(dnDonor);
         token_.approve(address(permit2), type(uint256).max);
         IAllowanceTransfer(address(permit2)).approve(address(token_), address(_nft()), type(uint160).max, type(uint48).max);
         uint256 lp_ = _nftDonate().donateWithPermit2Allowance(token_, amount_, quote_, _deadline());
         vm.stopPrank();
         assertEq(lp_, quote_, "allowance donation preview equals execution");
+        assertEq(token_.balanceOf(dnDonor), balance_ - amount_, "allowance pays actual prepared payment");
         _assertR12aUnassigned(before_, lp_);
     }
 
     /// @notice Actual Permit2 signature donation, exact preview, and replay rejection.
     function test_DN20_permit2_signature() public {
         _ensureLiveBond();
-        IERC20 token_ = _openPairToken();
-        uint256 amount_ = _uPair(4);
+        (IERC20 token_, uint256 amount_) = _prepareDnPayment(dnDonor, _uPair(4));
         uint256 deadline_ = _deadline();
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
         assertGt(quote_, 0, "signature donation preview");
         ISignatureTransfer.PermitTransferFrom memory signed_ = ISignatureTransfer.PermitTransferFrom({permitted: ISignatureTransfer.TokenPermissions({token: address(token_), amount: amount_}), nonce: 0, deadline: deadline_});
         bytes memory data_ = abi.encode(signed_, _signPermit2(dnDonorPk, address(token_), amount_, address(_nft()), 0, deadline_));
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
+        uint256 balance_ = token_.balanceOf(dnDonor);
         vm.startPrank(dnDonor);
         token_.approve(address(permit2), type(uint256).max);
         uint256 lp_ = _nftDonate().donateWithPermit2Signature(token_, amount_, quote_, deadline_, data_);
         vm.stopPrank();
         assertEq(lp_, quote_, "signature donation preview equals execution");
+        assertEq(token_.balanceOf(dnDonor), balance_ - amount_, "signature pays actual prepared payment");
         _assertR12aUnassigned(before_, lp_);
         IDetfNftReserveDonation receiver_ = _nftDonate();
         bytes32 afterFirst_ = keccak256(abi.encode(_snapLive(dnUserOriginal)));
@@ -602,6 +676,7 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         vm.prank(dnDonor);
         receiver_.donateWithPermit2Signature(token_, amount_, quote_, deadline_, data_);
         assertEq(keccak256(abi.encode(_snapLive(dnUserOriginal))), afterFirst_, "used signature cannot receive another LP credit");
+        assertEq(token_.balanceOf(dnDonor), balance_ - amount_, "signature replay cannot spend again");
     }
 
     /// @notice Repeated reserve gifts leave standing staking rights unchanged.
@@ -621,30 +696,118 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase_Decimals is TestBase_Uni
         IDETFNFTVault nft_ = _nft();
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         Uv4DetfDonateDuringUnlockHarness_DexUniV4Det harness = new Uv4DetfDonateDuringUnlockHarness_DexUniV4Det(pm);
-        IERC20 tok_ = _openPairToken();
-        _fundOpenPair(address(harness), _uPair(10));
+        (IERC20 tok_, uint256 amount_) = _prepareDnPayment(address(harness), _uPair(10));
+        uint256 balance_ = tok_.balanceOf(address(harness));
         vm.prank(address(harness));
-        tok_.approve(address(nft_), _uPair(10));
+        tok_.approve(address(nft_), amount_);
         bytes memory ret_ = harness.run(
             address(nft_),
             abi.encodeWithSelector(
                 bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)")),
                 address(tok_),
-                uint256(_uPair(10)),
+                amount_,
                 uint256(0),
                 false,
                 _deadline()
             )
         );
         uint256 lpOut_ = abi.decode(ret_, (uint256));
+        assertEq(tok_.balanceOf(address(harness)), balance_ - amount_, "unlock callback pays prepared payment");
         _assertR12aUnassigned(before_, lpOut_);
     }
 
-    function _buyDonationRaw(uint256 amount_) internal returns (uint256 out_) {
+    /// @dev Dual coverage: unsupported raw pairs must refund and reject atomically; supported
+    ///      raw pairs still execute donations. This witness never uses payment preparation.
+    function _assertDnRawPairPolicy() internal {
+        _ensureLiveBond();
         IERC20 token_ = _openPairToken();
-        _fundOpenPair(detfUser, amount_);(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(token_, amount_, IERC20(detf));
+        address vault_ = IUniswapV4SeBufferHook(detfInfo.hook()).standardExchangeOf(address(token_));
+        address[] memory tokens_ = IBasicVault(vault_).vaultTokens();
+        assertEq(tokens_.length, 2, "V3 position has two underlying assets");
+        address other_ = tokens_[0] == address(token_) ? tokens_[1] : tokens_[0];
+        bool wholeRefund_ = IERC20Metadata(address(token_)).decimals() < IERC20Metadata(other_).decimals();
+        uint256[12] memory budgets_ = [uint256(3), 4, 5, 6, 7, 8, 9, 10, 12, 13, 15, 20];
+        for (uint256 i_; i_ < budgets_.length; ++i_) {
+            uint256 amount_ = _uPair(budgets_[i_]);
+            if (wholeRefund_) {
+                _assertDnRawRefund(vault_, token_, amount_);
+            } else {
+                uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
+                assertGt(quote_, 0, "supported raw pair previews positive LP");
+                DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
+                uint256 lp_ = _donatePrepared(dnDonor, token_, amount_, quote_);
+                assertEq(lp_, quote_, "supported raw pair donation settles quote");
+                _assertR12aUnassigned(before_, lp_);
+            }
+        }
+    }
+
+    function _dnRawRejection() internal pure virtual returns (bytes memory) {
+        return abi.encodeWithSelector(UniswapV4DetfRepo.ZeroAmount.selector);
+    }
+
+    function _assertDnRawRefund(address vault_, IERC20 token_, uint256 amount_) internal {
+        _fundOpenPair(dnDonor, amount_);
+        (uint256 quoted_, uint256 quotedRefund_) =
+            IStandardExchangeIn(vault_).previewExchangeIn(token_, amount_, IERC20(vault_));
+        assertEq(quoted_, 0, "49 percent exact-output consumption cannot fund raw payment");
+        assertEq(quotedRefund_, amount_, "unsupported raw payment previews whole-input refund");
+        bytes32 before_ = _dnRawCustodyHash(vault_);
+        vm.startPrank(dnDonor);
+        token_.approve(vault_, amount_);
+        (uint256 actual_, uint256 refunded_) = IStandardExchangeIn(vault_).exchangeIn(
+            token_, amount_, IERC20(vault_), 0, dnDonor, false, _deadline()
+        );
+        vm.stopPrank();
+        assertEq(actual_, 0, "unsupported raw payment acquires no SE shares");
+        assertEq(refunded_, amount_, "unsupported raw payment actually refunds whole input");
+        assertEq(_dnRawCustodyHash(vault_), before_, "whole refund conserves capital supply and custody");
+        assertEq(_nftDonate().previewDonate(token_, amount_), 0, "unsupported raw donation has no LP quote");
+        assertEq(detfInfo.previewJoinDonatedCapital(token_, amount_), 0, "DETF raw join has no LP quote");
+        IDetfNftReserveDonation receiver_ = _nftDonate();
+        uint256 deadline_ = _deadline();
+        vm.startPrank(dnDonor);
+        token_.approve(address(receiver_), amount_);
+        vm.expectRevert(_dnRawRejection());
+        receiver_.donate(token_, amount_, 0, false, deadline_);
+        vm.stopPrank();
+        assertEq(_dnRawCustodyHash(vault_), before_, "rejected NFT donation is atomic");
+        vm.prank(dnDonor);
+        token_.approve(address(receiver_), amount_);
+        vm.expectRevert(_dnRawRejection());
+        vm.prank(dnDonor);
+        detfInfo.donate(token_, amount_, false);
+        assertEq(_dnRawCustodyHash(vault_), before_, "rejected forwarded donation is atomic");
+    }
+
+    function _dnRawCustodyHash(address vault_) internal view returns (bytes32 hash_) {
+        hash_ = keccak256(abi.encode(_snapLive(dnUserOriginal)));
+        address[] memory held_ = IBasicVault(detf).vaultTokens();
+        for (uint256 i_; i_ < held_.length; ++i_) {
+            hash_ = keccak256(abi.encode(hash_, _dnTokenCustodyHash(IERC20(held_[i_]), vault_)));
+        }
+        address[] memory underlyings_ = IBasicVault(vault_).vaultTokens();
+        for (uint256 i_; i_ < underlyings_.length; ++i_) {
+            hash_ = keccak256(abi.encode(hash_, _dnTokenCustodyHash(IERC20(underlyings_[i_]), vault_)));
+        }
+        return keccak256(abi.encode(hash_, _dnTokenCustodyHash(IERC20(vault_), vault_),
+            _dnTokenCustodyHash(_lpToken(), vault_)));
+    }
+
+    function _dnTokenCustodyHash(IERC20 token_, address vault_) internal view returns (bytes32) {
+        return keccak256(abi.encode(
+            token_.totalSupply(), token_.balanceOf(dnDonor), token_.balanceOf(detf),
+            token_.balanceOf(address(_nft())), token_.balanceOf(detfInfo.hook()),
+            token_.balanceOf(vault_), token_.balanceOf(detfInfo.rebasingClaimToken()),
+            IBasicVault(detf).reserveOfToken(address(token_)), IBasicVault(vault_).reserveOfToken(address(token_))
+        ));
+    }
+
+    function _buyDonationRaw(uint256 amount_) internal returns (uint256 out_) {
+        (IERC20 token_, uint256 funded_) = _prepareDnPayment(detfUser, amount_);
+        (uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(token_, funded_, IERC20(detf));
         vm.startPrank(detfUser);
-        token_.approve(detf, amount_);(out_,) = IStandardExchangeIn(detf).exchangeIn(token_, amount_, IERC20(detf), quote_, detfUser, false, _deadline());
+        token_.approve(detf, funded_);(out_,) = IStandardExchangeIn(detf).exchangeIn(token_, funded_, IERC20(detf), quote_, detfUser, false, _deadline());
         vm.stopPrank();
         assertEq(out_, quote_, "actual standard acquisition for self-leg or burn");
         assertGt(out_, 0, "actual acquired DETF");

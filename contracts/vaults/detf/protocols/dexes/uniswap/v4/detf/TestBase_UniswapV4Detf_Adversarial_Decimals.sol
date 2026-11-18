@@ -6,6 +6,10 @@ import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {DETFFundedBondTarget} from "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as FullSpread} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -575,11 +579,13 @@ abstract contract TestBase_UniswapV4Detf_Adversarial_Decimals is TestBase_Uniswa
         uint256 receipts_ = IERC20(se).balanceOf(detfUser);
         // Position reserveOfToken includes deployed liquidity and is not a
         // liquid-balance checkpoint. Claim one more than the actual delivery.
+        // Require a receipt: refund-only short-input handling must reject
+        // atomically when the caller asks for a positive share amount.
         uint256 claimOver_ = dust_ + 1;
         vm.expectRevert();IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             claimOver_,
             IERC20(se),
-            0,
+            1,
             detfUser,
             true,
             _deadline()
@@ -592,12 +598,58 @@ abstract contract TestBase_UniswapV4Detf_Adversarial_Decimals is TestBase_Uniswa
         _goLive(_uPair(500));
         _mintPairTo(detf, detfUser, _uPair(40));
         IERC20 tokenIn_ = IERC20(address(pairToken));
-        uint256 Rh = IBasicVault(se).reserveOfToken(address(tokenIn_));
-        uint256 Bh = tokenIn_.balanceOf(se);
-        uint256 U = Bh >= Rh ? Bh - Rh : 0;
-        uint256 claim_ = U >= 1 ? U + 1 : uint256(1);
-        vm.expectRevert();IStandardExchangeIn(se).exchangeIn(tokenIn_, claim_, IERC20(se), 0, detfUser, true, _deadline()
+        address host_;
+        IUniswapV4Detf.IoRoute[] memory routes_ = detfInfo.mintRoutes();
+        for (uint256 i_; i_ < routes_.length; ++i_) {
+            if (address(routes_[i_].token) == address(tokenIn_)) host_ = address(routes_[i_].vault);
+        }
+        assertNotEq(host_, address(0), "host is the actual payment route");
+        IERC20 tokenOut_ = IERC20(host_);
+        uint256 claim_;
+        uint256 minimum_;
+        if (IERC165(host_).supportsInterface(type(IStandardExchangeBundleIn).interfaceId)) {
+            uint256 donation_ = _uPair(1000);
+            _fundPair(address(this), donation_);
+            address authority_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+            assertNotEq(authority_, address(0));
+            vm.prank(authority_);
+            FullSpread(host_).setOperatorFor(FullSpread.donate.selector, address(this), true);
+            tokenIn_.approve(host_, donation_);
+            FullSpread(host_).donate(address(tokenIn_), donation_, false);
+            vm.prank(authority_);
+            FullSpread(host_).setOperatorFor(FullSpread.donate.selector, address(this), false);
+            claim_ = _uPair(1);
+            assertGe(tokenIn_.balanceOf(host_), claim_, "booked custody could fund the attempted theft");
+            // A pass-through remains executable when a mixed-decimal liquidity
+            // add cannot consume every swapped-output unit.
+            address[] memory currencies_ = IBasicVault(host_).vaultTokens();
+            for (uint256 i_; i_ < currencies_.length; ++i_) {
+                if (currencies_[i_] != address(tokenIn_) && currencies_[i_] != host_) {
+                    tokenOut_ = IERC20(currencies_[i_]);
+                    break;
+                }
+            }
+            assertNotEq(address(tokenOut_), host_, "host exposes the other pool currency");
+            (uint256 fundedQuote_,) = IStandardExchangeIn(host_).previewExchangeIn(tokenIn_, claim_, tokenOut_);
+            assertGt(fundedQuote_, 0, "funded counterfactual can exchange");
+            minimum_ = 1;
+        } else {
+            uint256 Rh = IBasicVault(host_).reserveOfToken(address(tokenIn_));
+            uint256 Bh = tokenIn_.balanceOf(host_);
+            uint256 U = Bh >= Rh ? Bh - Rh : 0;
+            claim_ = U >= 1 ? U + 1 : uint256(1);
+        }
+        uint256 held_ = tokenIn_.balanceOf(host_);
+        vm.expectRevert();IStandardExchangeIn(host_).exchangeIn(tokenIn_, claim_, tokenOut_, minimum_, detfUser, true, _deadline()
         );
+        assertEq(tokenIn_.balanceOf(host_), held_, "no delivery cannot consume the existing book");
+        if (address(tokenOut_) != host_) {
+            uint256 sharesBefore_ = IERC20(host_).balanceOf(detfUser);
+            vm.expectRevert();
+            IStandardExchangeIn(host_).exchangeIn(tokenIn_, claim_, IERC20(host_), 1, detfUser, true, _deadline());
+            assertEq(IERC20(host_).balanceOf(detfUser), sharesBefore_, "no delivery cannot mint shares");
+            assertEq(tokenIn_.balanceOf(host_), held_, "share attempt preserves booked custody");
+        }
     }
 
     function _assertT_LOCAL_I1() internal {

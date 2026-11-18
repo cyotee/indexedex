@@ -36,19 +36,32 @@ abstract contract V4FundedFeeBehavior is FundedRewardAssertions {
     function _fundedFeeDeploy(address creator_) internal virtual returns (address);
     function _fundedFeeLock() internal view virtual returns (uint256);
 
+    function _fundedFeePreparePayment(address d_, uint256 amount_)
+        internal virtual returns (IERC20, uint256)
+    {
+        return (_fundedFeeLead(d_), amount_);
+    }
+
+    function _fundedFeeBondPrepared(address d_, IERC20, uint256 amount_)
+        internal virtual returns (uint256 id_, uint256 lpOut_)
+    {
+        return _fundedFeeBond(d_, amount_);
+    }
+
     function _fundedFeeWave(IUniswapV4Detf d_, uint256 amount_) internal returns (uint256 id_) {
         IDETFFundedRewards(address(d_)).synchronizeRewards();
+        (IERC20 payment_, uint256 paid_) = _fundedFeePreparePayment(address(d_), amount_);
         IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
         IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
         (, uint256 principal_, uint256 reward_,) = d_.previewBond(
-            _fundedFeeLead(address(d_)), amount_, _fundedFeeLock()
+            payment_, paid_, _fundedFeeLock()
         );
         assertGt(principal_, 0, "actual later bond principal");
         assertGt(reward_, 0, "new issuance funds rewards");
         FundingExpectation memory expected_ = _expectedBondFunding(
             address(d_), stake_, nft_, _fundedFeeOracle(), principal_, reward_
         );
-        (id_,) = _fundedFeeBond(address(d_), amount_);
+        (id_,) = _fundedFeeBondPrepared(address(d_), payment_, paid_);
         assertEq(nft_.positionOf(id_).principal, principal_, "funded principal quote");
         _assertBondFunding(address(d_), stake_, nft_, id_, expected_);
         assertEq(nft_.previewClaim(1).rewardsDue, 0, "fee income already paid to staking wallet");

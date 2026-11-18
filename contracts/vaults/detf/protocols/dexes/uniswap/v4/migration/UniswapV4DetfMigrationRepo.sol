@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
+import {UniswapV4DetfMigrationWeightedPricingLib as PricingLib} from "./UniswapV4DetfMigrationWeightedPricingLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -56,6 +57,8 @@ library UniswapV4DetfMigrationRepo {
         mapping(address => mapping(uint256 => Migration.NftContribution[])) nftContributions;
         mapping(address => mapping(uint256 => Migration.NftContributionSurrender[])) nftContributionSurrenders;
         mapping(bytes32 => Migration.ClaimedSyWeights) claimedSyWeights;
+        // Append only. Zero with nonempty historical bytes denotes legacy version two.
+        uint256 weightedPricingVersion;
     }
 
     struct NftReceipt {
@@ -73,14 +76,32 @@ library UniswapV4DetfMigrationRepo {
         return _layoutStruct(DEFAULT_SLOT);
     }
 
-    function _weightedPricing() internal view returns (Pricing.Book memory) {
-        bytes memory encoded_ = _layoutStruct().weightedPricing;
-        if (encoded_.length == 0) revert Pricing.MigrationWeightedPricingNotSet();
-        return abi.decode(encoded_, (Pricing.Book));
+    function _legacyWeightedPricing() internal view returns (Pricing.Book memory book_) {
+        Storage storage m_ = _layoutStruct();
+        uint256 version_ = _weightedPricingVersion(m_);
+        if (version_ != 2) revert Pricing.MigrationWeightedPricingVersionMismatch(2, version_);
+        book_ = abi.decode(m_.weightedPricing, (Pricing.Book));
+        if (book_.version != 2) revert Pricing.MigrationWeightedPricingVersionMismatch(2, book_.version);
+    }
+
+    /// @notice Decode the recorded encoding, then normalize legacy operands without rehashing their id.
+    function _weightedPricing() internal view returns (Pricing.BookV3 memory book_) {
+        Storage storage m_ = _layoutStruct();
+        uint256 version_ = _weightedPricingVersion(m_);
+        if (version_ == 2) return PricingLib.normalize(_legacyWeightedPricing());
+        book_ = abi.decode(m_.weightedPricing, (Pricing.BookV3));
+        if (book_.version != 3) revert Pricing.MigrationWeightedPricingVersionMismatch(3, book_.version);
+    }
+
+    function _weightedPricingVersion(Storage storage m_) private view returns (uint256 version_) {
+        if (m_.weightedPricing.length == 0) revert Pricing.MigrationWeightedPricingNotSet();
+        version_ = m_.weightedPricingVersion;
+        if (version_ == 0) return 2;
+        if (version_ != 2 && version_ != 3) revert Pricing.MigrationWeightedPricingInvalid();
     }
 
     /// @notice Bind loading to the exact book prepared by the caller, even for an empty batch.
-    function _weightedPricing(bytes32 expectedBookId_) internal view returns (Pricing.Book memory book_) {
+    function _weightedPricing(bytes32 expectedBookId_) internal view returns (Pricing.BookV3 memory book_) {
         book_ = _weightedPricing();
         if (expectedBookId_ != book_.id) {
             revert Pricing.MigrationWeightedPricingBookMismatch(expectedBookId_, book_.id);

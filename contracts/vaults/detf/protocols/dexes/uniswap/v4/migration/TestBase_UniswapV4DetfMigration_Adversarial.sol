@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -33,7 +35,7 @@ abstract contract TestBase_UniswapV4DetfMigration_Adversarial is TestBase_Uniswa
     /// Includes the next NFT owner to detect an escaped child mint even when supply is restored.
     function _adversarialState(address actor_, uint256 nextId_) internal view returns (bytes32) {
         // Unset pricing is a valid pre-bootstrap state whose exact getter error must also stay unchanged.
-        (bool priced_, bytes memory pricing_) = detf.staticcall(abi.encodeWithSignature("migrationWeightedPricing()"));
+        (bool priced_, bytes memory pricing_) = detf.staticcall(abi.encodeCall(PricingV3.migrationWeightedPricingV3, ()));
         bytes32 custody_ = keccak256(abi.encode(
             IERC20(pairA).balanceOf(actor_), IERC20(pairB).balanceOf(actor_),
             IERC20(pairA).balanceOf(detf), IERC20(pairB).balanceOf(detf),

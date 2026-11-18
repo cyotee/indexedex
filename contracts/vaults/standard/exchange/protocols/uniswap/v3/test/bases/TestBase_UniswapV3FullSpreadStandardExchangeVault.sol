@@ -20,15 +20,11 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 import {
     UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
-import {
-    IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 
 /**
  * @title TestBase_UniswapV3FullSpreadStandardExchangeVault
@@ -45,7 +41,6 @@ abstract contract TestBase_UniswapV3FullSpreadStandardExchangeVault is
     using UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService for IIndexedexManagerProxy;
 
     uint24 internal constant FEE_MEDIUM = 3000;
-    uint256 internal constant DEFAULT_V3_LIQUID_RESERVE_PCT = 0.20e18;
 
     IUniswapV3Factory internal uniswapV3Factory;
     IFacet internal uniswapV3StandardExchangeInFacet;
@@ -72,11 +67,12 @@ abstract contract TestBase_UniswapV3FullSpreadStandardExchangeVault is
         uniswapV3StandardExchangeOutFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutFacet();
         uniswapV3StandardExchangeOutQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet();
         uniswapV3StandardExchangePositionImportFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultPositionImportFacet();
-        uniswapV3StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet();
-        uniswapV3StandardExchangeInMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiFacet();
-        uniswapV3StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet();
-        uniswapV3StandardExchangeOutMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiFacet();
-        uniswapV3StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet();
+        // Legacy field names remain source-compatible; their values are the new facets.
+        uniswapV3StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultReserveFacet();
+        uniswapV3StandardExchangeInMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultBundleFacet();
+        uniswapV3StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet();
+        uniswapV3StandardExchangeOutMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultMaintenanceFacet();
+        uniswapV3StandardExchangeOutMultiQueryFacet = uniswapV3StandardExchangeInMultiQueryFacet;
 
         IUniswapV3FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = erc20Facet;
@@ -102,12 +98,8 @@ abstract contract TestBase_UniswapV3FullSpreadStandardExchangeVault is
         pkgInit.permit2 = permit2;
         pkgInit.uniswapV3Factory = uniswapV3Factory;
 
-        vm.startPrank(owner);
-        IVaultFeeOracleManager(address(indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId, DEFAULT_V3_LIQUID_RESERVE_PCT
-        );
+        vm.prank(owner);
         uniswapV3StandardExchangeDFPkg = indexedexManager.deployUniswapV3FullSpreadStandardExchangeVaultDFPkg(pkgInit);
-        vm.stopPrank();
     }
 
     function _createPoolOneToOne(address tokenA, address tokenB, uint24 fee)

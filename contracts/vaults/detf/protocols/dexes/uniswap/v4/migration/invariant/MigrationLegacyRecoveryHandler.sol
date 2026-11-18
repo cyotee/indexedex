@@ -20,7 +20,8 @@ contract MigrationLegacyRecoveryHandler is MigrationLegacyClaimHandler {
     uint256 public oldPrincipal;
     uint256 public oldRewards;
 
-    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) MigrationLegacyClaimHandler(m_, n_, c_) {}
+    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_, uint256 protectedDtf_)
+        MigrationLegacyClaimHandler(m_, n_, c_, protectedDtf_) {}
 
     function redeemSy(uint256 seed_) public {
         if (syInventory == 0) { surrender(seed_); return; }

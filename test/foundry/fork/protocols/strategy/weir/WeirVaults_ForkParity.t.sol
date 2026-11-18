@@ -2,6 +2,7 @@
 pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
+import {IArbSys} from "@crane/contracts/external/openzeppelin-contracts/vendor/arbitrum/IArbSys.sol";
 import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 import {WeirVaults} from "contracts/protocols/strategy/weir/WeirVaults.sol";
 
@@ -21,10 +22,8 @@ contract WeirVaults_ForkParityTest is Test {
             revert ForkPreflightBlocked("rpcUrl robinhood_mainnet_alchemy reverted without a string");
         }
         vm.createSelectFork(url, ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK);
-        // The selected fork is the pin: the runner block, pin header, and reference code match.
-        // NUMBER stays at a stale env block, so roll it to the pin before the equality check.
-        if (block.number != ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK) vm.roll(ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK);
-        if (block.chainid != 4663 || block.number != ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK) {
+        // Inspect the selected fork height, not Arbitrum's ancestor-chain NUMBER.
+        if (vm.getChainId() != 4663 || IArbSys(address(0x64)).arbBlockNumber() != ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK) {
             revert ForkPreflightBlocked("pin chain or block mismatch");
         }
         if (keccak256(vm.getRawBlockHeader(ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK)) != PIN_HEADER_HASH) {
@@ -40,7 +39,7 @@ contract WeirVaults_ForkParityTest is Test {
 
     function test_AC65_forkPreflight() public view {
         assertEq(block.chainid, 4663);
-        assertEq(block.number, ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK);
+        assertEq(IArbSys(address(0x64)).arbBlockNumber(), ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK);
         assertEq(keccak256(vm.getRawBlockHeader(ROBINHOOD_MAIN.DEFAULT_FORK_BLOCK)), PIN_HEADER_HASH);
         assertGt(REFERENCE.code.length, 0);
         assertEq(address(WeirVaults(payable(REFERENCE)).poolManager()), ROBINHOOD_MAIN.UNISWAP_V4_POOL_MANAGER);

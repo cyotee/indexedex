@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {TestBase_UniswapV4DetfMigration} from "../TestBase_UniswapV4DetfMigration.sol";
 import {MigrationNativeHandler} from "./MigrationNativeHandler.sol";
 import {MigrationNativeLedger} from "./MigrationNativeLedger.sol";
@@ -28,11 +30,11 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         MigrationNativeLedger.Seed memory s_;
         s_.isolated = detf;
         s_.isolatedBook = keccak256(abi.encode(migration.owner(), migration.hook(), migration.rebasingClaimToken(),
-            migration.bondNftVault(), migration.migrationWeightedPricing(), migration.independentAllocation(address(0x2499)),
+            migration.bondNftVault(), PricingV3(address(migration)).migrationWeightedPricingV3(), migration.independentAllocation(address(0x2499)),
             migration.independentIssuance(address(0x2499)), IERC20(detf).totalSupply(), receipt.stakingState(),
             bonds.positionOf(3)));
         emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
-            migration.migrationWeightedPricing().id, detf.codehash);
+            PricingV3(address(migration)).migrationWeightedPricingV3().id, detf.codehash);
 
         Package.PkgArgs memory args_ = _migrationArgs(migrationOwner);
         args_.baseArgs.mintThreshold = 100e18;
@@ -67,7 +69,7 @@ abstract contract TestBase_MigrationStateful is TestBase_UniswapV4DetfMigration 
         IERC20(pairA).transfer(address(handler), 20 ether);
         handler.assertAll();
         emit StatefulDeployment(detf, migration.hook(), address(receipt), address(bonds),
-            migration.migrationWeightedPricing().id, detf.codehash);
+            PricingV3(address(migration)).migrationWeightedPricingV3().id, detf.codehash);
         address[] memory facets_ = IDiamondLoupe(detf).facetAddresses();
         for (uint256 i_; i_ < facets_.length; ++i_) {
             emit log_named_address("deployed parent facet", facets_[i_]);

@@ -7,6 +7,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
@@ -53,6 +54,45 @@ library UniswapV4SeBufferHookContextQuoteLib {
         if (!transitionSupported(exchange)) return bytes("");
         (state,) = Transition(exchange).quoteState(pair, holder);
         return project(exchange, state, unavailableManager);
+    }
+
+    function compositionSnapshot(address exchange, address pair, address holder)
+        public view returns (bytes memory)
+    {
+        if (LegLib.stateQuoteSupported(exchange)) return IStandardExchangeStateQuote(exchange).quoteExchangeState();
+        return snapshot(exchange, pair, holder, address(0));
+    }
+
+    /// @dev Global sequential snapshots have no holder ledger. Legacy snapshots still receive shares.
+    function receiveShares(address exchange, bytes memory state, uint256 shares)
+        public view returns (bytes memory)
+    {
+        if (LegLib.stateQuoteSupported(exchange)) return state;
+        (state,,,) = Transition(exchange).quoteTransition(state, Transition.Operation.ReceiveShares, shares);
+        return state;
+    }
+
+    /// @notice Quote one conversion from the supplied state and preserve its native input refund.
+    function conversion(address exchange, address pair, uint256 amount, bool redeem, bytes memory state)
+        public view returns (ExchangeInAmount.Result memory result, bytes memory next)
+    {
+        if (amount == 0) return (result, state);
+        if (state.length == 0) {
+            return (ExchangeInAmount.previewResult(IStandardExchangeIn(exchange),
+                IERC20(redeem ? exchange : pair), amount, IERC20(redeem ? pair : exchange)), state);
+        }
+        if (LegLib.stateQuoteSupported(exchange)) {
+            (next, result.amountOut, result.amountRefunded) = IStandardExchangeStateQuote(exchange).quoteExchangeIn(
+                state, IERC20(redeem ? exchange : pair), amount, IERC20(redeem ? pair : exchange)
+            );
+            return (result, next);
+        }
+        uint256 consumed;
+        uint256 output;
+        (next, consumed, output,) = Transition(exchange).quoteTransition(
+            state, redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
+        );
+        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
     }
 
     /// @dev Only substitute quantity quotes when the projection actually changes context.
@@ -114,13 +154,7 @@ library UniswapV4SeBufferHookContextQuoteLib {
     {
         if (amount_ == 0 || exchange_ == pair_) return (ExchangeInAmount.Result(amount_, 0), bytes(""));
         bytes memory state_ = snapshot(exchange_, pair_, holder_, unavailableManager_);
-        if (state_.length == 0) {
-            return (ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(pair_), amount_, IERC20(exchange_)), state_);
-        }
-        uint256 consumed_;
-        uint256 shares_;
-        (next_, consumed_, shares_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.DepositExactIn, amount_);
-        result_ = ExchangeInAmount.fromConsumedInput(amount_, consumed_, shares_);
+        return conversion(exchange_, pair_, amount_, false, state_);
     }
 
     function redeem(address exchange, address pair, address holder, uint256 shares, address unavailableManager)
@@ -136,13 +170,7 @@ library UniswapV4SeBufferHookContextQuoteLib {
     {
         if (shares_ == 0 || exchange_ == pair_) return (ExchangeInAmount.Result(shares_, 0), bytes(""));
         bytes memory state_ = snapshot(exchange_, pair_, holder_, unavailableManager_);
-        if (state_.length == 0) {
-            return (ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(exchange_), shares_, IERC20(pair_)), state_);
-        }
-        uint256 consumed_;
-        uint256 assets_;
-        (next_, consumed_, assets_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.RedeemExactIn, shares_);
-        result_ = ExchangeInAmount.fromConsumedInput(shares_, consumed_, assets_);
+        return conversion(exchange_, pair_, shares_, true, state_);
     }
 
     /// @dev A passthrough wrapper receives its specified shares before redeeming; it owns no reserve.
@@ -160,11 +188,8 @@ library UniswapV4SeBufferHookContextQuoteLib {
         if (state_.length == 0) {
             return ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(exchange_), shares_, IERC20(pair_));
         }
-        (state_,,,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.ReceiveShares, shares_);
-        uint256 consumed_;
-        uint256 assets_;
-        (, consumed_, assets_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.RedeemExactIn, shares_);
-        result_ = ExchangeInAmount.fromConsumedInput(shares_, consumed_, assets_);
+        state_ = receiveShares(exchange_, state_, shares_);
+        (result_,) = conversion(exchange_, pair_, shares_, true, state_);
     }
 
     function withdraw(address exchange, address pair, address holder, uint256 amount, address unavailableManager)

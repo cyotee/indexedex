@@ -10,9 +10,11 @@ import {SwapMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Sw
 import {LiquidityMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityMath.sol";
 import {ProtocolFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/ProtocolFeeLibrary.sol";
 import {BitMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/BitMath.sol";
+import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
 import {UniswapV4SinglePositionAwareRepo} from "@crane/contracts/protocols/dexes/uniswap/v4/aware/UniswapV4SinglePositionAwareRepo.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultTypes as Types} from "./UniswapV4FullSpreadStandardExchangeVaultTypes.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultMath as Math} from "./UniswapV4FullSpreadStandardExchangeVaultMath.sol";
+import {UniswapV4FullSpreadStandardExchangeVaultProjection as Projection} from "./UniswapV4FullSpreadStandardExchangeVaultProjection.sol";
 
 /// @notice Unbounded exact-input projection of the bound hookless pool. No step cap.
 library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
@@ -34,21 +36,33 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
         uint256 amountIn_,
         int128 liquidityAdjust_
     ) internal view returns (Types.SwapQuote memory quote_) {
+        Types.QuoteState memory state_ = Projection.poolState(manager_, key_);
+        if (liquidityAdjust_ != 0) Projection.modify(state_, liquidityAdjust_);
+        return exactInput(manager_, key_, state_, zeroForOne_, amountIn_);
+    }
+
+    /// @dev Mutates only the supplied memory state. The step loop is shared by live
+    /// previews, execution planning, and successive composable quotes.
+    function exactInput(
+        IPoolManager manager_,
+        PoolKey memory key_,
+        Types.QuoteState memory state_,
+        bool zeroForOne_,
+        uint256 amountIn_
+    ) internal view returns (Types.SwapQuote memory quote_) {
         uint160 limit_ = zeroForOne_ ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1;
-        uint24 protocolFee_;
-        uint24 lpFee_;
-        (quote_.sqrtPriceX96, quote_.tick, protocolFee_, lpFee_) = StateLibrary.getSlot0(manager_, key_.toId());
-        quote_.liquidity = StateLibrary.getLiquidity(manager_, key_.toId());
-        if (liquidityAdjust_ != 0) quote_.liquidity = LiquidityMath.addDelta(quote_.liquidity, liquidityAdjust_);
+        quote_.sqrtPriceX96 = state_.sqrtPriceX96;
+        quote_.tick = state_.tick;
+        quote_.liquidity = state_.poolLiquidity;
         if (amountIn_ == 0 || quote_.sqrtPriceX96 == 0) return quote_;
-        uint16 protocol_ = zeroForOne_ ? protocolFee_.getZeroForOneFee() : protocolFee_.getOneForZeroFee();
-        uint24 swapFee_ = protocol_ == 0 ? lpFee_ : protocol_.calculateSwapFee(lpFee_);
+        uint16 protocol_ = zeroForOne_ ? state_.protocolFee.getZeroForOneFee() : state_.protocolFee.getOneForZeroFee();
+        uint24 swapFee_ = protocol_ == 0 ? state_.lpFee : protocol_.calculateSwapFee(state_.lpFee);
         uint256 remaining_ = amountIn_;
         while (remaining_ != 0 && quote_.sqrtPriceX96 != limit_) {
             uint160 before_ = quote_.sqrtPriceX96;
             int24 beforeTick_ = quote_.tick;
             uint256 beforeRemaining_ = remaining_;
-            (int24 tickNext_, bool initialized_) = _nextTick(manager_, key_, quote_.tick, zeroForOne_);
+            (int24 tickNext_, bool initialized_) = _nextTick(manager_, key_, quote_.tick, zeroForOne_, state_);
             if (tickNext_ < TickMath.MIN_TICK) tickNext_ = TickMath.MIN_TICK;
             if (tickNext_ > TickMath.MAX_TICK) tickNext_ = TickMath.MAX_TICK;
             uint160 sqrtNext_ = TickMath.getSqrtPriceAtTick(tickNext_);
@@ -67,15 +81,30 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
             quote_.applied += amountInStep_;
             quote_.received += amountOutStep_;
             quote_.sqrtPriceX96 = sqrtNextPrice_;
+            // Pool.swap removes the protocol's share before each step's Q128
+            // division. Summing fees and dividing once changes future receipts.
+            if (protocol_ != 0) {
+                uint256 protocolAmount_ = swapFee_ == protocol_
+                    ? feeAmount_
+                    : (amountInStep_ + feeAmount_) * protocol_ / 1_000_000;
+                feeAmount_ -= protocolAmount_;
+            }
+            if (quote_.liquidity != 0) {
+                unchecked {
+                    state_.global[zeroForOne_ ? 0 : 1] +=
+                        FullMath.mulDiv(feeAmount_, uint256(1) << 128, quote_.liquidity);
+                }
+            }
             if (quote_.sqrtPriceX96 == sqrtNext_) {
                 if (initialized_) {
-                    int128 liquidityNet_ = _liquidityNet(manager_, key_, tickNext_);
-                    if (liquidityAdjust_ != 0) {
-                        if (tickNext_ == UniswapV4SinglePositionAwareRepo._tickLower()) {
-                            liquidityNet_ = _addInt128(liquidityNet_, liquidityAdjust_);
-                        } else if (tickNext_ == UniswapV4SinglePositionAwareRepo._tickUpper()) {
-                            liquidityNet_ = _addInt128(liquidityNet_, -liquidityAdjust_);
-                        }
+                    int128 liquidityNet_;
+                    bool ownRange_ = UniswapV4SinglePositionAwareRepo._tickLower() < UniswapV4SinglePositionAwareRepo._tickUpper();
+                    if (ownRange_ && tickNext_ == UniswapV4SinglePositionAwareRepo._tickLower()) {
+                        liquidityNet_ = _cross(state_, state_.lower);
+                    } else if (ownRange_ && tickNext_ == UniswapV4SinglePositionAwareRepo._tickUpper()) {
+                        liquidityNet_ = _cross(state_, state_.upper);
+                    } else {
+                        liquidityNet_ = _liquidityNet(manager_, key_, tickNext_);
                     }
                     int128 net_ = zeroForOne_ ? -liquidityNet_ : liquidityNet_;
                     quote_.liquidity = LiquidityMath.addDelta(quote_.liquidity, net_);
@@ -86,6 +115,9 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
             }
             if (quote_.sqrtPriceX96 == before_ && quote_.tick == beforeTick_ && remaining_ == beforeRemaining_) break;
         }
+        state_.sqrtPriceX96 = quote_.sqrtPriceX96;
+        state_.tick = quote_.tick;
+        state_.poolLiquidity = quote_.liquidity;
     }
 
     function swapFee(IPoolManager manager_, PoolKey memory key_, bool zeroForOne_) internal view returns (uint24) {
@@ -135,25 +167,55 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
         if (!zeroForOne_) ++compressed_;
         (int16 wordPos_, uint8 bitPos_) = TickBitmap.position(compressed_);
         uint256 bits_ = StateLibrary.getTickBitmap(manager_, key_.toId(), wordPos_);
+        return _nextTick(key_.tickSpacing, compressed_, bitPos_, bits_, zeroForOne_);
+    }
+
+    function _nextTick(
+        IPoolManager manager_, PoolKey memory key_, int24 tick_, bool zeroForOne_, Types.QuoteState memory state_
+    ) private view returns (int24 next_, bool initialized_) {
+        int24 compressed_ = TickBitmap.compress(tick_, key_.tickSpacing);
+        if (!zeroForOne_) ++compressed_;
+        (int16 wordPos_, uint8 bitPos_) = TickBitmap.position(compressed_);
+        uint256 bits_ = StateLibrary.getTickBitmap(manager_, key_.toId(), wordPos_);
+        if (UniswapV4SinglePositionAwareRepo._tickLower() < UniswapV4SinglePositionAwareRepo._tickUpper()) {
+            bits_ = _boundaryBit(bits_, wordPos_, UniswapV4SinglePositionAwareRepo._tickLower(), key_.tickSpacing, state_.lower.gross);
+            bits_ = _boundaryBit(bits_, wordPos_, UniswapV4SinglePositionAwareRepo._tickUpper(), key_.tickSpacing, state_.upper.gross);
+        }
+        return _nextTick(key_.tickSpacing, compressed_, bitPos_, bits_, zeroForOne_);
+    }
+
+    function _nextTick(int24 spacing_, int24 compressed_, uint8 bitPos_, uint256 bits_, bool zeroForOne_)
+        private pure returns (int24 next_, bool initialized_)
+    {
         if (zeroForOne_) {
             uint256 masked_ = bits_ & (type(uint256).max >> (255 - bitPos_));
             initialized_ = masked_ != 0;
             next_ = initialized_
-                ? (compressed_ - int24(uint24(bitPos_ - BitMath.mostSignificantBit(masked_)))) * key_.tickSpacing
-                : (compressed_ - int24(uint24(bitPos_))) * key_.tickSpacing;
+                ? (compressed_ - int24(uint24(bitPos_ - BitMath.mostSignificantBit(masked_)))) * spacing_
+                : (compressed_ - int24(uint24(bitPos_))) * spacing_;
         } else {
             uint256 masked_ = bits_ & ~((uint256(1) << bitPos_) - 1);
             initialized_ = masked_ != 0;
             next_ = initialized_
-                ? (compressed_ + int24(uint24(BitMath.leastSignificantBit(masked_) - bitPos_))) * key_.tickSpacing
-                : (compressed_ + int24(uint24(type(uint8).max - bitPos_))) * key_.tickSpacing;
+                ? (compressed_ + int24(uint24(BitMath.leastSignificantBit(masked_) - bitPos_))) * spacing_
+                : (compressed_ + int24(uint24(type(uint8).max - bitPos_))) * spacing_;
         }
     }
 
-    function _addInt128(int128 left_, int128 right_) private pure returns (int128) {
-        int256 sum_ = int256(left_) + int256(right_);
-        if (sum_ > type(int128).max || sum_ < type(int128).min) revert LiquidityMath.SafeCastOverflow();
-        return int128(sum_);
+    function _boundaryBit(uint256 bits_, int16 word_, int24 tick_, int24 spacing_, uint128 gross_)
+        private pure returns (uint256)
+    {
+        (int16 boundaryWord_, uint8 bit_) = TickBitmap.position(tick_ / spacing_);
+        if (word_ != boundaryWord_) return bits_;
+        return gross_ == 0 ? bits_ & ~(uint256(1) << bit_) : bits_ | (uint256(1) << bit_);
+    }
+
+    function _cross(Types.QuoteState memory state_, Types.QuoteTick memory boundary_) private pure returns (int128) {
+        unchecked {
+            boundary_.outside0 = state_.global[0] - boundary_.outside0;
+            boundary_.outside1 = state_.global[1] - boundary_.outside1;
+        }
+        return boundary_.net;
     }
 
     function _liquidityNet(IPoolManager manager_, PoolKey memory key_, int24 tick_)

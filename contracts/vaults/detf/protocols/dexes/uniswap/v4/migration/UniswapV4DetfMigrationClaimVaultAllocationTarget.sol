@@ -24,7 +24,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         _configureNftEntitlements(inputs_, true, Repo._weightedPricing(expectedBookId_));
     }
 
-    function _configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bool separate_, Pricing.Book memory book_)
+    function _configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bool separate_, Pricing.BookV3 memory book_)
         private
     {
         Repo.Storage storage m_ = Repo._layoutStruct();
@@ -79,7 +79,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureHeldSeLpEntitlements(Migration.HeldSeLpEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.HeldSeLpEntitlementInput calldata input_ = inputs_[i_];
@@ -108,7 +108,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureWeightedLiquidEntitlements(Migration.WeightedLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedLiquidEntitlementInput calldata input_ = inputs_[i_];
@@ -164,7 +164,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureEarlierLiquidEntitlements(Migration.EarlierLiquidEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.EarlierLiquidEntitlementInput calldata input_ = inputs_[i_];
@@ -196,7 +196,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureClaimVaultEntitlements(Migration.ClaimVaultEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.ClaimVaultEntitlementInput calldata input_ = inputs_[i_];
@@ -236,7 +236,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureWeightedReceiptEntitlements(Migration.WeightedReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedReceiptEntitlementInput calldata input_ = inputs_[i_];
@@ -277,7 +277,7 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     function configureEarlierReceiptEntitlements(Migration.EarlierReceiptEntitlementInput[] calldata inputs_, bytes32 expectedBookId_)
         external administration nonReentrant
     {
-        Pricing.Book memory book_ = Repo._weightedPricing(expectedBookId_);
+        Pricing.BookV3 memory book_ = Repo._weightedPricing(expectedBookId_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.EarlierReceiptEntitlementInput calldata input_ = inputs_[i_];

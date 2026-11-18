@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 
@@ -11,10 +13,19 @@ import {TestBase_UniswapV4Detf_Decimals} from
 
 /// @notice T7.19 / T7.20 R19 diamond dust sweep.
 abstract contract UniswapV4Detf_Dust_Decimals is TestBase_UniswapV4Detf_Decimals {
-    function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
+    function test_T7_19_afterMint_bookedBalances_feeToSweepClearsJoinableDust() public {
         _firstBond(_uPair(80));
         vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _uPair(10), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");
     }
@@ -31,7 +42,7 @@ abstract contract UniswapV4Detf_Dust_Decimals is TestBase_UniswapV4Detf_Decimals
         pairToken.mint(detf, _uPair(5));
         assertGt(IERC20(address(pairToken)).balanceOf(detf), 0, "dust parked");
 
-        detfInfo.sweepDust();
+        _sweepDustUntilSettled();
 
         assertEq(IERC20(address(pairToken)).balanceOf(detf), 0, "pair dust joined");
         uint256 nftLpAfter = IERC20(reserveHook).balanceOf(address(nft));
@@ -41,8 +52,17 @@ abstract contract UniswapV4Detf_Dust_Decimals is TestBase_UniswapV4Detf_Decimals
         _assertNoJoinableDust();
     }
 
-    function test_T7_20_afterBond_noJoinableDust() public {
+    function test_T7_20_afterBond_bookedBalances_feeToSweepClearsJoinableDust() public {
         _firstBond(_uPair(50));
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 }

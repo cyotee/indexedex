@@ -8,7 +8,6 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -60,7 +59,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         }
         if (genesis) {
             if (!asShare) {
-                if (state.length == 0) state = ContextQuote.snapshot(se, token, address(this), address(0));
+                if (state.length == 0) state = ContextQuote.compositionSnapshot(se, token, address(this));
                 (ExchangeInAmount.Result memory acquired, bytes memory next) =
                     conversionQuote(se, token, amount, false, state, false);
                 c = quoteHeldContribution(se, token, 0, 0, acquired.amountOut, true, true, next, false);
@@ -113,14 +112,9 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
             ), state);
         }
         if (received && redeem) {
-            (state,,,) = Transition(se).quoteTransition(state, Transition.Operation.ReceiveShares, amount);
+            state = ContextQuote.receiveShares(se, state, amount);
         }
-        uint256 consumed;
-        uint256 output;
-        (next, consumed, output,) = Transition(se).quoteTransition(
-            state, redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
-        );
-        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+        return ContextQuote.conversion(se, token, amount, redeem, state);
     }
 
     function netMint(uint256 gross) public view returns (uint256 net, uint256 fee, address recipient) {

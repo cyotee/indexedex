@@ -339,11 +339,11 @@ contract UniswapV4StandardExchangeWeightedBufferHook_ComponentAccounting is Full
     function test_HB48_pairGenesisAcquiresSharesBeforeFivePercentRedemption() public {
         uint256[] memory amounts = _hbFundPairs(HB_ALICE, 100 ether);
         ComponentSnapshot memory beforeQuote = _hbSnapshot(HB_ALICE);
-        vm.expectRevert(Transition.InvalidQuoteState.selector);
-        weighted.previewJoinProportional(_hbNativeAmounts(amounts));
-        assertEq(abi.encode(_hbSnapshot(HB_ALICE)), abi.encode(beforeQuote), "unsupported sequential preview stays read-only");
+        (uint256 quotedLp,) = weighted.previewJoinProportional(_hbNativeAmounts(amounts));
+        assertGt(quotedLp, 0);
+        assertEq(abi.encode(_hbSnapshot(HB_ALICE)), abi.encode(beforeQuote), "sequential preview stays read-only");
         vm.recordLogs();
-        assertGt(_hbJoinPairs(HB_ALICE, amounts, 1), 0);
+        assertEq(_hbJoinPairs(HB_ALICE, amounts, quotedLp), quotedLp, "sequential genesis preview matches actual receipts");
         Vm.Log[] memory logs = vm.getRecordedLogs();
         uint256 minted;
         uint256 burned;
@@ -364,11 +364,11 @@ contract UniswapV4StandardExchangeWeightedBufferHook_ComponentAccounting is Full
     function test_HB44_crossLegExitAliasesPayActualCallerBasket() public {
         _hbBootstrap();
         uint256 burned = IERC20(hook).balanceOf(HB_ALICE) / 20;
-        assertFalse(IERC165(seUT).supportsInterface(type(Transition).interfaceId), "FullSpread has no projected-state interface");
+        assertFalse(IERC165(seUT).supportsInterface(type(Transition).interfaceId), "legacy transition interface stays absent");
         bytes32 beforeQuote = _hbCompleteState(HB_ALICE);
-        vm.expectRevert(Transition.InvalidQuoteState.selector);
-        weighted.previewWithdrawSingle(other, burned);
-        assertEq(_hbCompleteState(HB_ALICE), beforeQuote, "unavailable sequential quote changes no state");
+        uint256 quotedOutput = weighted.previewWithdrawSingle(other, burned);
+        assertGt(quotedOutput, 0);
+        assertEq(_hbCompleteState(HB_ALICE), beforeQuote, "sequential quote changes no state");
         uint256 checkpoint = vm.snapshotState();
         uint256 controlOutput;
         bytes32 controlState;
@@ -382,6 +382,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_ComponentAccounting is Full
             else if (route == 1) out = weighted.exitSingleAssetExactBptIn(other, burned, HB_ALICE, 1, block.timestamp);
             else if (route == 2) (out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(hook), burned, IERC20(other), 1, HB_ALICE, false, block.timestamp);
             else out = IStandardizedYield(hook).redeem(HB_ALICE, burned, other, 1, false);
+            assertEq(out, quotedOutput, "all exit aliases match the sequential preview");
             assertGt(out, 0, "actual allocated-basket exit remains supported");
             assertEq(IERC20(other).balanceOf(HB_ALICE) - beforeOut, out);
             assertEq(IERC20(hook).totalSupply(), beforeSupply - burned);

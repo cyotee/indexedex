@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -34,6 +36,7 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
         bool retained_ = quoted_ == 0 || _hookPreviewIsZero(held_);
         uint256 callerBefore_ = IERC20(mintToken).balanceOf(address(this));
         uint256 feeBefore_ = IERC20(mintToken).balanceOf(address(feeCollector));
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
         detfInfo.sweepDust{gas: 30_000_000}();
         if (retained_) {
             assertEq(IERC20(mintToken).balanceOf(detf), held_, "unmintable complete route retains all custody");
@@ -43,6 +46,7 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
             assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "deployment mints LP");
         }
 
+        DetfResidualAssertions.sweepDustUntilSettled(detf, address(indexedexManager), 30_000_000);
         assertEq(IERC20(mintToken).balanceOf(detfUser), userBefore_, "sweep cannot charge donor again");
         assertEq(IERC20(detf).totalSupply(), supplyBefore_, "dust creates no user entitlement");
         assertGe(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "protocol LP custody preserved");
@@ -58,6 +62,7 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
         assertEq(IERC20(mintToken).allowance(detf, reserveHook), 0, "join approval cleared");
         assertEq(IERC20(mintToken).allowance(detf, se), 0, "wrap approval cleared");
         _assertSeAllowancesZero();
+        _assertNoJoinableDust();
     }
 
     function _hookPreviewIsZero(uint256 amount_) internal view returns (bool) {

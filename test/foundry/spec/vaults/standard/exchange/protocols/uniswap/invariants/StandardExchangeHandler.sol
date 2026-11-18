@@ -5,22 +5,25 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {DeliveryTestToken} from "../remediation/DeliveryTestToken.sol";
+import {IOperable} from "@crane/contracts/access/operable/IOperable.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as IMaintenance} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
+import {IStandardExchangeBundleIn, IStandardExchangeBundleOut} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 
 interface ISequenceEnvironment {
     function trade(bool zeroForOne, uint256 amount) external;
-    function configureSleeve(uint256 percentage) external;
+    function assertPositionAccounting() external view;
+    function positionDigest() external view returns (bytes32);
+    function booked() external view returns (uint256, uint256);
+    function positionLiquidity() external view returns (uint256);
+    function bundleClaim(uint256 shares) external view returns (uint256, uint256);
+    function maintain(IERC20 token, uint256 amount) external;
     function custodyAddresses() external view returns (address[3] memory);
-    function slippageError() external pure returns (bytes4);
-}
-
-interface ISequenceReserve {
-    function rebalanceLiquidReserve() external;
-    function deployedReserve() external view returns (uint256, uint256);
 }
 
 /// @notice Production-proxy FullSpread campaign with three independently funded holders.
@@ -29,8 +32,8 @@ interface ISequenceReserve {
 /// All counters start at zero; setup funding is not campaign activity. Only the
 /// named attacks catch reverts, and they compare the full expected payload and
 /// state digest. Any other revert fails the campaign (fail-on-revert is enabled).
-/// Fee collection uses a funded deposit after a real trade: FullSpread has no
-/// separate public collect selector. Callback probes use the configured token.
+/// Exact-out actions now prove fail-closed behavior. User deposits refund dust;
+/// authorized maintenance alone deploys booked fees and remainders.
 contract StandardExchangeHandler is Test {
     uint256 public constant ACTIONS = 24;
     address public constant EOA_ATTACKER = address(0xBAD);
@@ -53,15 +56,12 @@ contract StandardExchangeHandler is Test {
     uint256[3] public actorMoneyCalls;
     uint256[3] public refundModes;
 
-    struct Flow {
-        AtomicPretransferCaller actor;
-        IERC20 input;
-        IERC20 output;
-        uint256 amount;
+    struct ActionReceipt {
+        uint256 inputBefore;
+        uint256 outputBefore;
         uint256 quoted;
-        uint256 delivered;
-        uint256 maximum;
-        bool pushed;
+        uint256 refund;
+        bytes32 others;
     }
 
     constructor(ISequenceEnvironment env, IStandardExchangeProxy vault_, IERC20 a, IERC20 b) {
@@ -89,10 +89,10 @@ contract StandardExchangeHandler is Test {
         uint256 actorIndex = steps < ACTIONS ? steps % 3 : (seed >> 8) % 3;
         AtomicPretransferCaller actor = actors[actorIndex];
         IERC20 token = seed & 1 == 0 ? token0 : token1;
-        uint256 amount = bound(seed >> 16, 1e14, 0.1 ether);
+        uint256 amount = bound(seed >> 16, 1e8, 1e11);
         ++attempted[action];
         if (action < 12) {
-            _moneyAction(action, actor, token, amount, seed);
+            _moneyAction(action, actor, token, amount);
             ++actorMoneyCalls[actorIndex];
         } else if (action == 12) {
             _shareTransfer(actorIndex, amount);
@@ -102,23 +102,18 @@ contract StandardExchangeHandler is Test {
             _noDelivery(false, token0, amount);
             _noDelivery(false, token1, amount);
             _noDelivery(true, token, amount);
-            expectedReverts[action] += 5;
+            expectedReverts[action] += 3;
         } else if (action == 14) {
-            actor.execute(address(token), abi.encodeCall(IERC20.transfer, (address(vault), amount)));
-            ISequenceReserve(address(vault)).rebalanceLiquidReserve();
+            _bundleIn(actor, amount, amount * 2, false);
+            _bundleIn(actor, amount * 2, amount, true);
         } else if (action == 15) {
-            // Ensure deployed liquidity, accrue fees, then collect through the public mint route.
-            environment.configureSleeve(0.02e18);
-            ISequenceReserve(address(vault)).rebalanceLiquidReserve();
             environment.trade(seed & 1 == 0, amount);
             _exchangeIn(actor, token, IERC20(address(vault)), amount, false);
         } else if (action == 16) {
-            uint256[4] memory choices = [uint256(0.02e18), 0.2e18, 0.5e18, 1e18];
-            environment.configureSleeve(choices[(seed >> 4) % 4]);
-            ISequenceReserve(address(vault)).rebalanceLiquidReserve();
+            _maintenance(token, amount);
         } else if (action == 17) {
             _noDelivery(false, token, amount);
-            expectedReverts[action] += 2;
+            ++expectedReverts[action];
         } else if (action == 18) {
             _noDelivery(true, token, amount);
             ++expectedReverts[action];
@@ -129,8 +124,8 @@ contract StandardExchangeHandler is Test {
             _exchangeIn(actor, token, IERC20(address(vault)), amount, true);
             _rejectContract(
                 actor,
-                _inCall(token, amount, IERC20(address(vault)), address(actor), true, 0),
-                _deliveryError(amount, 0)
+                _inCall(token, amount, IERC20(address(vault)), address(actor), true, 1),
+                _minimumError(1, 0)
             );
             ++expectedReverts[action];
         } else if (action == 21) {
@@ -148,7 +143,7 @@ contract StandardExchangeHandler is Test {
         assertAccounting();
     }
 
-    function _moneyAction(uint256 action, AtomicPretransferCaller actor, IERC20 token, uint256 amount, uint256 seed)
+    function _moneyAction(uint256 action, AtomicPretransferCaller actor, IERC20 token, uint256 amount)
         private
     {
         IERC20 shares = IERC20(address(vault));
@@ -158,13 +153,17 @@ contract StandardExchangeHandler is Test {
         } else if (action < 4) {
             _exchangeIn(actor, shares, token, amount, pushed);
         } else if (action < 6) {
-            _exchangeOut(actor, token, shares, amount, pushed, seed);
+            _exchangeOut(actor, token, shares, amount, pushed);
+            ++expectedReverts[action];
         } else if (action < 8) {
-            _exchangeOut(actor, shares, token, amount, pushed, seed);
+            _exchangeOut(actor, shares, token, amount, pushed);
+            ++expectedReverts[action];
         } else if (action < 10) {
             _exchangeIn(actor, token, address(token) == address(token0) ? token1 : token0, amount, pushed);
         } else {
-            _exchangeOut(actor, token, address(token) == address(token0) ? token1 : token0, amount, pushed, seed);
+            _exchangeOut(actor, token, address(token) == address(token0) ? token1 : token0, amount, pushed);
+            ++expectedReverts[action];
+            _bundleOut(actor, amount, pushed);
         }
     }
 
@@ -172,15 +171,29 @@ contract StandardExchangeHandler is Test {
         private
         returns (uint256 received)
     {
-        uint256 inputBefore = input.balanceOf(address(actor));
-        uint256 outputBefore = output.balanceOf(address(actor));
-        bytes32 others = _otherHolders(address(actor));
+        ActionReceipt memory receipt;
+        receipt.inputBefore = input.balanceOf(address(actor));
+        receipt.outputBefore = output.balanceOf(address(actor));
+        receipt.others = _otherHolders(address(actor));
+        uint256[4] memory basis = _basis();
+        (receipt.quoted, receipt.refund) =
+            IStandardExchangeIn(address(vault)).previewExchangeIn(input, amount, output);
         bytes memory data = _inCall(input, amount, output, address(actor), pushed, 0);
-        received = _fundedCall(actor, input, amount, pushed, data);
+        // Exit shares stay with the caller under either flag.
+        uint256 returnedRefund;
+        (received, returnedRefund) = _fundedCall(actor, input, amount, pushed, data);
         assertGt(received, 0, "funded exact-in executed");
-        assertEq(inputBefore - input.balanceOf(address(actor)), amount, "exact-in has no refund");
-        assertEq(output.balanceOf(address(actor)) - outputBefore, received, "actual exact-in payout");
-        assertEq(_otherHolders(address(actor)), others, "other holders unchanged");
+        assertEq(received, receipt.quoted, "exact-in preview matches receipt");
+        assertEq(returnedRefund, receipt.refund, "exact-in preview matches refund");
+        assertEq(receipt.inputBefore - input.balanceOf(address(actor)), amount - receipt.refund, "only kept input debited");
+        assertEq(output.balanceOf(address(actor)) - receipt.outputBefore, received, "actual exact-in payout");
+        assertEq(_otherHolders(address(actor)), receipt.others, "other holders unchanged");
+        if (address(output) == address(vault)) _assertMintBasis(basis, received);
+        else if (address(input) == address(vault)) _assertBurnBasis(basis, amount);
+        else {
+            uint256[4] memory afterBasis = _basis();
+            for (uint256 i; i < 4; ++i) assertEq(afterBasis[i], basis[i], "pass-through cannot deploy books or issue shares");
+        }
         _attribute(input, output, amount, received);
     }
 
@@ -189,63 +202,144 @@ contract StandardExchangeHandler is Test {
         IERC20 input,
         IERC20 output,
         uint256 amount,
-        bool pushed,
-        uint256 seed
+        bool pushed
     ) private {
-        Flow memory flow;
-        flow.actor = actor;
-        flow.input = input;
-        flow.output = output;
-        flow.amount = amount;
-        flow.pushed = pushed;
-        flow.quoted = vault.previewExchangeOut(input, output, amount);
-        assertGt(flow.quoted, 0, "nonzero exact-out quote");
-        flow.maximum = flow.quoted * 4 + 1;
-        // Exercise full-max refunds, partial credit, and only-used under a fat max.
-        uint256 mode = steps < ACTIONS ? (steps == 5 ? 2 : steps == 7 ? 1 : 0) : (seed >> 4) % 3;
-        if (pushed) ++refundModes[mode];
-        flow.delivered =
-            !pushed || mode == 0 ? flow.quoted : mode == 1 ? flow.quoted + flow.quoted / 4 + 1 : flow.maximum;
-        _executeOut(flow);
-    }
-
-    function _executeOut(Flow memory flow) private {
-        address actor = address(flow.actor);
-        uint256 inputBefore = flow.input.balanceOf(actor);
-        uint256 outputBefore = flow.output.balanceOf(actor);
-        bytes32 others = _otherHolders(actor);
+        assertEq(vault.previewExchangeOut(input, output, amount), 0, "exact-out preview is unavailable");
+        // Even a funded allowance cannot make the retired route move tokens.
+        actor.execute(address(input), abi.encodeCall(IERC20.approve, (address(vault), amount * 4)));
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
-            (flow.input, flow.maximum, flow.output, flow.amount, actor, flow.pushed, block.timestamp)
+            (input, amount * 4, output, amount, address(actor), pushed, block.timestamp)
         );
-        // False-flag approves the fat max; the vault must debit only the quote.
-        uint256 used =
-            _fundedCall(flow.actor, flow.input, flow.pushed ? flow.delivered : flow.maximum, flow.pushed, data);
-        assertEq(used, flow.quoted, "exact-out preview/execute");
-        assertEq(inputBefore - flow.input.balanceOf(actor), used, "only used debited; bounded refund");
-        assertEq(flow.output.balanceOf(actor) - outputBefore, flow.amount, "exact requested payout");
-        if (flow.pushed) {
-            uint256 refunded = flow.input.balanceOf(actor) - (inputBefore - flow.delivered);
-            assertEq(refunded, flow.delivered - used, "refund from actual delivered credit only");
-            assertLe(refunded, flow.maximum - used, "refund below max minus used");
-        } else if (address(flow.input) != address(vault)) {
-            assertEq(flow.input.allowance(actor, address(vault)), flow.maximum - used, "pull used, not maximum");
-        }
-        assertEq(_otherHolders(actor), others, "other holders unchanged");
-        _attribute(flow.input, flow.output, used, flow.amount);
+        _rejectContract(actor, data, abi.encodeWithSelector(IStandardExchangeOut.ExchangeOutNotAvailable.selector));
     }
 
     function _fundedCall(AtomicPretransferCaller actor, IERC20 token, uint256 funding, bool pushed, bytes memory data)
         private
-        returns (uint256)
+        returns (uint256, uint256)
     {
+        if (address(token) == address(vault)) {
+            return abi.decode(actor.execute(address(vault), data), (uint256, uint256));
+        }
         actor.execute(
             address(token), abi.encodeCall(IERC20.approve, (pushed ? address(actor) : address(vault), funding))
         );
         bytes memory result = pushed
             ? actor.consumePretransfer(token, address(actor), address(vault), funding, data)
             : actor.execute(address(vault), data);
-        return abi.decode(result, (uint256));
+        return abi.decode(result, (uint256, uint256));
+    }
+
+    function _amounts(uint256 a, uint256 b) private pure returns (uint256[] memory amounts) {
+        amounts = new uint256[](2);
+        amounts[0] = a;
+        amounts[1] = b;
+    }
+
+    function _tokens() private view returns (address[] memory tokens) {
+        tokens = new address[](2);
+        tokens[0] = address(token0);
+        tokens[1] = address(token1);
+    }
+
+    /// @dev Both funding modes must pay exactly each budget minus its returned refund.
+    function _bundleIn(AtomicPretransferCaller actor, uint256 a, uint256 b, bool pushed) private {
+        uint256[4] memory basis = _basis();
+        ActionReceipt memory receipt;
+        receipt.inputBefore = token0.balanceOf(address(actor));
+        receipt.outputBefore = token1.balanceOf(address(actor));
+        uint256 beforeShares = vault.balanceOf(address(actor));
+        receipt.others = _otherHolders(address(actor));
+        uint256[] memory refunds;
+        (receipt.quoted, refunds) =
+            IStandardExchangeBundleIn(address(vault)).previewExchangeBundleInForSingleOut(_amounts(a, b), address(vault));
+        IERC20[2] memory tokens = [token0, token1];
+        for (uint256 i; i < 2; ++i) {
+            actor.execute(address(tokens[i]), abi.encodeCall(IERC20.approve, (address(vault), i == 0 ? a : b)));
+            if (pushed) actor.execute(address(tokens[i]), abi.encodeCall(IERC20.transfer, (address(vault), i == 0 ? a : b)));
+        }
+        (uint256 minted, uint256[] memory returned) = abi.decode(
+            actor.execute(address(vault), abi.encodeCall(IStandardExchangeBundleIn.exchangeBundleInForSingleOut,
+                (_amounts(a, b), address(vault), receipt.quoted, address(actor), pushed, block.timestamp))),
+            (uint256, uint256[])
+        );
+        assertEq(minted, receipt.quoted, "bundle net share quote");
+        assertGt(minted, 0, "bundle added liquidity");
+        assertEq(returned, refunds, "bundle per-token refund quote");
+        assertEq(receipt.inputBefore - token0.balanceOf(address(actor)), a - returned[0], "bundle token0 debit");
+        assertEq(receipt.outputBefore - token1.balanceOf(address(actor)), b - returned[1], "bundle token1 debit");
+        assertEq(vault.balanceOf(address(actor)), beforeShares + minted, "bundle shares attributed");
+        assertEq(_otherHolders(address(actor)), receipt.others, "bundle leaves other holders unchanged");
+        _assertMintBasis(basis, minted);
+        issued += minted;
+        ++refundModes[0];
+    }
+
+    /// @dev Both flags burn caller-held exact-in shares, with no transfer or approval.
+    function _bundleOut(AtomicPretransferCaller actor, uint256 amount, bool pushed) private {
+        uint256[4] memory basis = _basis();
+        ActionReceipt memory receipt;
+        receipt.inputBefore = token0.balanceOf(address(actor));
+        receipt.outputBefore = token1.balanceOf(address(actor));
+        uint256 beforeShares = vault.balanceOf(address(actor));
+        receipt.others = _otherHolders(address(actor));
+        (uint256[] memory quote, uint256 quoteRefund) =
+            IStandardExchangeBundleOut(address(vault)).previewExchangeBundleOut(address(vault), amount, _tokens());
+        {
+            (uint256 claim0, uint256 claim1) = environment.bundleClaim(amount);
+            assertEq(quote, _amounts(claim0, claim1), "independent principal, unpaid fee and book claim");
+        }
+        (uint256[] memory paid, uint256 refund) = abi.decode(
+            actor.execute(address(vault), abi.encodeCall(IStandardExchangeBundleOut.exchangeBundleOut,
+                (address(vault), amount, _tokens(), quote, address(actor), pushed, block.timestamp))),
+            (uint256[], uint256)
+        );
+        assertEq(paid, quote, "bundle exit quote");
+        assertEq(refund, 0, "exact share exit has no refund");
+        assertEq(quoteRefund, 0, "bundle exit preview refund");
+        assertEq(token0.balanceOf(address(actor)), receipt.inputBefore + paid[0], "bundle exit token0 receipt");
+        assertEq(token1.balanceOf(address(actor)), receipt.outputBefore + paid[1], "bundle exit token1 receipt");
+        assertEq(vault.balanceOf(address(actor)), beforeShares - amount, "caller shares burned");
+        assertEq(_otherHolders(address(actor)), receipt.others, "bundle exit leaves other holders unchanged");
+        _assertBurnBasis(basis, amount);
+        burned += amount;
+    }
+
+    function _basis() private view returns (uint256[4] memory basis) {
+        basis[0] = vault.totalSupply();
+        basis[1] = environment.positionLiquidity();
+        (basis[2], basis[3]) = environment.booked();
+    }
+
+    /// @dev The canonical fixture has zero usage fee; raw liquidity alone sets issuance.
+    function _assertMintBasis(uint256[4] memory beforeBasis, uint256 minted) private view {
+        uint256[4] memory afterBasis = _basis();
+        uint256 added = afterBasis[1] - beforeBasis[1];
+        assertEq(minted, added * beforeBasis[0] / beforeBasis[1], "raw-liquidity share issuance");
+        assertEq(afterBasis[0], beforeBasis[0] + minted, "deposit supply delta");
+        assertGe(afterBasis[2], beforeBasis[2], "deposit cannot deploy incumbent token0 book");
+        assertGe(afterBasis[3], beforeBasis[3], "deposit cannot deploy incumbent token1 book");
+    }
+
+    function _assertBurnBasis(uint256[4] memory beforeBasis, uint256 shares) private view {
+        assertEq(vault.totalSupply(), beforeBasis[0] - shares, "exit burns exact input shares");
+        assertEq(environment.positionLiquidity(),
+            beforeBasis[1] - beforeBasis[1] * shares / beforeBasis[0], "exit removes raw-liquidity fraction");
+    }
+
+    function _maintenance(IERC20 token, uint256 amount) private {
+        bytes32 holders = _otherHolders(address(0));
+        uint256 supply = vault.totalSupply();
+        uint256 liquidity = environment.positionLiquidity();
+        _rejectContract(attacker, abi.encodeCall(IMaintenance.compound, ()),
+            abi.encodeWithSelector(IOperable.NotOperator.selector, address(attacker)));
+        _rejectContract(attacker, abi.encodeCall(IMaintenance.donate, (address(token), amount, false)),
+            abi.encodeWithSelector(IOperable.NotOperator.selector, address(attacker)));
+        expectedReverts[16] += 2;
+        environment.maintain(token, amount);
+        assertGt(environment.positionLiquidity(), liquidity, "authorized donation deploys liquidity");
+        assertEq(vault.totalSupply(), supply, "token maintenance cannot issue shares");
+        assertEq(_otherHolders(address(0)), holders, "maintenance cannot pay holders");
     }
 
     function _attribute(IERC20 input, IERC20 output, uint256 amountIn, uint256 amountOut) private {
@@ -274,20 +368,20 @@ contract StandardExchangeHandler is Test {
             assertEq(reason, abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
             assertEq(stateDigest(), beforeState, "EOA rejection rolls back");
         } else {
-            _rejectContract(attacker, data, _deliveryError(amount, 0));
-            uint256 quoted = vault.previewExchangeOut(token, IERC20(address(vault)), amount);
-            data = abi.encodeCall(
-                IStandardExchangeOut.exchangeOut,
-                (token, quoted * 4, IERC20(address(vault)), amount, address(attacker), true, block.timestamp)
-            );
-            _rejectContract(attacker, data, _deliveryError(quoted, 0));
+            bytes32 beforeState = stateDigest();
+            (uint256 minted, uint256 refund) = abi.decode(attacker.execute(address(vault), data), (uint256, uint256));
+            assertEq(minted, 0, "missing delivery cannot issue shares");
+            assertEq(refund, 0, "no imaginary refund");
+            assertEq(stateDigest(), beforeState, "no delivery changes no state");
+            _rejectContract(attacker,
+                _inCall(token, amount, IERC20(address(vault)), address(attacker), true, 1), _minimumError(1, 0));
         }
     }
 
     function _shortAtomic(AtomicPretransferCaller actor, IERC20 token, uint256 amount) private {
         actor.execute(address(token), abi.encodeCall(IERC20.approve, (address(actor), amount - 1)));
         bytes32 beforeState = stateDigest();
-        bytes memory data = _inCall(token, amount, IERC20(address(vault)), address(actor), true, 0);
+        bytes memory data = _inCall(token, amount, IERC20(address(vault)), address(actor), true, 1);
         (bool ok, bytes memory reason) = address(actor)
             .call(
                 abi.encodeCall(
@@ -296,7 +390,7 @@ contract StandardExchangeHandler is Test {
                 )
             );
         assertFalse(ok);
-        assertEq(reason, _deliveryError(amount, amount - 1));
+        assertEq(reason, _minimumError(1, 0));
         assertEq(stateDigest(), beforeState, "atomic short delivery restores tokens, shares, books and allowances");
         _stagedShortDelivery(actor, token, amount, data);
     }
@@ -307,21 +401,26 @@ contract StandardExchangeHandler is Test {
         uint256 payerBefore = token.balanceOf(address(actor));
         uint256 vaultBefore = token.balanceOf(address(vault));
         actor.execute(address(token), abi.encodeCall(IERC20.transfer, (address(vault), amount - 1)));
-        _rejectContract(actor, data, _deliveryError(amount, amount - 1));
+        _rejectContract(actor, data, _minimumError(1, 0));
         assertEq(token.balanceOf(address(actor)), payerBefore - (amount - 1), "prior transfer stays spent");
         assertEq(token.balanceOf(address(vault)), vaultBefore + amount - 1, "prior transfer stays delivered");
         uint256 sharesBefore = vault.balanceOf(address(actor));
-        data = _inCall(token, amount - 1, IERC20(address(vault)), address(actor), true, 0);
-        uint256 minted = abi.decode(actor.execute(address(vault), data), (uint256));
-        assertGt(minted, 0);
-        assertEq(vault.balanceOf(address(actor)), sharesBefore + minted);
-        issued += minted;
+        data = _inCall(token, amount, IERC20(address(vault)), address(actor), true, 0);
+        (uint256 minted, uint256 refund) = abi.decode(actor.execute(address(vault), data), (uint256, uint256));
+        assertEq(minted, 0, "oversized pretransfer cannot mint or pull shortfall");
+        assertEq(refund, amount - 1, "oversized maximum refunds actual credit only");
+        assertEq(token.balanceOf(address(actor)), payerBefore, "short delivery returned");
+        assertEq(token.balanceOf(address(vault)), vaultBefore, "booked balance untouched");
+        assertEq(vault.balanceOf(address(actor)), sharesBefore);
+        ++refundModes[1];
     }
 
     function _atomicSlippage(AtomicPretransferCaller actor, IERC20 token, uint256 amount) private {
         actor.execute(address(token), abi.encodeCall(IERC20.approve, (address(actor), amount)));
         bytes32 beforeState = stateDigest();
-        // A real pool swap occurs before the impossible minOut check.
+        IERC20 output = address(token) == address(token0) ? token1 : token0;
+        (uint256 quoted,) = IStandardExchangeIn(address(vault)).previewExchangeIn(token, amount, output);
+        // The exact plan must roll back with the caller's atomic funding.
         bytes memory data = _inCall(
             token, amount, address(token) == address(token0) ? token1 : token0, address(actor), false, type(uint256).max
         );
@@ -332,13 +431,13 @@ contract StandardExchangeHandler is Test {
                 )
             );
         assertFalse(ok);
-        assertEq(reason, abi.encodeWithSelector(environment.slippageError()));
+        assertEq(reason, _minimumError(type(uint256).max, quoted));
         assertEq(stateDigest(), beforeState, "failed swap restores protocol custody and in-transaction approvals");
     }
 
     function _reentry(AtomicPretransferCaller actor, IERC20 token, uint256 amount) private {
         DeliveryTestToken hostile = DeliveryTestToken(address(token));
-        hostile.setCallback(address(vault), abi.encodeCall(ISequenceReserve.rebalanceLiquidReserve, ()));
+        hostile.setCallback(address(vault), abi.encodeCall(IMaintenance.compound, ()));
         _exchangeIn(actor, token, IERC20(address(vault)), amount, false);
         assertEq(hostile.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         hostile.setCallback(address(0), "");
@@ -353,16 +452,39 @@ contract StandardExchangeHandler is Test {
         uint256 sharesBefore = vault.balanceOf(address(consumer));
         // Deliberately stage a separate transfer. D12 allows another contract to
         // consume part of this available credit; it does not own the sender's credit.
-        payer.execute(address(token), abi.encodeCall(IERC20.transfer, (address(vault), paid)));
+        {
+            (uint256 book0, uint256 book1) = environment.booked();
+            uint256 reserve0 = vault.reserveOfToken(address(token0));
+            uint256 reserve1 = vault.reserveOfToken(address(token1));
+            payer.execute(address(token), abi.encodeCall(IERC20.transfer, (address(vault), paid)));
+            (uint256 afterBook0, uint256 afterBook1) = environment.booked();
+            assertEq(afterBook0, book0, "stray token0 not booked");
+            assertEq(afterBook1, book1, "stray token1 not booked");
+            assertEq(vault.reserveOfToken(address(token0)), reserve0, "stray custody not token0 reserves");
+            assertEq(vault.reserveOfToken(address(token1)), reserve1, "stray custody not token1 reserves");
+            environment.assertPositionAccounting();
+        }
         bytes memory data = _inCall(token, amount, IERC20(address(vault)), address(consumer), true, 0);
-        uint256 minted = abi.decode(consumer.execute(address(vault), data), (uint256));
+        uint256[4] memory basis = _basis();
+        (uint256 minted, uint256 refund) = abi.decode(consumer.execute(address(vault), data), (uint256, uint256));
+        _assertMintBasis(basis, minted);
         assertGt(minted, 0);
-        assertEq(token.balanceOf(address(payer)), payerBefore - paid, "no exact-in excess refund");
-        assertEq(token.balanceOf(address(consumer)), consumerBefore, "no consumer refund");
+        assertEq(token.balanceOf(address(payer)), payerBefore - paid, "staged payer retains no ownership");
+        assertEq(token.balanceOf(address(consumer)), consumerBefore + refund, "consumer receives unused declared input");
         assertEq(vault.balanceOf(address(consumer)), sharesBefore + minted);
         issued += minted;
-        // The remainder is booked by completion; it cannot fund a repeated call.
-        _rejectContract(consumer, data, _deliveryError(amount, 0));
+        environment.assertPositionAccounting();
+        // Above-maximum credit remains unbooked and can fund one more contract call.
+        basis = _basis();
+        (uint256 second, uint256 secondRefund) = abi.decode(consumer.execute(address(vault), data), (uint256, uint256));
+        _assertMintBasis(basis, second);
+        assertGt(second, 0, "remaining credit stays available");
+        issued += second;
+        assertEq(vault.balanceOf(address(consumer)), sharesBefore + minted + second);
+        assertEq(token.balanceOf(address(consumer)), consumerBefore + refund + secondRefund);
+        _rejectContract(consumer,
+            _inCall(token, amount, IERC20(address(vault)), address(consumer), true, 1), _minimumError(1, 0));
+        ++refundModes[2];
     }
 
     function _rejectContract(AtomicPretransferCaller caller, bytes memory data, bytes memory expected) private {
@@ -384,8 +506,8 @@ contract StandardExchangeHandler is Test {
         );
     }
 
-    function _deliveryError(uint256 requested, uint256 delivered) private pure returns (bytes memory) {
-        return abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, requested, delivered);
+    function _minimumError(uint256 minimum, uint256 actual) private pure returns (bytes memory) {
+        return abi.encodeWithSelector(IStandardExchangeErrors.AmountOutNotMet.selector, minimum, actual);
     }
 
     function _otherHolders(address except) private view returns (bytes32 digest) {
@@ -394,7 +516,10 @@ contract StandardExchangeHandler is Test {
                 digest = keccak256(abi.encode(digest, _accountDigest(address(actors[i]))));
             }
         }
-        digest = keccak256(abi.encode(digest, _accountDigest(address(environment)), _accountDigest(address(0xdEaD))));
+        if (except != address(0)) {
+            digest = keccak256(abi.encode(digest, _accountDigest(address(environment))));
+        }
+        digest = keccak256(abi.encode(digest, _accountDigest(address(0))));
     }
 
     function _accountDigest(address account) private view returns (bytes32 digest) {
@@ -439,13 +564,12 @@ contract StandardExchangeHandler is Test {
                 _accountDigest(EOA_ATTACKER)
             )
         );
-        (uint256 deployed0, uint256 deployed1) = ISequenceReserve(address(vault)).deployedReserve();
-        return keccak256(abi.encode(digest, deployed0, deployed1));
+        return keccak256(abi.encode(digest, environment.positionDigest()));
     }
 
     function assertAccounting() public view {
         assertEq(vault.totalSupply(), initialSupply + issued - burned, "all mint and burn attributed");
-        uint256 held = vault.balanceOf(address(environment)) + vault.balanceOf(address(0xdEaD));
+        uint256 held = vault.balanceOf(address(environment)) + vault.balanceOf(address(0));
         for (uint256 i; i < 3; ++i) {
             held += vault.balanceOf(address(actors[i]));
         }
@@ -460,8 +584,8 @@ contract StandardExchangeHandler is Test {
             0,
             "maintenance caller receives no assets"
         );
-        assertEq(vault.reserveOfToken(address(token0)), token0.balanceOf(address(vault)), "token0 custody fully booked");
-        assertEq(vault.reserveOfToken(address(token1)), token1.balanceOf(address(vault)), "token1 custody fully booked");
+        assertEq(vault.balanceOf(address(0)), 1000, "genesis floor remains at zero address");
+        environment.assertPositionAccounting();
     }
 
     function assertCampaignCoverage() external view {
@@ -469,7 +593,7 @@ contract StandardExchangeHandler is Test {
         for (uint256 i; i < ACTIONS; ++i) {
             assertGt(attempted[i], 0, "required action attempted");
             if (_attackAction(i)) {
-                uint256 checks = i == 17 || i == 19 ? 2 : 1;
+                uint256 checks = i == 19 ? 2 : 1;
                 assertEq(expectedReverts[i], attempted[i] * checks, "expected attacks reached and rejected");
             } else {
                 assertEq(succeeded[i], attempted[i], "every valid action succeeded");
@@ -477,15 +601,19 @@ contract StandardExchangeHandler is Test {
             assertEq(unexpectedReverts[i], 0);
         }
         assertGt(expectedReverts[21], 0, "callback reached lock");
-        assertEq(expectedReverts[13], attempted[13] * 5, "post-trade checks reached before reserve sync");
-        assertEq(expectedReverts[22], attempted[22], "partially consumed credit cannot be replayed");
+        assertEq(expectedReverts[10], attempted[10], "token-token pull exact-out rejected");
+        assertEq(expectedReverts[11], attempted[11], "token-token pretransfer exact-out rejected");
+        assertEq(expectedReverts[16], attempted[16] * 2, "both maintenance selectors enforce authorization");
+        assertEq(expectedReverts[13], attempted[13] * 3, "post-trade checks do not treat fees as credit");
+        assertEq(expectedReverts[22], attempted[22], "fully consumed credit cannot be replayed");
         for (uint256 i; i < 3; ++i) {
             assertGt(actorMoneyCalls[i], 0, "each funded holder participated");
-            assertGt(refundModes[i], 0, "full, partial and only-used credit exercised");
+            assertGt(refundModes[i], 0, "bundle, oversized and remaining-credit refunds exercised");
         }
     }
 
     function _attackAction(uint256 action) private pure returns (bool) {
-        return action == 17 || action == 18 || action == 19 || action == 20 || action == 23;
+        return (action >= 4 && action < 8) || action == 17 || action == 18
+            || action == 19 || action == 20 || action == 23;
     }
 }

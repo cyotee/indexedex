@@ -8,6 +8,7 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
@@ -337,10 +338,13 @@ contract UniswapV4FullSpreadStandardExchangeVaultDFPkg is IUniswapV4FullSpreadSt
             return selectors_;
         }
         if (index_ == 6) {
-            selectors_ = new bytes4[](3);
+            selectors_ = new bytes4[](6);
             selectors_[0] = IStandardExchangeIn.previewExchangeIn.selector;
             selectors_[1] = IStandardExchangeBundleIn.previewExchangeBundleInForSingleOut.selector;
             selectors_[2] = IStandardExchangeBundleOut.previewExchangeBundleOut.selector;
+            selectors_[3] = IStandardExchangeStateQuote.quoteExchangeState.selector;
+            selectors_[4] = IStandardExchangeStateQuote.quoteExchangeIn.selector;
+            selectors_[5] = IStandardExchangeStateQuote.quoteExchangeSupply.selector;
             return selectors_;
         }
         if (index_ == 7) {

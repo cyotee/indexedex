@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
@@ -114,7 +116,7 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
             allocation.configureClaimedSyEntitlements(claimed_, pricingId);
             credit_ = Math.mulDiv(credit_, W0, ORIGINAL_WEIGHT);
             assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).configurationId,
-                keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, claimed_[0])));
+                keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, claimed_[0])));
             (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(CLAIMED_ORIGIN);
             assertEq(original_, ORIGINAL_WEIGHT);
             assertEq(eligible_, W0);

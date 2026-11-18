@@ -4,7 +4,8 @@ import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -88,16 +89,25 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf {
         seOther.mint(address(this), amount_);
         pairToken.approve(se, amount_);
         seOther.approve(se, amount_);
-        address[] memory tokens_ = new address[](2);
-        tokens_[0] = univ3Pool.token0();
-        tokens_[1] = univ3Pool.token1();
+        address[] memory tokens_ = IBasicVault(se).vaultTokens();
         uint256[] memory amounts_ = new uint256[](2);
         amounts_[0] = amount_;
         amounts_[1] = amount_;
-        uint256 issued_ = IStandardExchangeInMulti(se).exchangeInManyToOne(
-            tokens_, amounts_, IERC20(se), 1, address(this), false, block.timestamp + 1 hours
+        uint256[] memory balances_ = new uint256[](2);
+        for (uint256 i_; i_ < tokens_.length; ++i_) balances_[i_] = IERC20(tokens_[i_]).balanceOf(address(this));
+        (uint256 quote_, uint256[] memory quotedRefunds_) =
+            IStandardExchangeBundleIn(se).previewExchangeBundleInForSingleOut(amounts_, se);
+        (uint256 issued_, uint256[] memory refunds_) = IStandardExchangeBundleIn(se).exchangeBundleInForSingleOut(
+            amounts_, se, quote_, address(this), false, block.timestamp + 1 hours
         );
         assertGt(issued_, 0, "both assets activate underlying V3 SE");
+        assertEq(issued_, quote_, "V3 activation quote/execution");
+        assertEq(refunds_, quotedRefunds_, "V3 activation refund quote/execution");
+        assertEq(refunds_.length, tokens_.length, "V3 activation refund count");
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(IERC20(tokens_[i_]).balanceOf(address(this)), balances_[i_] - amounts_[i_] + refunds_[i_],
+                "V3 activation net funding");
+        }
     }
 
     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {

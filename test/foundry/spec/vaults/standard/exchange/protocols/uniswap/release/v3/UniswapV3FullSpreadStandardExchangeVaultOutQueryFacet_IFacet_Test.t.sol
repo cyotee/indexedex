@@ -1,57 +1,33 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
-
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {
-    UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol";
-import {
-    UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol";
+import {UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService as Components} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
 
+/// @notice V3-OWN-03: declaration coverage through the preserved release deployment entrypoint.
 contract UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet_IFacet_Test is CraneTest, TestBase_IFacet {
-    using UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService for ICreate3FactoryProxy;
-
+    using Components for ICreate3FactoryProxy;
     function setUp() public override(CraneTest, TestBase_IFacet) {
         CraneTest.setUp();
         TestBase_IFacet.setUp();
     }
-
     function facetTestInstance() public override returns (IFacet) {
         return create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet();
     }
-
     function controlFacetName() public pure override returns (string memory) {
         return type(UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet).name;
     }
-
-    function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](2);
-        controlInterfaces[0] = type(IStandardExchangeOut).interfaceId;
-        controlInterfaces[1] = type(IStandardizedYield).interfaceId;
+    function controlFacetInterfaces() public pure override returns (bytes4[] memory values) {
+        values = new bytes4[](1);
+        values[0] = type(IStandardExchangeOut).interfaceId;
     }
-
-    function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](13);
-        controlFuncs[0] = IStandardExchangeOut.previewExchangeOut.selector;
-        controlFuncs[1] = IStandardizedYield.exchangeRate.selector;
-        controlFuncs[2] = IStandardizedYield.yieldToken.selector;
-        controlFuncs[3] = IStandardizedYield.assetInfo.selector;
-        controlFuncs[4] = IStandardizedYield.getTokensIn.selector;
-        controlFuncs[5] = IStandardizedYield.getTokensOut.selector;
-        controlFuncs[6] = IStandardizedYield.isValidTokenIn.selector;
-        controlFuncs[7] = IStandardizedYield.isValidTokenOut.selector;
-        controlFuncs[8] = IStandardizedYield.previewDeposit.selector;
-        controlFuncs[9] = IStandardizedYield.previewRedeem.selector;
-        controlFuncs[10] = IStandardizedYield.getRewardTokens.selector;
-        controlFuncs[11] = IStandardizedYield.accruedRewards.selector;
-        controlFuncs[12] = IStandardizedYield.rewardIndexesStored.selector;
+    function controlFacetFuncs() public pure override returns (bytes4[] memory values) {
+        values = new bytes4[](1);
+        values[0] = IStandardExchangeOut.previewExchangeOut.selector;
     }
 }

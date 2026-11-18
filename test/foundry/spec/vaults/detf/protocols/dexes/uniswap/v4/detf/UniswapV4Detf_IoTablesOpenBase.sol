@@ -77,6 +77,15 @@ abstract contract UniswapV4Detf_IoTablesOpenBase is TestBase_UniswapV4Detf {
         uint256 owned_ = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
         assertGe(owned_ - expected_.ownedLp, lpOut_, "actual LP in protocol custody");
         assertEq(IERC20(detfInfo.hook()).balanceOf(address(staking_)), 0, "staking has held DETF backing only");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
@@ -92,14 +101,32 @@ abstract contract UniswapV4Detf_IoTablesOpenBase is TestBase_UniswapV4Detf {
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "no LP on diamond");
         assertEq(IERC20(reserveHook).balanceOf(claim_), 0, "no LP on claim");
         assertGt(IERC20(reserveHook).balanceOf(nft_), 0, "LP on Bond NFT");
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
     }
 
-    /// @notice T7.19: After mint, diamond has no joinable balances (also Stage 11 Open).
-    function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
+    /// @notice T7.19: After mint, custody is booked; explicit feeTo maintenance clears joinable balances.
+    function test_T7_19_afterMint_bookedBalances_feeToSweepClearsJoinableDust() public {
         _firstBond(80 ether);
         vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        // Ordinary operations retain and book custody; feeTo performs maintenance.
+        {
+            address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
+            for (uint256 i_; i_ < heldTokens_.length; ++i_) {
+                assertEq(IBasicVault(detf).reserveOfToken(heldTokens_[i_]),
+                    IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
+            }
+        }
+        _sweepDustUntilSettled();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");
     }

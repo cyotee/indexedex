@@ -5,41 +5,31 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+import {IStandardExchangeBundleIn, IStandardExchangeBundleOut} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
+import {UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet.sol";
+import {UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService as Components} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
 
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {
-    UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol";
-import {
-    UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
-
+/// @notice V3-OWN-03: declaration coverage through the preserved release deployment entrypoint.
 contract UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test is CraneTest, TestBase_IFacet {
-    using UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService for ICreate3FactoryProxy;
-
+    using Components for ICreate3FactoryProxy;
     function setUp() public override(CraneTest, TestBase_IFacet) {
         CraneTest.setUp();
         TestBase_IFacet.setUp();
     }
-
     function facetTestInstance() public override returns (IFacet) {
         return create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet();
     }
-
     function controlFacetName() public pure override returns (string memory) {
-        return type(UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet).name;
+        return type(UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet).name;
     }
-
-    function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](2);
-        controlInterfaces[0] = type(IStandardExchangeInMulti).interfaceId;
-        controlInterfaces[1] = type(IStandardExchangeIn).interfaceId;
+    function controlFacetInterfaces() public pure override returns (bytes4[] memory values) {
+        values = new bytes4[](2);
+        values[0] = type(IStandardExchangeBundleIn).interfaceId;
+        values[1] = type(IStandardExchangeBundleOut).interfaceId;
     }
-
-    function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](2);
-        controlFuncs[0] = IStandardExchangeInMulti.previewExchangeInManyToOne.selector;
-        controlFuncs[1] = IStandardExchangeIn.previewExchangeIn.selector;
+    function controlFacetFuncs() public pure override returns (bytes4[] memory values) {
+        values = new bytes4[](2);
+        values[0] = IStandardExchangeBundleIn.previewExchangeBundleInForSingleOut.selector;
+        values[1] = IStandardExchangeBundleOut.previewExchangeBundleOut.selector;
     }
 }

@@ -1,121 +1,55 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-
+import {FullSpreadReleaseFixture} from "./harness/FullSpreadReleaseFixture.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
-import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
-import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
-import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
-import {
-    TestBase_UniswapV3FullSpreadStandardExchangeVault
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
-import {
-    IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 
-/// @notice Collect + D27 sleeve-then-deploy-excess (free remains ~20%, not ~0).
-contract UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test is TestBase_UniswapV3FullSpreadStandardExchangeVault {
-    ERC20PermitMintableStub internal tokenA;
-    ERC20PermitMintableStub internal tokenB;
-    IUniswapV3Pool internal pool;
-    IStandardExchangeProxy internal vault;
-    IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve internal liquid;
-    address internal incumbent = makeAddr("incumbent");
-    address internal attacker = makeAddr("attacker");
-
-    function setUp() public override {
-        super.setUp();
-        tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
-        tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
-        pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
-        _seedExternalLiquidity(pool, 50_000_000e18);
-        vault = _deployVault(pool);
-        liquid = IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve(address(vault));
-    }
-
-    function _seedIncumbent(address token0, address token1, uint256 amount) internal returns (uint256) {
-        address[] memory tokens = new address[](2);
-        tokens[0] = token0;
-        tokens[1] = token1;
-        uint256[] memory amounts = new uint256[](2);
-        amounts[0] = amount;
-        amounts[1] = amount;
-        return IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
-            tokens, amounts, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1
-        );
-    }
-
-    function test_outsidePoolTradeDoesNotRefreshVaultBook() public {
-        address token0 = pool.token0();
-        address token1 = pool.token1();
-        ERC20PermitMintableStub(token0).mint(incumbent, 200 ether);
-        ERC20PermitMintableStub(token1).mint(incumbent, 200 ether);
-        ERC20PermitMintableStub(token0).mint(attacker, 1 ether);
-        vm.startPrank(incumbent);
-        IERC20(token0).approve(address(vault), type(uint256).max);
-        IERC20(token1).approve(address(vault), type(uint256).max);
-        _seedIncumbent(token0, token1, 200 ether);
-        vm.stopPrank();
-        uint256 book0 = IBasicVault(address(vault)).reserveOfToken(token0);
-        uint256 book1 = IBasicVault(address(vault)).reserveOfToken(token1);
-        uint256 supply = IERC20(address(vault)).totalSupply();
+/// @notice D27 migrated to V3-ACC-09/11/20: fees are booked once, outside mint liquidity.
+contract UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test is FullSpreadReleaseFixture {
+    function test_outsidePoolTrade_refreshesEconomicReservesWithoutMinting() public {
+        _join(200 ether, 200 ether);
+        uint256 beforeReserve0 = vault.reserveOfToken(address(token0));
+        uint256 beforeReserve1 = vault.reserveOfToken(address(token1));
+        uint256 supply = vault.totalSupply();
         _externalSwapExactIn(pool, true, 50_000 ether);
-        assertEq(IBasicVault(address(vault)).reserveOfToken(token0), book0, "outside trade leaves token0 book unchanged");
-        assertEq(IBasicVault(address(vault)).reserveOfToken(token1), book1, "outside trade leaves token1 book unchanged");
-        assertEq(IERC20(address(vault)).totalSupply(), supply, "outside trade mints no shares");
-        vm.startPrank(attacker);
-        IERC20(token0).approve(address(vault), type(uint256).max);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)));(uint256 minted,) = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), preview, attacker, false, block.timestamp + 1);
-        vm.stopPrank();
-        assertEq(minted, preview, "later deposit credits only the funded input");
-        assertEq(IERC20(address(vault)).balanceOf(attacker), minted, "caller receives only the funded credit");
+        _assertReserves();
+        assertTrue(vault.reserveOfToken(address(token0)) != beforeReserve0 ||
+            vault.reserveOfToken(address(token1)) != beforeReserve1, "economic reserves follow the position");
+        assertEq(vault.totalSupply(), supply);
+        uint128 liquidity = _liquidity();
+        (uint256 quote,) = vault.previewExchangeIn(token0, 1 ether, IERC20(address(vault)));
+        (uint256 minted,) = _mintOne(token0, 1 ether, alice);
+        assertEq(minted, quote);
+        assertEq(minted, uint256(_liquidity() - liquidity) * supply / liquidity);
     }
 
-    function test_d27_subsequentTinyZap_doesNotDiluteIncumbentIntoFees_freeRemainsSleeve() public {
-        address token0 = pool.token0();
-        address token1 = pool.token1();
-        uint256 large = 200 ether;
-        ERC20PermitMintableStub(token0).mint(incumbent, large);
-        ERC20PermitMintableStub(token1).mint(incumbent, large);
-        ERC20PermitMintableStub(token0).mint(attacker, 1 ether);
-
-        vm.startPrank(incumbent);
-        IERC20(token0).approve(address(vault), type(uint256).max);
-        IERC20(token1).approve(address(vault), type(uint256).max);
-        uint256 incumbentShares = _seedIncumbent(token0, token1, large);
-        vm.stopPrank();
-
+    function test_d27_subsequentTinyZap_booksFeesWithoutCreditingNewDepositor() public {
+        uint256 incumbent = _join(200 ether, 200 ether);
         _externalSwapExactIn(pool, true, 50_000 ether);
         _externalSwapExactIn(pool, false, 50_000 ether);
-
-        uint256 supplyBefore = IERC20(address(vault)).totalSupply();
-        assertEq(supplyBefore, incumbentShares + 1e15);
-
-        vm.startPrank(attacker);
-        IERC20(token0).approve(address(vault), type(uint256).max);(uint256 attackerShares,) = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
-        vm.stopPrank();
-
-        assertLt(attackerShares, incumbentShares / 10, "attacker not fee-diluting");
-        assertEq(IERC20(address(vault)).balanceOf(incumbent), incumbentShares, "incumbent shares unchanged");
-
-        uint256 free0 = IERC20(pool.token0()).balanceOf(address(vault));
-        uint256 free1 = IERC20(pool.token1()).balanceOf(address(vault));
-        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
-        uint256 total0 = free0 + dep0;
-        uint256 total1 = free1 + dep1;
-        if (total0 > 0) {
-            uint256 target0 = (total0 * 0.20e18) / ONE_WAD;
-            uint256 dev0 = free0 > target0 ? free0 - target0 : target0 - free0;
-            assertLe(dev0, target0 / 2 + total0 / 4 + 1e15, "D27: free0 remains near 20%");
-        }
-        if (total1 > 0) {
-            uint256 target1 = (total1 * 0.20e18) / ONE_WAD;
-            uint256 dev1 = free1 > target1 ? free1 - target1 : target1 - free1;
-            if (target1 > 0) {
-                assertLe(dev1, target1 + total1 / 2 + 1e15, "D27: free1 not fully deployed");
-            }
-        }
-        assertGt(free0 + free1, 1 ether, "D27: sleeve remains (not ~0)");
+        uint256 supply = vault.totalSupply();
+        uint128 liquidity = _liquidity();
+        uint256 snap = vm.snapshotState();
+        _externalSwapExactIn(pool, true, uint256(1 ether) * 49 / 100);
+        (uint256 collected0, uint256 collected1) = _fees();
+        assertGt(collected0 + collected1, 0);
+        assertTrue(vm.revertToState(snap));
+        (uint256 issued,) = _mintOne(token0, 1 ether, bob);
+        assertGt(issued, 0);
+        assertEq(issued, uint256(_liquidity() - liquidity) * supply / liquidity);
+        assertEq(vault.balanceOf(address(this)), incumbent);
+        assertEq(token0.balanceOf(address(vault)), collected0);
+        assertEq(token1.balanceOf(address(vault)), collected1);
+        _assertReserves();
+        uint256 shares = incumbent / 3;
+        uint256 enlarged = vault.totalSupply();
+        assertEq(enlarged, supply + issued);
+        assertLt(collected0 * shares / enlarged, collected0 * shares / supply, "copied mint dilutes booked claim per share");
+        uint128 removed = uint128(uint256(_liquidity()) * shares / enlarged);
+        (uint256 principal0, uint256 principal1) = _principal(removed);
+        uint256[] memory paid = _bundleExit(shares);
+        assertEq(paid[0], principal0 + collected0 * shares / enlarged);
+        assertEq(paid[1], principal1 + collected1 * shares / enlarged);
+        assertEq(token0.balanceOf(address(vault)), collected0 - collected0 * shares / enlarged);
+        assertEq(token1.balanceOf(address(vault)), collected1 - collected1 * shares / enlarged);
     }
 }

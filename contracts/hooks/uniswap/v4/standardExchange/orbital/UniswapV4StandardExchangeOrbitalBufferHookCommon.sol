@@ -653,7 +653,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         address se = _seOf(pair);
         if (se == address(0) || _seOf(rawOut) != address(0)) revert InvalidPoolToken();
         if (Repo._isDisabled(se) && tokenIn != se) revert IVaultRegistryDisableQuery.VaultDisabled(se);
-        if (!ContextQuote.transitionSupported(se)) {
+        if (!ContextQuote.transitionSupported(se) && !LegLib.stateQuoteSupported(se)) {
             ExchangeInAmount.Result memory result = ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(tokenIn), amountIn, IERC20(pair));
             return _previewSwapExactIn(pair, rawOut, result.amountOut);
         }
@@ -662,7 +662,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 held;
         uint256 inflow;
         if (Repo._isDisabled(se)) {
-            held = _effectiveNativeOf(pair);
+            (held,) = _projectedInputValue(q, pair, 0);
             inflow = q.assets;
         } else {
             (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(se, pair, q.assets, false, q.state, false);

@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultQuoteTarget} from "./UniswapV4FullSpreadStandardExchangeVaultQuoteTarget.sol";
 import {
     IStandardExchangeBundleIn,
@@ -15,17 +16,21 @@ contract UniswapV4FullSpreadStandardExchangeVaultQuoteFacet is UniswapV4FullSpre
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory ids_) {
-        ids_ = new bytes4[](3);
+        ids_ = new bytes4[](4);
         ids_[0] = type(IStandardExchangeIn).interfaceId;
         ids_[1] = type(IStandardExchangeBundleIn).interfaceId;
         ids_[2] = type(IStandardExchangeBundleOut).interfaceId;
+        ids_[3] = type(IStandardExchangeStateQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](3);
+        funcs_ = new bytes4[](6);
         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[1] = IStandardExchangeBundleIn.previewExchangeBundleInForSingleOut.selector;
         funcs_[2] = IStandardExchangeBundleOut.previewExchangeBundleOut.selector;
+        funcs_[3] = IStandardExchangeStateQuote.quoteExchangeState.selector;
+        funcs_[4] = IStandardExchangeStateQuote.quoteExchangeIn.selector;
+        funcs_[5] = IStandardExchangeStateQuote.quoteExchangeSupply.selector;
     }
 
     function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {

@@ -7,10 +7,16 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 
 /// @notice R19 permits only booked capital below the host's actual join minimum.
 /// @dev No fixed native-unit tolerance: check single routes and complete residual baskets.
 library DetfResidualAssertions {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+    uint256 private constant MAX_SWEEP_CALLS = 256;
+
     struct Choices {
         address[] pairInputs;
         address[] shareInputs;
@@ -30,6 +36,32 @@ library DetfResidualAssertions {
     error JoinableNativeResidualBasket(uint256 quotedLp);
     error HookPairClaimMismatch(address pair, uint256 quoted, uint256 heldClaim);
     error UnconsumedClaimShares(address se, uint256 shares);
+    error DustMaintenanceDidNotConverge(address detf, uint256 calls);
+    error DustMaintenanceReducedLp(uint256 beforeLp, uint256 afterLp);
+
+    /// @notice Perform separately authorized maintenance calls until reserve LP stops growing.
+    /// @dev Callers must retain their independent final no-joinable/custody assertions.
+    function sweepDustUntilSettled(address detf, address feeOracle) internal {
+        sweepDustUntilSettled(detf, feeOracle, type(uint256).max);
+    }
+
+    /// @notice Apply the same per-call gas cap when a fixture specifies one.
+    function sweepDustUntilSettled(address detf, address feeOracle, uint256 gasLimit) internal {
+        IUniswapV4Detf info = IUniswapV4Detf(detf);
+        IERC20 hook = IERC20(info.hook());
+        address holder = info.bondNftVault();
+        uint256 previous = hook.balanceOf(holder);
+        for (uint256 i; i < MAX_SWEEP_CALLS; ++i) {
+            address recipient = address(IVaultFeeOracleQuery(feeOracle).feeTo());
+            vm.prank(recipient);
+            info.sweepDust{gas: gasLimit}();
+            uint256 current = hook.balanceOf(holder);
+            if (current < previous) revert DustMaintenanceReducedLp(previous, current);
+            if (current == previous) return;
+            previous = current;
+        }
+        revert DustMaintenanceDidNotConverge(detf, MAX_SWEEP_CALLS);
+    }
 
     /// @notice Local pair inventory is backing, not dust that must be rebuffered.
     /// @dev These lifecycle fixtures have no ambient hook donations. Reconcile

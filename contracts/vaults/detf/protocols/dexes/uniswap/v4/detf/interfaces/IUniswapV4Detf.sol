@@ -137,6 +137,7 @@ interface IUniswapV4Detf {
     ///        The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 
+    /// @notice The current feeTo may perform one reserve join; refunds remain for a later call.
     function sweepDust() external;
 
     function isMintingAllowed() external view returns (bool);
@@ -161,6 +162,43 @@ interface IUniswapV4Detf {
     function completeReserveBondNft() external returns (address bondNftVault);
 
     function completeReserveClaim() external returns (address rebasingClaimToken);
+}
+
+/// @notice Ordinary DETF bootstrap funded entirely by already-acquired SE shares.
+/// @dev Amounts follow acceptedBondTokens() before activation, replacing each pair
+/// with hook.standardExchangeOf(pair). Every declared share is contributed.
+/// The anchor alone prices the purchase; excess backing on other legs is not
+/// additional purchased principal. The reserve hook must still be empty.
+interface IUniswapV4DetfFirstBondShares {
+    error InvalidShareBasket();
+    error InsufficientFirstBondBacking(address pair, uint256 available, uint256 required);
+    error FirstBondMinimumNotMet(uint256 principal, uint256 minimumPrincipal, uint256 lp, uint256 minimumLp);
+    error IncompleteShareIntake(address token, uint256 expectedBalance, uint256 actualBalance);
+
+    function previewFirstBondShares(
+        uint256[] calldata shareAmounts,
+        uint256 anchorIndex,
+        uint256 lockDuration
+    ) external view returns (
+        uint256 purchasedDetf,
+        uint256 principalDetf,
+        uint256 rewardsDetf,
+        uint256 liquidityDetf,
+        uint256 lpOut
+    );
+
+    /// @notice Pull the complete basket freshly from the caller and open the first bond.
+    /// @dev Existing parent inventory cannot fund a leg. A partial hook intake
+    /// reverts the transaction. Shares not declared remain with the caller.
+    function bondFirstShares(
+        uint256[] calldata shareAmounts,
+        uint256 anchorIndex,
+        uint256 lockDuration,
+        address recipient,
+        uint256 minPrincipal,
+        uint256 minLp,
+        uint256 deadline
+    ) external returns (uint256 tokenId, uint256 lpOut);
 }
 
 /**

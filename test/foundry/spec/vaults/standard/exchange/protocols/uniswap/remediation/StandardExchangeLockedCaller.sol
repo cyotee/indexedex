@@ -12,6 +12,8 @@ contract StandardExchangeLockedCaller is IUniswapV3FlashCallback, IUnlockCallbac
     bool private immutable v4;
     uint256 private result;
     constructor(address pool_, bool v4_) { pool = pool_; v4 = v4_; }
+    /// @notice Bound protocol host, for independent position observations in tests.
+    function boundPool() external view returns (address) { return pool; }
     function run(address vault, bytes memory callData, address[] memory tokens, uint256[] memory amounts)
         external returns (uint256)
     {

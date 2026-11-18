@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {MigrationNativeLedger} from "./MigrationNativeLedger.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
@@ -10,6 +12,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as V3Vault} from
+    "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
 import {IUniswapV4StandardExchangeWeightedBufferHook as Hook} from
     "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation,
@@ -69,17 +73,17 @@ contract MigrationNativeHandler is MigrationNativeLedger {
 
     /// @notice Catches repricing that mutates any existing original, credit, issuance, funding or supply.
     function setPricing(uint256 choice_) public {
-        Pricing.Inputs memory next_ = parent.migrationWeightedPricing().inputs;
+        Pricing.InputsV3 memory next_ = PricingV3(address(parent)).migrationWeightedPricingV3().inputs;
         next_.swapFeeWad = choice_ % 2 == 0 ? 1e16 : 2e16;
         bytes32 records_ = _records();
         vm.prank(currentOwner);
-        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", Allocation.setMigrationWeightedPricing.selector));
-        bytes32 id_ = Allocation(address(parent)).setMigrationWeightedPricing(next_);
+        if (active) vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", AllocationV3.setMigrationWeightedPricingV3.selector));
+        bytes32 id_ = AllocationV3(address(parent)).setMigrationWeightedPricingV3(next_);
         if (active) ++rejections;
         else {
             previousBook = snapshotId;
             snapshotId = id_;
-            snapshotHash = keccak256(abi.encode(parent.migrationWeightedPricing()));
+            snapshotHash = keccak256(abi.encode(PricingV3(address(parent)).migrationWeightedPricingV3()));
             for (uint256 i_; i_ < 3; ++i_)
                 frozenQuotes[i_] = parent.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15);
             ++pricingActions; ++successes;
@@ -326,7 +330,14 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         }
         assertNotEq(provider_, address(0));
         uint256 before_ = IRateProvider(provider_).getRate();
-        assertTrue(IERC20(seed.pair).transfer(seed.se, (amount_ % 10 + 1) * 1e15));
+        uint256 donation_ = (amount_ % 10 + 1) * 1e15;
+        address authority_ = address(IVaultFeeOracleQuery(seed.registry).feeTo());
+        vm.prank(authority_);
+        V3Vault(seed.se).setOperatorFor(V3Vault.donate.selector, address(this), true);
+        IERC20(seed.pair).approve(seed.se, donation_);
+        V3Vault(seed.se).donate(seed.pair, donation_, false);
+        vm.prank(authority_);
+        V3Vault(seed.se).setOperatorFor(V3Vault.donate.selector, address(this), false);
         assertNotEq(IRateProvider(provider_).getRate(), before_, "actual provider change");
         ++successes;
         _count(this.providerRateChange.selector);
@@ -334,7 +345,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
     }
 
     /// @notice Interface-derived administration set, not copied facet output.
-    function administrationSelectors() public pure returns (bytes4[16] memory) {
+    function administrationSelectors() public pure returns (bytes4[17] memory) {
         return [Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
@@ -342,7 +353,8 @@ contract MigrationNativeHandler is MigrationNativeLedger {
             Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
             Allocation.configureWeightedReceiptEntitlements.selector, Allocation.configureEarlierReceiptEntitlements.selector,
             Allocation.configureEarlierLiquidEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector,
-            Allocation.configureNftContributionEntitlements.selector, Allocation.configureClaimedSyEntitlements.selector];
+            Allocation.configureNftContributionEntitlements.selector, Allocation.configureClaimedSyEntitlements.selector,
+            AllocationV3.setMigrationWeightedPricingV3.selector];
     }
 
     function assertAll() public view {
@@ -350,7 +362,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
         assertEq(parent.owner(), currentOwner);
         assertEq(IMultiStepOwnable(seed.registry).owner(), seed.registryOwner);
         assertEq(parent.migrationActivated(), active);
-        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), snapshotHash);
+        assertEq(keccak256(abi.encode(PricingV3(address(parent)).migrationWeightedPricingV3())), snapshotHash);
         assertEq(isolatedBook(seed.isolated), seed.isolatedBook, "separate proxy book");
         for (uint256 i_; i_ < 3; ++i_) assertEq(parent.previewOriginalCredit((i_ + 1) * 1e15, (i_ + 1) * 1e15), frozenQuotes[i_]);
         for (uint256 i_; i_ < 6; ++i_) {
@@ -365,7 +377,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
             assertEq(x_.configurationId, issuedConfiguration[i_]);
             assertEq(x_.issuedAt, issuedTime[i_]);
         }
-        bytes4[16] memory ss_ = administrationSelectors();
+        bytes4[17] memory ss_ = administrationSelectors();
         for (uint256 i_; i_ < ss_.length; ++i_) {
             if (active) assertEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));
             else assertNotEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));

@@ -70,12 +70,8 @@ library UniswapV4StandardExchangeWeightedBufferHookLiquidityLib {
         if (amount == 0) return (r, state);
         if (state.length == 0) return (_previewConvert(i, sharesIn, amount), state);
         if (!sharesIn && ClaimLib.isDisabled(i)) return (ExchangeInAmount.Result(0, amount), state);
-        uint256 consumed;
-        uint256 output;
-        (next, consumed, output,) = Transition(Repo._layout().standardExchanges[i]).quoteTransition(
-            state, sharesIn ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
-        );
-        r = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+        Repo.Layout storage l = Repo._layout();
+        return ContextQuote.conversion(l.standardExchanges[i], l.tokens[i], amount, sharesIn, state);
     }
 
     function _quoteStates(Book memory old, Book memory caller, uint8 projectedIndex, bytes memory projectedState) private view {
@@ -83,11 +79,9 @@ library UniswapV4StandardExchangeWeightedBufferHookLiquidityLib {
         for (uint8 i; i < l.numTokens; ++i) {
             if (l.standardExchanges[i] == address(0)) continue;
             old.states[i] = i == projectedIndex ? projectedState
-                : ContextQuote.snapshot(l.standardExchanges[i], l.tokens[i], address(this), address(0));
+                : ContextQuote.compositionSnapshot(l.standardExchanges[i], l.tokens[i], address(this));
             if (caller.shares[i] != 0 && old.states[i].length != 0) {
-                (old.states[i],,,) = Transition(l.standardExchanges[i]).quoteTransition(
-                    old.states[i], Transition.Operation.ReceiveShares, caller.shares[i]
-                );
+                old.states[i] = ContextQuote.receiveShares(l.standardExchanges[i], old.states[i], caller.shares[i]);
             }
         }
         caller.states = old.states;
@@ -675,7 +669,7 @@ library UniswapV4StandardExchangeWeightedBufferHookLiquidityLib {
         bool[] memory unprojected = new bool[](l.numTokens);
         for (uint8 i; i < l.numTokens; ++i) {
             if (l.standardExchanges[i] != address(0)) {
-                old.states[i] = ContextQuote.snapshot(l.standardExchanges[i], l.tokens[i], address(this), address(0));
+                old.states[i] = ContextQuote.compositionSnapshot(l.standardExchanges[i], l.tokens[i], address(this));
             }
         }
         caller.states = old.states;

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {Test} from "forge-std/Test.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -75,7 +77,7 @@ abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
     Funded[] internal funded;
     event LegacyAction(bytes4 indexed action, uint256 successes, uint256 rejections);
 
-    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_) {
+    constructor(Migration m_, OriginalNft[2] memory n_, uint256 c_, uint256 protectedDtf_) {
         parent = m_; recovery = Recovery(address(m_));
         bonds = Bonds(m_.bondNftVault());
         receipt = MigrationReceipt(m_.rebasingClaimToken());
@@ -84,11 +86,10 @@ abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
         baseBacking = IERC20(address(m_)).balanceOf(address(receipt));
         baseBondGons = receipt.gonsOf(address(bonds));
         k = receipt.stakingState().gonsPerUnit;
-        frozen = keccak256(abi.encode(m_.migrationWeightedPricing()));
-        // The base donates exactly 1 DTF before genesis, without selecting it for
-        // bootstrap. All other initial DTF is the paid reserve's spendable residual,
-        // not recovery inventory or an unsolicited/protected donation.
-        unbookedDtf = 1 ether;
+        frozen = keccak256(abi.encode(PricingV3(address(m_)).migrationWeightedPricingV3()));
+        // The fixture independently quotes the genesis refund. That refund and
+        // the untouched original donation remain protected, not spendable recovery.
+        unbookedDtf = protectedDtf_;
         assertEq(m_.migrationDonationInventory(IERC20(Legacy.DTF)), unbookedDtf);
         retainedDonation = IERC20(Legacy.DTF).balanceOf(address(m_)) - unbookedDtf;
         emit log_named_uint("initial protected DTF donation", unbookedDtf);
@@ -279,7 +280,7 @@ abstract contract MigrationLegacyHandler is Test, IERC721Receiver {
         assertEq(IERC20(address(parent)).balanceOf(address(receipt)), baseBacking + issued);
         assertEq(receipt.stakingState().gonsPerUnit, k);
         assertEq(receipt.gonsOf(address(bonds)), baseBondGons + newGons);
-        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), frozen);
+        assertEq(keccak256(abi.encode(PricingV3(address(parent)).migrationWeightedPricingV3())), frozen);
         for (uint256 i_; i_ < funded.length; ++i_) {
             Funded memory f_ = funded[i_];
             if (f_.retired) {

@@ -2,10 +2,15 @@
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721Metadata} from "@crane/contracts/interfaces/IERC721Metadata.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {Base64} from "@crane/contracts/utils/Base64.sol";
 import {LibString} from "@crane/contracts/utils/LibString.sol";
 import {DETFFundedBondMetadata as Metadata} from "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadata.sol";
 import {DETFFundedStakingMath as StakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+import {TestBase_UniswapV4Detf_Weighted_Univ3Se} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol";
 
 /// @notice One shared renderer suite covers every family without redeploying reserve fixtures.
 contract DETFFundedBondMetadataTest is Test {
@@ -104,5 +109,59 @@ contract DETFFundedBondMetadataTest is Test {
         assertEq(vm.parseJsonString(json_, ".attributes[0].value"), v_.detfName);
         vm.writeFile(string.concat(directory_, label_, ".svg"), Metadata._svg(v_));
         vm.writeFile(string.concat(directory_, label_, ".json"), json_);
+    }
+}
+
+/// @notice An isolated ordinary registry fixture prevents Migration child package salts entering this control.
+contract OrdinaryFundedBondMetadataTest is TestBase_UniswapV4Detf_Weighted_Univ3Se {
+    /// @notice Ordinary output keeps linear structure and immediately claimable real funded rewards.
+    function test_ordinaryPackageFundedMetadataRemainsUnchanged() public {
+        vm.startPrank(detfUser);
+        (uint256 id_,) = detfInfo.bond(IERC20(pairA), 100 ether, 90 days, detfUser, false, block.timestamp);
+        detfInfo.bond(IERC20(pairA), 20 ether, 90 days, detfUser, false, block.timestamp);
+        vm.stopPrank();
+        IDetfBondNFT nft_ = IDetfBondNFT(detfInfo.bondNftVault());
+        StakingMath.BondPosition memory p_ = nft_.positionOf(id_);
+        vm.warp(p_.startTimestamp + 45 days);
+        StakingMath.BondClaim memory c_ = nft_.previewClaim(id_);
+        assertGt(c_.rewardsDue, 0);
+        assertEq(c_.principalDue, p_.principal / 2);
+        string memory uri_ = IERC721Metadata(address(nft_)).tokenURI(id_);
+        string memory json_ = string(Base64.decode(LibString.slice(uri_, bytes("data:application/json;base64,").length)));
+        string[] memory traits_ = abi.decode(vm.parseJson(json_, ".attributes[*].trait_type"), (string[]));
+        assertEq(traits_.length, 13, "ordinary purchased attribute structure");
+        assertEq(_attribute(json_, "Role"), "Staked DETF bond");
+        assertEq(_attribute(json_, "Vesting status"), "Vesting");
+        assertEq(vm.parseJsonUint(json_, _attributePath(json_, "Vesting start")), p_.startTimestamp);
+        assertEq(vm.parseJsonUint(json_, _attributePath(json_, "Vesting end")), p_.startTimestamp + 90 days);
+        assertEq(_attribute(json_, "Seconds remaining"), LibString.toString(uint256(45 days)));
+        assertEq(_attribute(json_, "Claimable principal sDETF"), Metadata._amount(c_.principalDue));
+        assertEq(_attribute(json_, "Claimable rewards sDETF"), Metadata._amount(c_.rewardsDue));
+        assertEq(_attribute(json_, "Total claimable sDETF"), Metadata._amount(c_.principalDue + c_.rewardsDue));
+        string memory image_ = vm.parseJsonString(json_, ".image");
+        string memory svg_ = string(Base64.decode(LibString.slice(image_, bytes("data:image/svg+xml;base64,").length)));
+        assertTrue(LibString.contains(svg_, Metadata._amount(c_.principalDue + c_.rewardsDue)));
+        emit log_named_string("ordinary package claimable reward sDETF", _attribute(json_, "Claimable rewards sDETF"));
+        emit log_named_string("ordinary package total sDETF", _attribute(json_, "Total claimable sDETF"));
+        emit log_named_string("ordinary package metadata JSON", json_);
+        IERC20 staking_ = IERC20(detfInfo.rebasingClaimToken());
+        uint256 before_ = staking_.balanceOf(detfUser);
+        vm.prank(detfUser);
+        assertEq(nft_.claimRewards(id_, detfUser), c_.rewardsDue);
+        assertEq(staking_.balanceOf(detfUser) - before_, c_.rewardsDue);
+    }
+
+    function _attribute(string memory json_, string memory trait_) private view returns (string memory) {
+        return vm.parseJsonString(json_, _attributePath(json_, trait_));
+    }
+
+    function _attributePath(string memory json_, string memory trait_) private view returns (string memory) {
+        string[] memory traits_ = abi.decode(vm.parseJson(json_, ".attributes[*].trait_type"), (string[]));
+        for (uint256 i_; i_ < traits_.length; ++i_) {
+            if (keccak256(bytes(traits_[i_])) == keccak256(bytes(trait_))) {
+                return string.concat(".attributes[", LibString.toString(i_), "].value");
+            }
+        }
+        revert(string.concat("Missing metadata trait: ", trait_));
     }
 }

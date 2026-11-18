@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {MigrationSourceUnitsHandler} from "./MigrationSourceUnitsHandler.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
@@ -43,7 +45,7 @@ contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {
         a_[0].entitlements = new Migration.OriginalEntitlement[](1);
         bytes32 original_ = keccak256("stateful independently issued origin");
         a_[0].entitlements[0] = Migration.OriginalEntitlement(original_, 0.01 ether, 0, bytes32("fixture"));
-        bytes32 config_ = keccak256(abi.encode(block.chainid, address(parent), parent.migrationWeightedPricing().id, a_[0]));
+        bytes32 config_ = keccak256(abi.encode(block.chainid, address(parent), PricingV3(address(parent)).migrationWeightedPricingV3().id, a_[0]));
         vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_, pricingId);
         Migration.IndependentIssuanceRequest[] memory requests_ = new Migration.IndependentIssuanceRequest[](1);
         requests_[0] = Migration.IndependentIssuanceRequest(OTHER, config_);
@@ -60,7 +62,7 @@ contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {
         a_[0].entitlements[0].originalEth = 0.02 ether;
         vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_, pricingId);
         independentConfiguration = keccak256(abi.encode(
-            block.chainid, address(parent), parent.migrationWeightedPricing().id, a_[0]));
+            block.chainid, address(parent), PricingV3(address(parent)).migrationWeightedPricingV3().id, a_[0]));
         for (uint256 i_; i_ < 10; ++i_) {
             Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
             inputs_[0] = _input(i_, 0);

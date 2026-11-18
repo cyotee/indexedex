@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -14,26 +16,41 @@ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation 
 
 /// @notice Controllable external ERC20 only. The parent, children, pools and SEs are real.
 contract MigrationHostileContribution is SimpleMintableERC20 {
+    error ForcedTransferRevert();
+
     bool public shortReceipt;
     address public watchedParent;
     address public callback;
     bytes public payload;
     bool public callbackSucceeded;
     bytes public callbackReason;
+    bool public callbackAttempted;
+    address public transferRevertCaller;
     constructor() SimpleMintableERC20("External hostile contribution fixture", "HOSTILE") {}
     function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }
     function arm(bool short_, address parent_, address callback_, bytes calldata payload_) external {
         shortReceipt = short_; watchedParent = parent_; callback = callback_; payload = payload_;
+        callbackAttempted = false;
+        callbackSucceeded = false;
+        delete callbackReason;
+    }
+    /// @notice Fail only the selected actual caller's pull; zero preserves ordinary token behavior.
+    function setTransferRevertCaller(address caller_) external {
+        transferRevertCaller = caller_;
     }
     function transferFrom(address from_, address to_, uint256 amount_) external override returns (bool) {
+        if (msg.sender == transferRevertCaller) revert ForcedTransferRevert();
         uint256 allowed_ = allowance[from_][msg.sender];
         require(allowed_ >= amount_, "allowance");
         if (allowed_ != type(uint256).max) allowance[from_][msg.sender] = allowed_ - amount_;
         bool trigger_ = msg.sender == watchedParent;
         _transfer(from_, to_, trigger_ && shortReceipt ? amount_ - 1 : amount_);
-        if (trigger_ && callback != address(0)) (callbackSucceeded, callbackReason) = callback.call(payload);
+        if (trigger_ && callback != address(0)) {
+            callbackAttempted = true;
+            (callbackSucceeded, callbackReason) = callback.call(payload);
+        }
         return true;
     }
     function claim(IDetfBondNFT bond_, uint256 id_, address recipient_) external returns (uint256) {
@@ -89,10 +106,10 @@ contract MigrationHostileContributionTest is TestBase_UniswapV4DetfMigration_Adv
     function test_N1_unauthorizedPricingCallbackCannotMutateBookOrCredit() public {
         _fundAndCapture();
         _configure(address(this), 1 ether, bytes32("priced-original"));
-        bytes memory book_ = abi.encode(migration.migrationWeightedPricing());
+        bytes memory book_ = abi.encode(PricingV3(address(migration)).migrationWeightedPricingV3());
         bytes memory config_ = abi.encode(migration.independentAllocation(address(this)));
         uint256 supply_ = IERC20(detf).totalSupply();
-        _armContribution(false, detf, abi.encodeCall(Allocation.setMigrationWeightedPricing, (_manualInputs())));
+        _armContribution(false, detf, abi.encodeCall(AllocationV3.setMigrationWeightedPricingV3, (_manualInputs())));
         IERC20[] memory tokens_ = new IERC20[](1);
         tokens_[0] = IERC20(pairB);
         uint256[] memory amounts_ = new uint256[](1);
@@ -101,7 +118,7 @@ contract MigrationHostileContributionTest is TestBase_UniswapV4DetfMigration_Adv
         MigrationHostileContribution token_ = MigrationHostileContribution(pairB);
         assertFalse(token_.callbackSucceeded());
         assertEq(token_.callbackReason(), abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, pairB));
-        assertEq(abi.encode(migration.migrationWeightedPricing()), book_);
+        assertEq(abi.encode(PricingV3(address(migration)).migrationWeightedPricingV3()), book_);
         assertEq(abi.encode(migration.independentAllocation(address(this))), config_);
         assertEq(IERC20(detf).totalSupply(), supply_);
         assertEq(receipt.stakingState().totalGons, 0);

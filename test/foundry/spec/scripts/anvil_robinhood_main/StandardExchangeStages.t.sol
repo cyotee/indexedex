@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -80,7 +80,7 @@ contract StandardExchangeStages is TestBase_VaultComponents {
         vm.stopPrank();
         address package_ = state.uniV3SePkg;
         // RC-03: exercise the actual launch helper, not a filesystem assertion.
-        assertEq(IDiamondFactoryPackage(package_).packageName(), "UniswapV3FullSpreadStandardExchangeVaultDFPkg");
+        assertEq(IDiamondFactoryPackage(package_).packageName(), "UniswapV3FullSpreadStandardExchangeVaultDFPkg.v4Accounting.v2");
         bytes32 config_ = keccak256(abi.encode(IDiamondFactoryPackage(package_).diamondConfig()));
         vm.startPrank(owner);
         V3Stage.execute(state);
@@ -91,15 +91,20 @@ contract StandardExchangeStages is TestBase_VaultComponents {
         IUniswapV3Pool pool = IUniswapV3Pool(IUniswapV3Factory(RobinhoodCanonicalLib.v3Factory()).createPool(address(a), address(b), 3000));
         pool.initialize(uint160(1 << 96));
         address vault = IUniswapV3FullSpreadStandardExchangeVaultDFPkg(package_).deployVault(pool);
-        assertTrue(IERC165(vault).supportsInterface(type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId));
-        address[] memory tokens = new address[](2);
-        tokens[0] = pool.token0(); tokens[1] = pool.token1();
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeBundleIn).interfaceId));
+        assertFalse(IERC165(vault).supportsInterface(type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId));
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 ether; amounts[1] = 100 ether;
         a.mint(address(this), 110 ether); b.mint(address(this), 100 ether);
         a.approve(vault, 100 ether); b.approve(vault, 100 ether);
-        IStandardExchangeInMulti(vault).exchangeInManyToOne(tokens, amounts, IERC20(vault), 1, address(this), false, block.timestamp);
-        _assertDeposit(vault, IERC20(address(a)), 10 ether);
+        (uint256 shares, uint256[] memory refunds) = IStandardExchangeBundleIn(vault).exchangeBundleInForSingleOut(
+            amounts, vault, 1, address(this), false, block.timestamp
+        );
+        assertEq(IERC20(vault).balanceOf(address(this)), shares);
+        assertEq(IERC20(vault).balanceOf(address(0)), 1000);
+        assertEq(refunds.length, 2);
+        // Keep the fixed 49% swap within a formable add on this vault-only pool.
+        _assertDeposit(vault, IERC20(address(a)), 1 ether);
     }
 
     function test_orbitalStage_replayRegisteredPackageAndDeployableFacets() public {

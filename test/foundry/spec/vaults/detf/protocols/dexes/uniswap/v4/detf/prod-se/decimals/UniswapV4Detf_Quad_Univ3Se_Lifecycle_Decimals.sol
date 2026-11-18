@@ -8,8 +8,16 @@ import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUni
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {TestBase_UniswapV4Detf_Quad_Univ3Se_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Univ3Se_Decimals.sol";
+import {UniswapV4DetfProductionSeDeployLib as SeLib} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
 
 abstract contract UniswapV4Detf_Quad_Univ3Se_Lifecycle_Decimals is TestBase_UniswapV4Detf_Quad_Univ3Se_Decimals {
+    function _firstBond(uint256 pairAmount_) internal override returns (uint256 tokenId, uint256 shares) {
+        (tokenId, shares,) = SeLib.bondFirstPositionBasket(
+            detfInfo, address(pairToken), pairAmount_, detfUser, DEFAULT_MIN_LOCK
+        );
+    }
+
     function _mintIn() internal view returns (uint256) {
         return _uPair(10);
     }

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
@@ -81,8 +83,8 @@ abstract contract MigrationSourceUnitsLedger is Test {
         baseBacking = IERC20(address(parent_)).balanceOf(address(receipt));
         baseGons = receipt.gonsOf(address(bonds));
         k = receipt.stakingState().gonsPerUnit;
-        pricingId = parent_.migrationWeightedPricing().id;
-        snapshot = keccak256(abi.encode(parent_.migrationWeightedPricing()));
+        pricingId = PricingV3(address(parent_)).migrationWeightedPricingV3().id;
+        snapshot = keccak256(abi.encode(PricingV3(address(parent_)).migrationWeightedPricingV3()));
         currentOwner = parent_.owner();
         dtfFloor = IERC20(Legacy.DTF).balanceOf(address(parent_));
         syFloor = IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent_));
@@ -186,7 +188,7 @@ abstract contract MigrationSourceUnitsLedger is Test {
 
     function assertAll() public view {
         assertEq(parent.owner(), currentOwner);
-        assertEq(keccak256(abi.encode(parent.migrationWeightedPricing())), snapshot);
+        assertEq(keccak256(abi.encode(PricingV3(address(parent)).migrationWeightedPricingV3())), snapshot);
         assertEq(IERC20(address(parent)).totalSupply(), baseSupply + issued);
         assertEq(IERC20(address(parent)).balanceOf(address(receipt)), baseBacking + issued);
         assertEq(receipt.stakingState().gonsPerUnit, k);

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
-import {TransferredTestInput, IStandardExchangeOut, IStandardizedYield} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/TransferredTestInput.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -32,13 +31,9 @@ contract UniswapV3FullSpreadStandardExchangeVaultInFacet_IFacet_Test is TestBase
         values[2] = type(IUniswapV3SwapCallback).interfaceId;
     }
     function controlFacetFuncs() public pure override returns (bytes4[] memory values) {
-        values = new bytes4[](7);
+        values = new bytes4[](3);
         values[0] = IStandardExchangeIn.exchangeIn.selector;
         values[1] = IUniswapV3MintCallback.uniswapV3MintCallback.selector;
         values[2] = IUniswapV3SwapCallback.uniswapV3SwapCallback.selector;
-        values[3] = IStandardizedYield.deposit.selector;
-        values[4] = IStandardizedYield.redeem.selector;
-        values[5] = IStandardizedYield.rewardIndexesCurrent.selector;
-        values[6] = IStandardizedYield.claimRewards.selector;
     }
 }

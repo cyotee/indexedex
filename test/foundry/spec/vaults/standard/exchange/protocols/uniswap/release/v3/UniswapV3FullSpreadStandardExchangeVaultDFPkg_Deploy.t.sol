@@ -1,180 +1,137 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService as Components} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
 import {UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
-
+import {UniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVault as Family} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVault.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve as FeeIdentity} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
+import {FullSpreadReleaseFixture} from "./harness/FullSpreadReleaseFixture.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
-import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeStateQuote} from "contracts/interfaces/IStandardExchangeStateQuote.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeBundleIn, IStandardExchangeBundleOut} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {UniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol";
 
-import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
-import {IStandardExchangeFrozenQuoteInputs} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
-import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
-import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
-import {
-    IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
-import {UniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
-import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
-import {
-    TestBase_UniswapV3FullSpreadStandardExchangeVault
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
-
-contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is TestBase_UniswapV3FullSpreadStandardExchangeVault {
-    ERC20PermitMintableStub internal tokenA;
-    ERC20PermitMintableStub internal tokenB;
-
-    function setUp() public override {
-        super.setUp();
-        tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
-        tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
-    }
-
+/// @notice V3-OWN-03/04: real registry deployment and versioned component identities.
+contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is FullSpreadReleaseFixture {
     function test_packageMetadata_matchesExpectedFacets() public view {
         (string memory name_, bytes4[] memory interfaces, address[] memory facets) =
             UniswapV3FullSpreadStandardExchangeVaultDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
-
-        assertEq(name_, type(UniswapV3FullSpreadStandardExchangeVaultDFPkg).name, "package name");
-        assertEq(interfaces.length, 16, "interface count");
-        assertEq(interfaces[15], type(IStandardExchangeFrozenQuoteInputs).interfaceId, "frozen quote interface");
-        assertEq(facets.length, 15, "facet count");
-        assertEq(facets[0], address(erc20Facet), "erc20");
-        assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
-        assertEq(facets[6], address(uniswapV3StandardExchangeInQueryFacet), "in query");
-        assertEq(facets[7], address(uniswapV3StandardExchangeOutFacet), "out");
-        assertEq(facets[8], address(uniswapV3StandardExchangeOutQueryFacet), "out query");
-        assertEq(facets[9], address(uniswapV3StandardExchangePositionImportFacet), "import");
-        assertEq(facets[10], address(uniswapV3StandardExchangeLiquidReserveFacet), "liquid reserve");
-        assertEq(facets[11], address(uniswapV3StandardExchangeInMultiFacet), "in multi");
-        assertEq(facets[12], address(uniswapV3StandardExchangeInMultiQueryFacet), "in multi query");
-        assertEq(facets[13], address(uniswapV3StandardExchangeOutMultiFacet), "out multi");
-        assertEq(facets[14], address(uniswapV3StandardExchangeOutMultiQueryFacet), "out multi query");
+        assertEq(name_, "UniswapV3FullSpreadStandardExchangeVaultDFPkg.v4Accounting.v2");
+        assertEq(interfaces.length, 14);
+        assertEq(interfaces[9], type(IBasicVault).interfaceId);
+        assertEq(interfaces[10], type(IStandardExchangeBundleIn).interfaceId);
+        assertEq(interfaces[11], type(IStandardExchangeBundleOut).interfaceId);
+        assertEq(interfaces[12], type(Family).interfaceId);
+        assertEq(interfaces[13], type(IStandardExchangeStateQuote).interfaceId);
+        address[14] memory expected = [address(erc20Facet), address(erc5267Facet), address(erc2612Facet),
+            address(multiAssetBasicVaultFacet), address(multiAssetStandardVaultFacet),
+            address(uniswapV3StandardExchangeInFacet), address(uniswapV3StandardExchangeInQueryFacet),
+            address(uniswapV3StandardExchangeOutFacet), address(uniswapV3StandardExchangeOutQueryFacet),
+            address(uniswapV3StandardExchangePositionImportFacet), address(uniswapV3StandardExchangeLiquidReserveFacet),
+            address(uniswapV3StandardExchangeInMultiFacet), address(uniswapV3StandardExchangeInMultiQueryFacet),
+            address(uniswapV3StandardExchangeOutMultiFacet)];
+        assertEq(facets.length, expected.length);
+        for (uint256 i; i < expected.length; ++i) assertEq(facets[i], expected[i]);
     }
 
-    function test_deployVault_registersAndInitializesPool() public {
-        IUniswapV3Pool pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
-        address vault = address(_deployVault(pool));
-
-        assertTrue(vault != address(0), "vault deployed");
-        assertTrue(indexedexManager.isVault(vault), "registered");
-
-        address[] memory vaultTokens = IBasicVault(vault).vaultTokens();
-        assertEq(vaultTokens.length, 2);
-        assertEq(vaultTokens[0], pool.token0());
-        assertEq(vaultTokens[1], pool.token1());
-
-        assertEq(IERC20Metadata(vault).symbol(), "UV3X");
-
-        // Storage reads via staticcall into vault context for pool binding would require a view facet;
-        // assert init via successful registry + token wiring above and factory-mismatch below.
-        IStandardVault.VaultConfig memory config = IStandardVault(vault).vaultConfig();
+    function test_deployVault_registersAndInitializesPool() public view {
+        assertTrue(indexedexManager.isVault(address(vault)));
+        address[] memory tokens = vault.vaultTokens();
+        assertEq(tokens.length, 2);
+        assertEq(tokens[0], address(token0));
+        assertEq(tokens[1], address(token1));
+        assertEq(IERC20Metadata(address(vault)).symbol(), "UV3X");
+        IStandardVault.VaultConfig memory config = IStandardVault(address(vault)).vaultConfig();
         assertEq(config.tokens.length, 2);
-        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeIn).interfaceId), "erc165 in");
-        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOut).interfaceId), "erc165 out");
-        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeInMulti).interfaceId), "erc165 in multi");
-        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOutMulti).interfaceId), "erc165 out multi");
-        assertTrue(
-            IERC165(vault).supportsInterface(type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId),
-            "erc165 liquid reserve"
-        );
-        assertTrue(
-            IERC165(vault).supportsInterface(type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId),
-            "erc165 liquid reserve"
-        );
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeIn).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeOut).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeBundleIn).interfaceId));
+        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardExchangeBundleOut).interfaceId));
+        assertFalse(IERC165(address(vault)).supportsInterface(type(FeeIdentity).interfaceId));
     }
 
     function test_deployVault_revertsWhenPoolFactoryMismatch() public {
-        // Pool from a different factory.
-        UniswapV3Factory otherFactory = new UniswapV3Factory();
-        (address t0, address t1) =
-            address(tokenA) < address(tokenB) ? (address(tokenA), address(tokenB)) : (address(tokenB), address(tokenA));
-        IUniswapV3Pool roguePool = IUniswapV3Pool(otherFactory.createPool(t0, t1, FEE_MEDIUM));
-        roguePool.initialize(uint160(uint256(1) << 96));
-
-        vm.expectRevert(abi.encodeWithSignature("InvalidPoolFactory(address,address)", address(otherFactory), address(uniswapV3Factory)));
-        uniswapV3StandardExchangeDFPkg.deployVault(roguePool);
+        UniswapV3Factory other = new UniswapV3Factory();
+        IUniswapV3Pool foreign = IUniswapV3Pool(other.createPool(address(token0), address(token1), FEE_MEDIUM));
+        foreign.initialize(uint160(1 << 96));
+        vm.expectRevert(abi.encodeWithSelector(IUniswapV3FullSpreadStandardExchangeVaultDFPkg.InvalidPoolFactory.selector,
+            address(other), address(uniswapV3Factory)));
+        uniswapV3StandardExchangeDFPkg.deployVault(foreign);
     }
 
     function test_componentSalts_areAbiEncodedNamesOnFactoryPath() public {
+        address inDelegate = Components.deployUniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate(create3Factory);
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("create3(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol:UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate(create3Factory);
-        }
-        address inDelegate = UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate(create3Factory);
-        {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("create3(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol:UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate(create3Factory);
-        }
-        address outDelegate = UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate(create3Factory);
-        {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultInFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", bytes.concat(ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInFacet"), abi.encode(inDelegate)), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol:UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("create3(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInQueryFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultInQueryFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInQueryFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInQueryFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInFacet");
+            code = bytes.concat(code, abi.encode(inDelegate));
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultInFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultOutFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", bytes.concat(ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutFacet"), abi.encode(outDelegate)), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.v4Accounting.v2"));
+            bytes memory code = ArtifactCreationCode.creationCode(create3Factory, "UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInQueryFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultInQueryFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultOutFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol:UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultPositionImportFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol:UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol:UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultPositionImportFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInMultiFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultInMultiFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInMultiFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInMultiFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultReserveFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultReserveFacet.sol:UniswapV3FullSpreadStandardExchangeVaultReserveFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultReserveFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultBundleFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultBundleFacet.sol:UniswapV3FullSpreadStandardExchangeVaultBundleFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultBundleFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultBundleQueryFacet(create3Factory);
         }
         {
-            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet"));
-            assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet")), "raw-name hash is not the salt");
-            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol:UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet"), salt));
-            UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet(create3Factory);
+            bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultMaintenanceFacet.v4Accounting.v1"));
+            bytes memory code = ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultMaintenanceFacet.sol:UniswapV3FullSpreadStandardExchangeVaultMaintenanceFacet");
+            vm.expectCall(address(create3Factory), abi.encodeWithSignature("deployFacet(bytes,bytes32)", code, salt));
+            Components.deployUniswapV3FullSpreadStandardExchangeVaultMaintenanceFacet(create3Factory);
         }
+        assertEq(Components.deployUniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate(create3Factory),
+            address(uniswapV3StandardExchangeOutFacet), "constructorless exact-out facet is the compatibility target");
     }
 
     function test_packageSalt_isAbiEncodedNameOnRegistryPath() public {
@@ -202,11 +159,12 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is TestBase_U
         pkgInit.permit2 = permit2;
         pkgInit.uniswapV3Factory = uniswapV3Factory;
 
-        bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultDFPkg"));
-        assertTrue(salt != keccak256(bytes("UniswapV3FullSpreadStandardExchangeVaultDFPkg")));
+        bytes32 salt = keccak256(abi.encode("UniswapV3FullSpreadStandardExchangeVaultDFPkg.v4Accounting.v2"));
         vm.expectCall(address(indexedexManager), abi.encodeWithSignature("deployPkg(bytes,bytes,bytes32)",
-            ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV3FullSpreadStandardExchangeVaultDFPkg"), abi.encode(pkgInit), salt));
+            ArtifactCreationCode.creationCode("UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV3FullSpreadStandardExchangeVaultDFPkg"),
+            abi.encode(pkgInit), salt));
         vm.prank(owner);
-        UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.deployUniswapV3FullSpreadStandardExchangeVaultDFPkg(indexedexManager, pkgInit);
+        IUniswapV3FullSpreadStandardExchangeVaultDFPkg deployed = Components.deployUniswapV3FullSpreadStandardExchangeVaultDFPkg(indexedexManager, pkgInit);
+        assertEq(address(deployed), address(uniswapV3StandardExchangeDFPkg), "identical registry init resolves same new package");
     }
 }

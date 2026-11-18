@@ -11,8 +11,6 @@ interface IUniswapV4DetfSelfCall {
     function joinResidualAtomic(address token, uint256 amount, bool singleAsset) external returns (uint256 lpOut);
     /// @notice Quotes an input token amount in its configured vault's reserve-pair units.
     function peekPairEq(address vault, address tokenIn, uint256 amountIn) external view returns (uint256);
-    /// @notice Executes one atomic dust-sweep attempt; only the diamond itself may call.
-    function sweepDustAtomic() external;
     /// @notice Wraps residual pair tokens through their SE vault; only the diamond itself may call.
     function sweepPairToShare(address standardExchange, address pairToken, uint256 amount)
         external

@@ -22,18 +22,26 @@ import {UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault
 
 /// @notice Real FullSpread component-accounting adapter; no substitute vault or synthetic balances.
 contract UniswapV4DualSEBCPHook_ComponentAccounting is FullSpreadRow, HookComponentAccountingBehavior {
-    function test_component_sequentialShareJoinQuoteRequiresProjectionButExecutionWorks() public {
+    function test_component_sequentialShareJoinPreviewMatchesExecutionAndRefund() public {
         _hbSetFee(HB_FEE);
         _hbBootstrap();
         uint256[] memory funded = _hbFundShares(HB_BOB, 10 ether);
         uint256 amount = funded[0] / 10;
-        vm.expectRevert(bytes4(keccak256("InvalidQuoteState()")));
-        IUniswapV4SeBufferHook(hook).previewJoinSingleAssetExactIn(seUT, amount);
         ComponentSnapshot memory before_ = _hbSnapshot(HB_BOB);
+        uint256 quote = IUniswapV4SeBufferHook(hook).previewJoinSingleAssetExactIn(seUT, amount);
+        (uint256 flexibleQuote, uint256 used0, uint256 used1) = dual.previewDepositFlexible(
+            faceIsC0 ? amount : 0, true, faceIsC0 ? 0 : amount, true
+        );
+        assertEq(quote, flexibleQuote);
+        assertEq(abi.encode(_hbSnapshot(HB_BOB)), abi.encode(before_), "preview leaves custody unchanged");
         vm.prank(HB_BOB);
-        uint256 net = IUniswapV4SeBufferHook(hook).joinSingleAssetExactIn(seUT, amount, HB_BOB, 1, block.timestamp);
+        uint256 net = IUniswapV4SeBufferHook(hook).joinSingleAssetExactIn(seUT, amount, HB_BOB, quote, block.timestamp);
         assertGt(net, 0);
-        _hbAssertFee(before_, _hbSnapshot(HB_BOB), net);
+        assertEq(net, quote);
+        ComponentSnapshot memory after_ = _hbSnapshot(HB_BOB);
+        assertEq(before_.userShares[0] - after_.userShares[0], faceIsC0 ? used0 : used1,
+            "caller pays quoted input after share refunds");
+        _hbAssertFee(before_, after_, net);
     }
 
     function test_component_oneConversionPerLegQuoteRemainsAvailable() public {
@@ -47,18 +55,28 @@ contract UniswapV4DualSEBCPHook_ComponentAccounting is FullSpreadRow, HookCompon
         assertEq(_hbJoinShares(HB_BOB, amounts, quote), quote);
     }
 
-    function test_component_sequentialExitQuoteRequiresProjectionButExecutionWorks() public {
+    function test_component_sequentialExitPreviewMatchesPayoutAndCustody() public {
         _hbBootstrap();
-        uint256 burned = IERC20(hook).balanceOf(HB_ALICE) / 10;
-        vm.expectRevert(bytes4(keccak256("InvalidQuoteState()")));
-        IUniswapV4SeBufferHook(hook).previewExitSingleAssetExactBptIn(face, burned);
-        uint256 beforePair = IERC20(face).balanceOf(HB_ALICE);
-        uint256 supply = IERC20(hook).totalSupply();
-        vm.prank(HB_ALICE);
-        uint256 paid = IUniswapV4SeBufferHook(hook).exitSingleAssetExactBptIn(face, burned, HB_ALICE, 1, block.timestamp);
-        assertGt(paid, 0);
-        assertEq(IERC20(face).balanceOf(HB_ALICE) - beforePair, paid);
-        assertEq(IERC20(hook).totalSupply(), supply - burned);
+        for (uint256 mode; mode < 2; ++mode) {
+            uint256 checkpoint = vm.snapshotState();
+            address token = mode == 0 ? face : other;
+            ComponentSnapshot memory before_ = _hbSnapshot(HB_ALICE);
+            uint256 burned = before_.userLp / 10;
+            uint256 beforeToken = IERC20(token).balanceOf(HB_ALICE);
+            uint256 quote = IUniswapV4SeBufferHook(hook).previewExitSingleAssetExactBptIn(token, burned);
+            assertEq(abi.encode(_hbSnapshot(HB_ALICE)), abi.encode(before_), "preview leaves custody unchanged");
+            vm.prank(HB_ALICE);
+            uint256 paid = IUniswapV4SeBufferHook(hook).exitSingleAssetExactBptIn(
+                token, burned, HB_ALICE, quote, block.timestamp
+            );
+            assertGt(paid, 0);
+            assertEq(paid, quote);
+            assertEq(IERC20(token).balanceOf(HB_ALICE) - beforeToken, paid);
+            assertEq(IERC20(hook).balanceOf(HB_ALICE), before_.userLp - burned);
+            assertEq(IERC20(hook).totalSupply(), before_.supply - burned);
+            assertEq(IERC20(hook).balanceOf(_hbFeeRecipient()), before_.feeLp);
+            assertTrue(vm.revertToState(checkpoint));
+        }
     }
 
     function _hbHook() internal view override returns (address) { return hook; }

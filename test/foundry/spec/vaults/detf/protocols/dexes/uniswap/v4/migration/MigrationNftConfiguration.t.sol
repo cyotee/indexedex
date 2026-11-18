@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -76,7 +80,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         Migration.NftEntitlement memory config_ = migration.nftEntitlement(WEIGHTED, 3);
         assertEq(config_.credit, parts_[0].credit + parts_[1].credit);
         assertEq(config_.configurationId,
-            keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0], true)));
+            keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, a_[0], true)));
         vm.prank(migrationOwner);
         allocation.configureNftEntitlements(a_, pricingId);
         parts_ = migration.nftContributions(WEIGHTED, 3);
@@ -149,7 +153,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
             assertEq(after_.original.originalWallet, address(0xCAFE));
             assertNotEq(before_.configurationId, after_.configurationId);
             assertEq(after_.configurationId,
-                keccak256(abi.encode(block.chainid, detf, migration.migrationWeightedPricing().id, a_[0])));
+                keccak256(abi.encode(block.chainid, detf, PricingV3(address(migration)).migrationWeightedPricingV3().id, a_[0])));
             assertEq(before_.originalId, after_.originalId);
             assertEq(before_.credit, after_.credit);
             vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, before_.originalId));
@@ -231,7 +235,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_retainedDeclarationIncludesEveryProductSelector() public {
-        bytes4[] memory expected_ = new bytes4[](28);
+        bytes4[] memory expected_ = new bytes4[](29);
         expected_[0] = Migration.migrationActivated.selector;
         expected_[1] = Migration.migrationSyRewardToken.selector;
         expected_[2] = Migration.migrationWeightedPricing.selector;
@@ -260,14 +264,22 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         expected_[25] = Migration.previewDtfCustodySeSurrender.selector;
         expected_[26] = Migration.surrenderMigrationDtfCustodySe.selector;
         expected_[27] = Migration.claimedSyWeights.selector;
+        expected_[28] = PricingV3.migrationWeightedPricingV3.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
+        bytes4[] memory interfaces_ = new bytes4[](3);
+        interfaces_[0] = type(Migration).interfaceId;
+        interfaces_[1] = type(IERC721Receiver).interfaceId;
+        interfaces_[2] = type(PricingV3).interfaceId;
+        assertTrue(Behavior_IFacet.areValid_IFacet_facetInterfaces(facet_, interfaces_, facet_.facetInterfaces()));
+        assertTrue(IERC165(detf).supportsInterface(type(PricingV3).interfaceId));
         _buyOwnerFirstBond();
         vm.prank(migrationOwner);
         allocation.activateMigration();
         for (uint256 i_; i_ < expected_.length; ++i_) {
             assertEq(IDiamondLoupe(detf).facetAddress(expected_[i_]), address(facet_));
         }
+        assertTrue(IERC165(detf).supportsInterface(type(PricingV3).interfaceId));
         address query_ = IDiamondLoupe(detf).facetAddress(Migration.nftContributions.selector);
         assertNotEq(query_, address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Migration.nftEntitlement.selector), query_);
@@ -295,9 +307,9 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         bytes memory record_ = abi.encode(migration.nftEntitlement(WEIGHTED, 3));
         bytes memory remaining_ = abi.encode(migration.nftSurrender(WEIGHTED, 3), migration.nftCustody(WEIGHTED, 3), migration.nftContributions(WEIGHTED, 3));
         uint256 supply_ = IERC20(detf).totalSupply();
-        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        Pricing.InputsV3 memory next_ = PricingV3(address(migration)).migrationWeightedPricingV3().inputs;
         next_.swapFeeWad = 1e17;
-        vm.prank(migrationOwner); pricingId = allocation.setMigrationWeightedPricing(next_);
+        vm.prank(migrationOwner); pricingId = AllocationV3(address(allocation)).setMigrationWeightedPricingV3(next_);
         assertEq(abi.encode(migration.nftEntitlement(WEIGHTED, 3)), record_);
         assertEq(abi.encode(migration.nftSurrender(WEIGHTED, 3), migration.nftCustody(WEIGHTED, 3), migration.nftContributions(WEIGHTED, 3)), remaining_);
         vm.prank(migrationOwner);

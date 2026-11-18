@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {Test} from "forge-std/Test.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -82,8 +84,8 @@ abstract contract MigrationNativeLedger is Test {
         feeFraction = s_.feeFraction;
         creatorFraction = s_.creatorFraction;
         frozenQuotes = s_.quotes;
-        snapshotHash = keccak256(abi.encode(parent.migrationWeightedPricing()));
-        snapshotId = parent.migrationWeightedPricing().id;
+        snapshotHash = keccak256(abi.encode(PricingV3(address(parent)).migrationWeightedPricingV3()));
+        snapshotId = PricingV3(address(parent)).migrationWeightedPricingV3().id;
         for (uint256 i_; i_ < 8; ++i_) actors[i_] = address(uint160(0x2400 + i_));
         book.gonsPerUnit = 1e36;
         _recordPosition(3, actors[0], s_.firstCredit, true);
@@ -222,7 +224,7 @@ abstract contract MigrationNativeLedger is Test {
     function isolatedBook(address address_) public view returns (bytes32) {
         Migration m_ = Migration(address_);
         return keccak256(abi.encode(m_.owner(), m_.hook(), m_.rebasingClaimToken(), m_.bondNftVault(),
-            m_.migrationWeightedPricing(), m_.independentAllocation(address(0x2499)),
+            PricingV3(address(m_)).migrationWeightedPricingV3(), m_.independentAllocation(address(0x2499)),
             m_.independentIssuance(address(0x2499)), IERC20(address_).totalSupply(),
             MigrationReceipt(m_.rebasingClaimToken()).stakingState(), Bonds(m_.bondNftVault()).positionOf(3)));
     }

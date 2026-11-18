@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {FullSpreadV4MatrixChecks} from "../../dual/UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol";
+import {FullSpreadSequentialQuoteChecks as StateChecks} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/FullSpreadSequentialQuoteChecks.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
@@ -40,6 +41,21 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_Unisw
     UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrixBehavior
 {
     address internal sharedPkg;
+
+    function test_sequentialQuote_externalSwapMatchesExecution() public {
+        _seed();
+        StateChecks.swaps(fx, hook, raw, single.rateProvider(face));
+    }
+
+    function test_sequentialQuote_externalDepositJoinMatchesExecution() public {
+        _seed();
+        StateChecks.join(fx, hook);
+    }
+
+    function test_sequentialQuote_providerRejectsForeignState() public {
+        SeMatrixFixture foreignFixture = _newFixture();
+        StateChecks.rejectForeignState(single.rateProvider(face), seUT, face, foreignFixture.se());
+    }
 
     function _newFixture() internal override returns (SeMatrixFixture) {
         SeMatrix_FullSpreadV4Fixture f = new SeMatrix_FullSpreadV4Fixture(_ctx(), sharedPkg);

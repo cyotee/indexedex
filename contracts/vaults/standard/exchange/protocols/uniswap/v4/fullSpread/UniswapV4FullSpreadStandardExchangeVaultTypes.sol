@@ -68,4 +68,33 @@ library UniswapV4FullSpreadStandardExchangeVaultTypes {
         int24 tick;
         uint128 liquidity;
     }
+
+    /// @dev Only our two boundary ticks can change liquidity in a hypothetical sequence.
+    /// Other ticks are read from the unchanged external-liquidity baseline.
+    struct QuoteTick {
+        uint128 gross;
+        int128 net;
+        uint256 outside0;
+        uint256 outside1;
+    }
+
+    /// @dev ABI-only state; never stored in the vault. Amounts retain native units.
+    struct QuoteState {
+        bytes32 domain;
+        uint256 version;
+        uint256 supply;
+        uint128 positionLiquidity;
+        uint160 sqrtPriceX96;
+        int24 tick;
+        uint128 poolLiquidity;
+        uint24 protocolFee;
+        uint24 lpFee;
+        uint256[2] booked;
+        uint256[2] global;
+        uint256[2] last;
+        QuoteTick lower;
+        QuoteTick upper;
+        uint256 usageFee;
+        address feeTo;
+    }
 }

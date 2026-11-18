@@ -10,7 +10,7 @@ import {IDETFStakingPreview, IDETFStandardizedYield} from "contracts/interfaces/
 import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {UniswapV4DetfRepo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
 import {IUniswapV4DetfSelfCall} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
-import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IUniswapV4Detf, IUniswapV4DetfFirstBondShares} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Adversarial} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol";
 
 /// @notice Shared J1–J3 assertions against each actual manager-deployed reserve binding.
@@ -24,7 +24,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
     function _surfacePayment() internal view virtual returns (IERC20);
 
     function _controlSelectors() internal pure returns (bytes4[] memory s_) {
-        s_ = new bytes4[](47);
+        s_ = new bytes4[](48);
         s_[0] = IStandardExchangeIn.exchangeIn.selector;
         s_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         s_[2] = IUniswapV4Detf.bond.selector;
@@ -64,14 +64,15 @@ abstract contract V4FundedSurfaceBehavior is Test {
         s_[36] = IUniswapV4Detf.completeReserveBondNft.selector;
         s_[37] = IUniswapV4Detf.completeReserveClaim.selector;
         s_[38] = IUniswapV4DetfSelfCall.peekPairEq.selector;
-        s_[39] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
-        s_[40] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
-        s_[41] = IDETFFundedRewards.synchronizeRewards.selector;
-        s_[42] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
-        s_[43] = IDETFStandardizedYield.rawSY.selector;
-        s_[44] = IDETFStandardizedYield.stakingSY.selector;
-        s_[45] = IUniswapV4Detf.previewFirstBondPayments.selector;
-        s_[46] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
+        s_[39] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
+        s_[40] = IDETFFundedRewards.synchronizeRewards.selector;
+        s_[41] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
+        s_[42] = IDETFStandardizedYield.rawSY.selector;
+        s_[43] = IDETFStandardizedYield.stakingSY.selector;
+        s_[44] = IUniswapV4Detf.previewFirstBondPayments.selector;
+        s_[45] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
+        s_[46] = IUniswapV4DetfFirstBondShares.bondFirstShares.selector;
+        s_[47] = IUniswapV4DetfFirstBondShares.previewFirstBondShares.selector;
     }
 
     function test_J1_facetFuncs_coversTargetApi() public view {
@@ -115,7 +116,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
     }
 
     function _assertRetiredSelectorsAbsent(address proxy_) private view {
-        bytes4[13] memory retired_ = [
+        bytes4[14] memory retired_ = [
             bytes4(keccak256("mint(address,uint256,uint256,address,bool,uint256)")),
             bytes4(keccak256("previewMint(address,uint256)")),
             bytes4(keccak256("burn(uint256,address,uint256,address,uint256)")),
@@ -124,6 +125,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
             bytes4(keccak256("previewCloseBondMature(uint256)")),
             bytes4(keccak256("compoundProtocolRewards()")),
             bytes4(keccak256("compoundProtocolRewardsAtomic()")),
+            bytes4(keccak256("sweepDustAtomic()")),
             bytes4(keccak256("claimLiquidity(uint256,address)")),
             bytes4(keccak256("previewClaimLiquidity(uint256)")),
             bytes4(keccak256("thresholdMode()")),
@@ -167,6 +169,9 @@ abstract contract V4FundedSurfaceBehavior is Test {
         vm.stopPrank();
         assertGt(out_, 0, "standard output executes through actual proxy");
         IDETFFundedRewards(proxy_).synchronizeRewards();
+        address stranger_ = _surfaceAttacker();
+        vm.prank(stranger_);
+        vm.expectRevert(abi.encodeWithSelector(UniswapV4DetfRepo.NotAuthorized.selector, stranger_));
         info_.sweepDust();
     }
 

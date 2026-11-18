@@ -66,26 +66,27 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
             (spend,) = Components.bootstrapSplit(amount);
             return spend;
         }
-        return _conversionForBook(i, amount, asShare, l.seReserves[i], l.rawReserves[i]);
+        (spend,) = _conversionForBook(i, amount, asShare, l.seReserves[i], l.rawReserves[i]);
     }
 
     function _conversionForBook(uint8 i, uint256 amount, bool asShare, uint256 shares, uint256 local)
-        private view returns (uint256 spend)
+        private view returns (uint256 spend, ExchangeInAmount.Result memory result)
     {
-        if (amount == 0 || (asShare ? local == 0 : shares == 0)) return 0;
+        if (amount == 0 || (asShare ? local == 0 : shares == 0)) return (0, result);
         if (!asShare && disabled(i)) revert IVaultRegistryDisableQuery.VaultDisabled(Repo._layout().standardExchanges[i]);
-        ExchangeInAmount.Result memory full = _previewConversion(i, amount, asShare);
-        if (full.amountOut == 0) return 0;
+        result = _previewConversion(i, amount, asShare);
+        if (result.amountOut == 0) return (0, ExchangeInAmount.Result(0, 0));
         if (asShare) {
-            if (shares == 0) return amount;
-            uint256 pairedShares = FullMath.mulDiv(shares, full.amountOut, amount);
+            if (shares == 0) return (amount, result);
+            uint256 pairedShares = FullMath.mulDiv(shares, result.amountOut, amount);
             spend = FullMath.mulDiv(amount, local, local + pairedShares, FullMath.Rounding.Ceil);
         } else {
-            if (local == 0) return amount;
-            uint256 sharesForLocal = FullMath.mulDiv(local, full.amountOut, amount);
+            if (local == 0) return (amount, result);
+            uint256 sharesForLocal = FullMath.mulDiv(local, result.amountOut, amount);
             spend = FullMath.mulDiv(amount, shares, shares + sharesForLocal);
         }
-        if (_previewConversion(i, spend, asShare).amountOut == 0) return 0;
+        if (spend != amount) result = _previewConversion(i, spend, asShare);
+        if (result.amountOut == 0) return (0, ExchangeInAmount.Result(0, 0));
     }
 
     error InvalidRoute();
@@ -138,8 +139,8 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
                     _previewSeed(i, amounts[i], flags[i]);
                 continue;
             }
-            uint256 spend = conversion(i, amounts[i], flags[i], first);
-            ExchangeInAmount.Result memory result = _previewConversion(i, spend, flags[i]);
+            (uint256 spend, ExchangeInAmount.Result memory result) =
+                _conversionForBook(i, amounts[i], flags[i], l.seReserves[i], l.rawReserves[i]);
             if (flags[i]) {
                 basket.shares[i] = ExchangeInAmount.localCredit(amounts[i], spend, result.amountRefunded);
                 basket.local[i] = result.amountOut;
@@ -191,8 +192,8 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
             if (Repo._layout().standardExchanges[i] == address(0) || (incoming.shares[i] != 0 && incoming.local[i] != 0)) continue;
             bool redeem = incoming.shares[i] != 0;
             uint256 amount = redeem ? incoming.shares[i] : incoming.local[i];
-            uint256 spend = _conversionForBook(i, amount, redeem, book.shares[i], book.local[i]);
-            ExchangeInAmount.Result memory result = _previewConversion(i, spend, redeem);
+            (uint256 spend, ExchangeInAmount.Result memory result) =
+                _conversionForBook(i, amount, redeem, book.shares[i], book.local[i]);
             if (redeem) {
                 incoming.shares[i] -= spend - result.amountRefunded;
                 incoming.local[i] += result.amountOut;
@@ -229,7 +230,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
             if (l.standardExchanges[i] == address(0) || (incoming.shares[i] != 0 && incoming.local[i] != 0)) continue;
             bool redeem = incoming.shares[i] != 0;
             uint256 amount = redeem ? incoming.shares[i] : incoming.local[i];
-            uint256 spend = _conversionForBook(i, amount, redeem, book.shares[i], book.local[i]);
+            (uint256 spend,) = _conversionForBook(i, amount, redeem, book.shares[i], book.local[i]);
             ExchangeInAmount.Result memory result = convert(i, spend, redeem);
             if (redeem) {
                 incoming.shares[i] -= spend - result.amountRefunded;
@@ -285,26 +286,22 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         bytes memory state;
         uint256 supplied = amount;
         if (asShare) {
-            state = ContextQuote.snapshot(se, l.tokens[i], address(this), address(0));
+            state = ContextQuote.compositionSnapshot(se, l.tokens[i], address(this));
             if (state.length != 0) {
-                (state,,,) = Transition(se).quoteTransition(state, Transition.Operation.ReceiveShares, amount);
+                state = ContextQuote.receiveShares(se, state, amount);
             }
         } else {
             if (disabled(i)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
             ExchangeInAmount.Result memory acquired;
-            (acquired, state) = ContextQuote.depositResult(se, l.tokens[i], address(this), amount, address(0));
+            state = ContextQuote.compositionSnapshot(se, l.tokens[i], address(this));
+            (acquired, state) = ContextQuote.conversion(se, l.tokens[i], amount, false, state);
             supplied = acquired.amountOut;
             refund = acquired.amountRefunded;
         }
         uint256 spend;
         (spend, retained) = Components.bootstrapSplit(supplied);
         ExchangeInAmount.Result memory redeemed;
-        if (state.length == 0) redeemed = _previewConversion(i, spend, true);
-        else {
-            (, uint256 consumed, uint256 output,) =
-                Transition(se).quoteTransition(state, Transition.Operation.RedeemExactIn, spend);
-            redeemed = ExchangeInAmount.fromConsumedInput(spend, consumed, output);
-        }
+        (redeemed,) = ContextQuote.conversion(se, l.tokens[i], spend, true, state);
         if (redeemed.amountRefunded != 0 || redeemed.amountOut == 0) revert Components.InvalidBootstrapReceipt();
         local = redeemed.amountOut;
     }
@@ -449,8 +446,8 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     {
         if (amount == 0 || supply == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        Transition exchange = Transition(l.standardExchanges[index]);
-        (state,,,) = exchange.quoteTransition(state, Transition.Operation.ReceiveShares, amount);
+        address exchange = l.standardExchanges[index];
+        state = ContextQuote.receiveShares(exchange, state, amount);
         uint256[4] memory rates = _joinRates();
         rates[index] = ContextQuote.rateFromState(l.standardExchanges[index], l.tokens[index], l.rateProviders[index], state);
         Basket memory incoming;
@@ -460,14 +457,14 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         if (_missingPreparedLeg(incoming, book)) return 0;
         uint256 remaining = incoming.shares[index];
         if (remaining != 0 && book.local[index] != 0 && incoming.local[index] == 0) {
-            (,, uint256 fullOut,) = exchange.quoteTransition(state, Transition.Operation.RedeemExactIn, remaining);
-            if (fullOut == 0) return 0;
-            uint256 pairedShares = FullMath.mulDiv(book.shares[index], fullOut, remaining);
+            (ExchangeInAmount.Result memory result,) = ContextQuote.conversion(exchange, l.tokens[index], remaining, true, state);
+            if (result.amountOut == 0) return 0;
+            uint256 pairedShares = FullMath.mulDiv(book.shares[index], result.amountOut, remaining);
             uint256 spend = FullMath.mulDiv(remaining, book.local[index], book.local[index] + pairedShares, FullMath.Rounding.Ceil);
-            (, uint256 consumed, uint256 output,) = exchange.quoteTransition(state, Transition.Operation.RedeemExactIn, spend);
-            if (output == 0) return 0;
-            incoming.shares[index] -= consumed;
-            incoming.local[index] = output;
+            (result,) = ContextQuote.conversion(exchange, l.tokens[index], spend, true, state);
+            if (result.amountOut == 0) return 0;
+            incoming.shares[index] -= ExchangeInAmount.consumedInput(spend, result.amountRefunded);
+            incoming.local[index] = result.amountOut;
         }
         return grossMint(incoming, book, supply);
     }

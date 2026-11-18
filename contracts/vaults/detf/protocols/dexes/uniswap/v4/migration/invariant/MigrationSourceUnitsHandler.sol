@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {MigrationSourceUnitsLedger} from "./MigrationSourceUnitsLedger.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Errors} from "@crane/contracts/interfaces/IERC20Errors.sol";
@@ -54,7 +56,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
         vm.prank(currentOwner);
         _invoke(abi.encodeWithSelector(configSelector(i_), inputs_, pricingId));
         rows[i_].originalC = creditAnchors[variant_]; rows[i_].c = creditAnchors[variant_];
-        rows[i_].configuration = keccak256(abi.encode(block.chainid, address(parent), parent.migrationWeightedPricing().id, inputs_[0]));
+        rows[i_].configuration = keccak256(abi.encode(block.chainid, address(parent), PricingV3(address(parent)).migrationWeightedPricingV3().id, inputs_[0]));
         rows[i_].entitlementHash = keccak256(abi.encode(true, inputs_[0], rows[i_].configuration, rows[i_].originalC));
     }
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {console2} from "forge-std/console2.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
@@ -11,7 +13,7 @@ library MigrationStatefulBindings {
     function capture(Migration m_, address package_, address registry_) internal view {
         console2.log("STATEFUL_SUBJECT");
         console2.logBytes(abi.encode(address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
-            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), package_, registry_, m_.migrationWeightedPricing().id));
+            m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), package_, registry_, PricingV3(address(m_)).migrationWeightedPricingV3().id));
         address[8] memory roots_ = [address(m_), m_.hook(), m_.bondNftVault(), m_.rebasingClaimToken(),
             m_.rawSY(), m_.stakingSY(), m_.migrationSyRewardToken(), registry_];
         for (uint256 i_; i_ < roots_.length; ++i_) {

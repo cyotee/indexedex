@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
-import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
@@ -66,10 +65,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (pairToken != l.pairToken || detfToken != l.rawToken) revert UnsupportedRoute();
         LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(l.standardExchange, pairToken, tokenIn, amountIn, address(this));
         q.heldShares = l.bookedSeShares;
-        pairValue = q.exchange.quoteAssets(q.state, q.assets);
+        pairValue = LegLib.assetsAtState(q, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
         {
-            uint256 pairClaim = l.localPairReserve + q.exchange.quoteAssets(q.state, l.bookedSeShares);
+            uint256 pairClaim = l.localPairReserve + LegLib.assetsAtState(q, l.bookedSeShares);
             if (pairClaim != 0) liquidityDetf = FullMath.mulDiv(l.bookedRaw, pairValue, pairClaim);
         }
         q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);

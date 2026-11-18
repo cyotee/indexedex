@@ -69,7 +69,7 @@ contract MigrationRecoveryClaimVaultTest is MigrationClaimVaultForkBase {
         uint256 lp_ = IERC20(reserveHook).balanceOf(address(bonds));
         _run(Recovery.Stage.Donate, 0, dtf_, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
         assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lp_);
         assertEq(_protected(bond_), protected_);
     }

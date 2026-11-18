@@ -3,6 +3,10 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeBundleIn} from
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {TestBase_UniswapV4DetfMigration} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation}
     from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -49,7 +53,29 @@ contract MigrationRetainedAccountingTest is TestBase_UniswapV4DetfMigration {
         IStakedDETF.StakingState memory empty_ = receipt.stakingState();
         assertEq(empty_.totalGons, 0);
         assertGt(empty_.feeWeight + empty_.creatorWeight, 0);
+        // This large one-sided budget cannot form the fixed 49% V3 add.
+        // Preserve that rejection, then fund the same standing-weight exercise
+        // through the already-supported share donation route.
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, 1, 0));
         _donate(1000 ether);
+        IERC20[] memory donations_ = new IERC20[](2);
+        uint256[] memory shares_ = new uint256[](2);
+        donations_[0] = IERC20(se0);
+        donations_[1] = IERC20(se1);
+        for (uint256 i_; i_ < 2; ++i_) {
+            address exchange_ = address(donations_[i_]);
+            address[] memory tokens_ = IBasicVault(exchange_).vaultTokens();
+            uint256[] memory amounts_ = new uint256[](2);
+            amounts_[0] = 500 ether;
+            amounts_[1] = 500 ether;
+            IERC20(tokens_[0]).approve(exchange_, amounts_[0]);
+            IERC20(tokens_[1]).approve(exchange_, amounts_[1]);
+            (shares_[i_],) = IStandardExchangeBundleIn(exchange_).exchangeBundleInForSingleOut(
+                amounts_, exchange_, 1, address(this), false, block.timestamp
+            );
+            donations_[i_].approve(detf, shares_[i_]);
+        }
+        assertGt(migration.donateMigrationCapital(donations_, shares_, 0, 1, block.timestamp), 0);
         vm.warp(vm.getBlockTimestamp() + 8 hours);
         uint256 expected_ = migration.pendingExpansionDetf();
         assertGt(expected_, 0);

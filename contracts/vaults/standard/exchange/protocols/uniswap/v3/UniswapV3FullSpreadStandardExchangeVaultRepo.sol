@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {IERC20Events} from "@crane/contracts/interfaces/IERC20Events.sol";
+
 /**
  * @title UniswapV3FullSpreadStandardExchangeVaultRepo
  * @notice One vault-owned bound-pool position for Uniswap V3 Standard Exchange vaults.
@@ -19,6 +22,11 @@ library UniswapV3FullSpreadStandardExchangeVaultRepo {
 
     struct Storage {
         Position centerPosition;
+        uint256[2] booked;
+        // Custody allocated to the current operation is not available pretransfer credit.
+        uint256[2] reserved;
+        // Only an explicitly opened pool action can spend through a callback.
+        uint256[2] callbackBudget;
     }
 
     function _layout(bytes32 slot) internal pure returns (Storage storage layout_) {
@@ -29,6 +37,14 @@ library UniswapV3FullSpreadStandardExchangeVaultRepo {
 
     function _layout() internal pure returns (Storage storage layout_) {
         return _layout(STORAGE_SLOT);
+    }
+
+    /// @dev The nonredeemable genesis floor uses a direct ERC20 storage write.
+    function _writeGenesisFloor() internal {
+        ERC20Repo.Storage storage token_ = ERC20Repo._layoutStruct();
+        token_.balanceOf[address(0)] = 1_000;
+        token_.totalSupply += 1_000;
+        emit IERC20Events.Transfer(address(0), address(0), 1_000);
     }
 
     function _createPositionIfNeeded(Storage storage layout_, int24 tickLower_, int24 tickUpper_) internal {

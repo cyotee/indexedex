@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
+import {IArbSys} from "@crane/contracts/external/openzeppelin-contracts/vendor/arbitrum/IArbSys.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
@@ -50,7 +51,7 @@ contract APEX20260917_HistoricalInventory is Test {
 
     function test_APEX001M2_chainAndRegistry() public {
         assertEq(block.chainid, CHAIN_ID, "chain 4663");
-        assertEq(block.number, PINNED_BLOCK, "pinned historical block");
+        assertEq(IArbSys(address(0x64)).arbBlockNumber(), PINNED_BLOCK, "pinned historical block");
         assertEq(REGISTRY.code.length > 0, true, "registry code");
         assertTrue(IVaultRegistryVaultQuery(REGISTRY).isVault(UNI_V4_WETH_DTF_OPEN), "primary reported vault in registry");
         assertTrue(IVaultRegistryVaultQuery(REGISTRY).isVault(CUSTODY), "custody in registry");
@@ -162,8 +163,8 @@ contract APEX20260917_HistoricalInventory is Test {
     function test_APEX_R4_5_currentBlockAssessment() public {
         string memory rpcAlias = vm.envOr("APEX_ROBINHOOD_RPC_ALIAS", string("robinhood_mainnet_alchemy"));
         vm.createSelectFork(rpcAlias);
-        emit log_named_uint("currentBlock", block.number);
-        assertGt(block.number, PINNED_BLOCK);
+        emit log_named_uint("currentBlock", IArbSys(address(0x64)).arbBlockNumber());
+        assertGt(IArbSys(address(0x64)).arbBlockNumber(), PINNED_BLOCK);
         assertEq(block.chainid, CHAIN_ID);
         address[] memory instances = _reported();
         for (uint256 i; i < instances.length; ++i) {

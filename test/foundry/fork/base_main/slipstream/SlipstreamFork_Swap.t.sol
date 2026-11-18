@@ -276,7 +276,8 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
             // Success
         } catch {
             return; // Skip if deal fails
-        }uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        }
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         if (preview == 0) return;// Skip if preview is 0
 
         (uint256 amountOut,) = vault.exchangeIn(tokenIn,

@@ -18,7 +18,8 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
-import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeBundleIn} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {TestBase_UniswapV4Detf_Weighted_ProdSe} from "../detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol";
@@ -60,6 +61,9 @@ import {UniswapV4DetfMigration_Pkg_FactoryService as Packages} from "./UniswapV4
 
 import {IUniswapV4DetfMigrationWeightedPricing as Pricing} from "./interfaces/IUniswapV4DetfMigrationWeightedPricing.sol";
 import {MigrationWeightedPricingFixture} from "./TestBase_UniswapV4DetfMigrationSnapshot.sol";
+import {UniswapV3FrozenQuoteFixture as V3Capture} from "./UniswapV3FrozenQuoteFixture.sol";
+import {IUniswapV4DetfMigrationWeightedPricingAllocationV3 as PricingAllocationV3}
+    from "./interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
 
 /// @notice Gold registry fixture with real WETH, V3 pools/SEs, weighted hook, and genuine issuance.
 /// @dev Only mintable contribution/rate currencies and the external liquidity seeder are fixtures.
@@ -76,6 +80,8 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
     address internal payer;
     bool internal localBroadcast;
     bytes32 internal pricingId;
+    IUniswapV3Pool internal migrationPoolA;
+    IUniswapV3Pool internal migrationPoolB;
 
     function onERC721Received(address, address, uint256, bytes calldata) external pure virtual returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
@@ -114,6 +120,8 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         V3Package v3_ = _migrationV3Package(factory_);
         IUniswapV3Pool poolA_ = SeLib.createUniv3PoolOneToOne(factory_, pairA, rate_, 3000);
         IUniswapV3Pool poolB_ = SeLib.createUniv3PoolOneToOne(factory_, pairB, rate_, 3000);
+        migrationPoolA = poolA_;
+        migrationPoolB = poolB_;
         _seedMigrationPool(poolA_, bytes32("A"));
         _seedMigrationPool(poolB_, bytes32("B"));
         se0 = v3_.deployVault(poolA_);
@@ -188,20 +196,32 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         ));
         IERC20(pool_.token0()).transfer(address(seeder_), 2000 ether);
         IERC20(pool_.token1()).transfer(address(seeder_), 2000 ether);
-        seeder_.seedFullRange(pool_, uint128(1000 ether));
+        // Genesis converts 100 tokens per leg through the fixed 49% entry swap.
+        // Deploy the funded external liquidity so that swap has a formable add.
+        seeder_.seedFullRange(pool_, uint128(2000 ether));
     }
 
     function _activateMigrationSe(address se_, address pair_, address rate_) internal {
-        address[] memory tokens_ = new address[](2);
-        tokens_[0] = pair_; tokens_[1] = rate_;
-        _sortInPlace(tokens_);
+        address[] memory tokens_ = IBasicVault(se_).vaultTokens();
         uint256[] memory amounts_ = new uint256[](2);
         amounts_[0] = 100 ether; amounts_[1] = 100 ether;
         IERC20(pair_).approve(se_, amounts_[0]);
         IERC20(rate_).approve(se_, amounts_[1]);
-        IStandardExchangeInMulti(se_).exchangeInManyToOne(
-            tokens_, amounts_, IERC20(se_), 1, payer, false, block.timestamp + 1 hours
+        uint256[] memory balances_ = new uint256[](2);
+        for (uint256 i_; i_ < tokens_.length; ++i_) balances_[i_] = IERC20(tokens_[i_]).balanceOf(payer);
+        (uint256 quote_, uint256[] memory quotedRefunds_) =
+            IStandardExchangeBundleIn(se_).previewExchangeBundleInForSingleOut(amounts_, se_);
+        (uint256 issued_, uint256[] memory refunds_) = IStandardExchangeBundleIn(se_).exchangeBundleInForSingleOut(
+            amounts_, se_, quote_, payer, false, block.timestamp + 1 hours
         );
+        assertGt(issued_, 0, "migration V3 activation");
+        assertEq(issued_, quote_, "migration V3 activation quote/execution");
+        assertEq(refunds_, quotedRefunds_, "migration V3 activation refund quote/execution");
+        assertEq(refunds_.length, tokens_.length, "migration V3 activation refund count");
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(IERC20(tokens_[i_]).balanceOf(payer), balances_[i_] - amounts_[i_] + refunds_[i_],
+                "migration V3 activation net funding");
+        }
     }
 
     function _migrationHookPackage() internal {
@@ -288,7 +308,11 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         args_ = _prepareMigrationHook(args_);
         _ownerStart();
         migrationPkg.prepareSyChildren(args_);
-        parent_ = migrationPkg.deployVault(args_);
+        // Native publication uses an explicit envelope below the owned node's
+        // 32-million ceiling; other transactions retain Forge's estimation margin.
+        parent_ = localBroadcast
+            ? migrationPkg.deployVault{gas: 31_900_000}(args_)
+            : migrationPkg.deployVault(args_);
         _ownerStop();
         require(parent_ == diamondPackageFactory.calcAddress(IDiamondFactoryPackage(address(migrationPkg)), abi.encode(args_)),
             "owner-aware prediction");
@@ -349,14 +373,22 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         _migrationStop();
     }
 
-    function _manualInputs() internal view returns (Pricing.Inputs memory) {
-        return MigrationWeightedPricingFixture.observed(detf, address(indexedexManager), pairA, pairB);
+    function _v3PricingBindings() internal view returns (V3Capture.Binding[] memory bindings_) {
+        bindings_ = new V3Capture.Binding[](2);
+        bindings_[0] = V3Capture.Binding(se0, address(migrationPoolA), address(indexedexManager));
+        bindings_[1] = V3Capture.Binding(se1, address(migrationPoolB), address(indexedexManager));
+    }
+
+    function _manualInputs() internal view returns (Pricing.InputsV3 memory) {
+        return MigrationWeightedPricingFixture.observed(
+            detf, address(indexedexManager), pairA, pairB, _v3PricingBindings()
+        );
     }
 
     function _setObservedPricing() internal {
-        Pricing.Inputs memory inputs_ = _manualInputs();
+        Pricing.InputsV3 memory inputs_ = _manualInputs();
         _migrationStart();
-        pricingId = allocation.setMigrationWeightedPricing(inputs_);
+        pricingId = PricingAllocationV3(address(allocation)).setMigrationWeightedPricingV3(inputs_);
         _migrationStop();
     }
 

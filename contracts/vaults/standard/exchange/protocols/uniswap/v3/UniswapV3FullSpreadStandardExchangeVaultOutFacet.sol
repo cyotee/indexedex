@@ -12,8 +12,6 @@ import {
  * @notice Execute-only exchangeOut. Preview lives on OutQueryFacet.
  */
 contract UniswapV3FullSpreadStandardExchangeVaultOutFacet is UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget, IFacet {
-    constructor(address executionDelegate) UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget(executionDelegate) {}
-
     function facetName() public pure returns (string memory name) {
         return type(UniswapV3FullSpreadStandardExchangeVaultOutFacet).name;
     }

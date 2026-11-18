@@ -67,6 +67,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
     uint256 internal launchRichOpeningWad;
     uint256 internal _policyDeployNonce;
     mapping(address => uint256) internal _policyInitialBond;
+    mapping(address => uint256) internal _policyFirstBondPaid;
 
     function setUp() public virtual override {
         super.setUp();
@@ -242,7 +243,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         _fundAndApprove(d);
     }
 
-    function _firstBondOn(address d, uint256 amt) internal returns (uint256 tokenId, uint256 shares) {
+    function _firstBondOn(address d, uint256 amt) internal virtual returns (uint256 tokenId, uint256 shares) {
         IERC20 token_ = _mintTokenOf(d);
         bool first_ = !IUniswapV4Detf(d).isReserveLive();
         if (first_) {
@@ -258,9 +259,13 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
             vm.prank(detfUser);
             token_.approve(d, amt);
         }
+        uint256 paymentBefore_ = token_.balanceOf(detfUser);
         vm.prank(detfUser);
         (tokenId, shares) = IUniswapV4Detf(d).bond(token_, amt, DEFAULT_MIN_LOCK, detfUser, false, _deadline());
-        if (first_) _policyInitialBond[d] = tokenId;
+        if (first_) {
+            _policyInitialBond[d] = tokenId;
+            _policyFirstBondPaid[d] = paymentBefore_ - token_.balanceOf(detfUser);
+        }
     }
 
     function _mintOn(address d, uint256 amt) internal returns (uint256 userDetf) {
@@ -595,7 +600,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         assertFalse(info.isReserveLive(), "inert");
         _firstBondOn(d, _firstBondAmt());
         assertTrue(info.isReserveLive(), "live");
-        uint256 g_ = _expectedJoinDetf(_firstBondAmt(), DEFAULT_CREATION_PAIR_PER_DETF);
+        uint256 g_ = _expectedJoinDetf(_policyFirstBondPaid[d], DEFAULT_CREATION_PAIR_PER_DETF);
         assertApproxEqAbs(_detfReserveInHook(d), g_, 1000, "first-bond G at peg");
     }
 
@@ -605,8 +610,8 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         assertTrue(_openingAll(info.openingPairPerDetfWad(), LAUNCH_RICH_START), "stored opening");
         _firstBondOn(d, _firstBondAmt());
         assertTrue(info.isReserveLive());
-        uint256 gOpening_ = _expectedJoinDetf(_firstBondAmt(), LAUNCH_RICH_START);
-        uint256 gCreation_ = _expectedJoinDetf(_firstBondAmt(), DEFAULT_CREATION_PAIR_PER_DETF);
+        uint256 gOpening_ = _expectedJoinDetf(_policyFirstBondPaid[d], LAUNCH_RICH_START);
+        uint256 gCreation_ = _expectedJoinDetf(_policyFirstBondPaid[d], DEFAULT_CREATION_PAIR_PER_DETF);
         uint256 raw_ = _detfReserveInHook(d);
         assertApproxEqAbs(raw_, gOpening_, 1000, "first-bond G uses opening");
         assertTrue(raw_ != gCreation_, "G is not creation-rate join");
@@ -653,6 +658,11 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         require(init.finalizeInitialization(), "finalize");
     }
     function _fundedPolicyUser() internal view override returns (address) { return detfUser; }
+    function _fundedPolicyPreparePayment(address d_, IERC20 token_, uint256 amount_, address payer_)
+        internal override returns (IERC20, uint256)
+    {
+        return _preparePositivePayment(d_, token_, amount_, payer_);
+    }
     function _fundedPolicyMintToken(address d) internal view override returns (IERC20) { return _mintTokenOf(d); }
     function _fundedPolicyFundToken(address token, address user, uint256 amount) internal override { _fundToken(token, user, amount); }
     function _fundedPolicySkewDown(address d) internal override { _skewSyntheticDown(d); }

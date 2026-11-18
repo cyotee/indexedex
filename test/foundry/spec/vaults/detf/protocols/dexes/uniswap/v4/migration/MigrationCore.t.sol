@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -100,7 +102,7 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
     function test_manualBookChangesOnlyOnExplicitSetNotDonation() public {
         _fundAndCapture();
         uint256 quote_ = migration.previewOriginalCredit(1 ether, 1 ether);
-        bytes32 id_ = migration.migrationWeightedPricing().id;
+        bytes32 id_ = PricingV3(address(migration)).migrationWeightedPricingV3().id;
         _setObservedPricing();
         assertEq(pricingId, id_, "identical inputs keep identity");
         IERC20[] memory tokens_ = new IERC20[](1);
@@ -108,7 +110,7 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         uint256[] memory amounts_ = new uint256[](1);
         amounts_[0] = 1 ether;
         migration.donateMigrationCapital(tokens_, amounts_, 0, 0, block.timestamp);
-        assertEq(migration.migrationWeightedPricing().id, id_);
+        assertEq(PricingV3(address(migration)).migrationWeightedPricingV3().id, id_);
         assertEq(migration.previewOriginalCredit(1 ether, 1 ether), quote_);
     }
 
@@ -183,13 +185,13 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
 
     function test_activationRemovesEntireAdministrationAndKeepsQueries() public {
         _fundAndCapture();
-        bytes4[11] memory selectors_ = [
+        bytes4[12] memory selectors_ = [
             Allocation.bootstrapMigrationReserve.selector, Allocation.setMigrationWeightedPricing.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
             Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureWeightedSyEntitlements.selector,
             Allocation.configureDtfCustodySeEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
-            Allocation.configureWeightedReceiptEntitlements.selector
+            Allocation.configureWeightedReceiptEntitlements.selector, AllocationV3.setMigrationWeightedPricingV3.selector
         ];
         address[] memory facets_ = new address[](selectors_.length);
         for (uint256 i_; i_ < selectors_.length; ++i_) {
@@ -211,6 +213,7 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         assertEq(reason_.length, 0);
         assertFalse(migration.migrationActivated());
         assertTrue(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
+        assertTrue(IERC165(detf).supportsInterface(type(AllocationV3).interfaceId));
         for (uint256 i_; i_ < selectors_.length; ++i_) {
             assertEq(IDiamondLoupe(detf).facetAddress(selectors_[i_]), facets_[i_]);
         }
@@ -224,9 +227,10 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         allocation.activateMigration();
         assertTrue(migration.migrationActivated());
         assertFalse(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
+        assertFalse(IERC165(detf).supportsInterface(type(AllocationV3).interfaceId));
         for (uint256 i_; i_ < selectors_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(selectors_[i_]), address(0));
         assertEq(migration.owner(), migrationOwner);
-        assertNotEq(migration.migrationWeightedPricing().id, bytes32(0));
+        assertNotEq(PricingV3(address(migration)).migrationWeightedPricingV3().id, bytes32(0));
         assertGt(migration.previewOriginalCredit(1 ether, 0), 0);
         uint256 before_ = IERC20(detf).balanceOf(address(this));
         (uint256 out_,) = detfExchangeIn.exchangeIn(

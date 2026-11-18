@@ -2,11 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+import {Vm} from "forge-std/Vm.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {TestBase_UniswapV4DetfMigration} from
@@ -58,6 +61,7 @@ contract RecoveryHostileRate is SimpleMintableERC20 {
 /// The selected recovery witness is a different NFT, surrendered to the genuine Migration proxy.
 abstract contract MigrationRecoveryDonationForkBase is MigrationRecoveryForkBase {
     RecoveryHostileRate internal hostileRate;
+    uint256 internal initialDonationFloor;
 
     function _deployContributionFixture() internal pure override returns (address) { return Legacy.DTF; }
     function _fundContribution(address recipient_, uint256 amount_) internal override {
@@ -79,14 +83,17 @@ abstract contract MigrationRecoveryDonationForkBase is MigrationRecoveryForkBase
     function _seedMigrationPool(IUniswapV3Pool pool_, bytes32 salt_) internal override {
         TestBase_UniswapV4DetfMigration._seedMigrationPool(pool_, salt_);
     }
-    function _fundHistoricalBook() internal override {
+    function _fundHistoricalBook() internal virtual override {
         IERC20[] memory tokens_ = new IERC20[](1);
         tokens_[0] = IERC20(Legacy.DTF);
         uint256[] memory amounts_ = new uint256[](1);
         amounts_[0] = 1 ether;
         migration.donateMigrationCapital(tokens_, amounts_, 0, 0, block.timestamp);
+        (, uint256 genesisRefund_) =
+            IStandardExchangeIn(se1).previewExchangeIn(IERC20(Legacy.DTF), 100 ether, IERC20(se1));
+        initialDonationFloor = 1 ether + genesisRefund_;
         _fundAndCapture();
-        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 1 ether);
+        assertEq(migration.migrationDonationInventory(IERC20(Legacy.DTF)), initialDonationFloor);
     }
     function _deployRateFixture() internal override returns (address) {
         hostileRate = RecoveryHostileRate(create3Factory.create3WithArgs(
@@ -103,6 +110,101 @@ abstract contract MigrationRecoveryDonationForkBase is MigrationRecoveryForkBase
         _run(Recovery.Stage.WeightedConvert, 0, recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 1);
         out_ = recovery.migrationRecoveryInventory(Legacy.DTF);
         assertGt(out_, 1 ether);
+    }
+}
+
+/// @notice Positive legacy recovery custody coexists with the explicit genesis-remainder sweep.
+contract MigrationRecoveryDonationRemainderTest is MigrationRecoveryDonationForkBase {
+    function _fundHistoricalBook() internal override {
+        IERC20[] memory tokens_ = new IERC20[](2);
+        tokens_[0] = IERC20(pairA); tokens_[1] = IERC20(pairB);
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = 100 ether; amounts_[1] = 100 ether;
+        migration.donateMigrationCapital(tokens_, amounts_, 0, 0, block.timestamp);
+        Migration.GenesisLeg[] memory legs_ = new Migration.GenesisLeg[](2);
+        legs_[0] = Migration.GenesisLeg(IERC20(pairA), 50 ether, 1);
+        legs_[1] = Migration.GenesisLeg(IERC20(pairB), 50 ether, 1);
+        vm.prank(migrationOwner);
+        allocation.bootstrapMigrationReserve(legs_, 0, 1, block.timestamp);
+        _setObservedPricing();
+    }
+
+    /// @notice Only genesis books are released; recovered DTF and unsolicited DTF remain in custody.
+    function test_partialBootstrapSweepPreservesRealRecoveryInventory() public {
+        (uint256 bond_, uint256 recovered_) = _converted();
+        assertGt(recovered_, 0);
+        assertTrue(migration.migrationActivated());
+        assertGt(migration.migrationDonationInventory(IERC20(pairA)), 0);
+        assertGt(migration.migrationDonationInventory(IERC20(Legacy.DTF)), 0);
+        IERC20(Legacy.DTF).transfer(detf, 7 ether);
+        address[6] memory tokens_ = [pairA, pairB, se0, se1, detf, reserveHook];
+        uint256[6] memory held_;
+        uint256[6] memory booked_;
+        uint256[6] memory payer_;
+        uint256[6] memory recovery_;
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            held_[i_] = IERC20(tokens_[i_]).balanceOf(detf);
+            booked_[i_] = migration.migrationDonationInventory(IERC20(tokens_[i_]));
+            payer_[i_] = IERC20(tokens_[i_]).balanceOf(address(this));
+            recovery_[i_] = recovery.migrationRecoveryInventory(tokens_[i_]);
+        }
+        bytes32 backing_ = keccak256(abi.encode(
+            bonds.positionOf(bond_), IERC721(address(bonds)).ownerOf(bond_),
+            IERC721(address(bonds)).ownerOf(bond_ + 1), IERC20(detf).totalSupply(),
+            receipt.stakingState(), receipt.gonsOf(address(bonds)), bonds.attributedBondGons(),
+            IERC20(detf).balanceOf(address(receipt)), migration.migrationOwnerFirstBondTokenId()
+        ));
+        uint256 lpBefore_ = IERC20(reserveHook).balanceOf(address(bonds));
+        vm.recordLogs();
+        address authority_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        vm.prank(authority_);
+        migration.sweepDust();
+        Vm.Log[] memory logs_ = vm.getRecordedLogs();
+        assertGt(IERC20(reserveHook).balanceOf(address(bonds)), lpBefore_);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            uint256 released_;
+            uint256 incoming_;
+            uint256 outgoing_;
+            for (uint256 j_; j_ < logs_.length; ++j_) {
+                Vm.Log memory log_ = logs_[j_];
+                if (log_.emitter == detf && log_.topics.length == 2
+                    && log_.topics[0] == keccak256("MigrationCapitalReleasedToResidual(address,uint256)")
+                    && log_.topics[1] == bytes32(uint256(uint160(tokens_[i_])))) {
+                    released_ += abi.decode(log_.data, (uint256));
+                }
+                if (log_.emitter == tokens_[i_] && log_.topics.length == 3
+                    && log_.topics[0] == keccak256("Transfer(address,address,uint256)")) {
+                    if (log_.topics[1] == bytes32(uint256(uint160(detf)))) outgoing_ += abi.decode(log_.data, (uint256));
+                    if (log_.topics[2] == bytes32(uint256(uint160(detf)))) incoming_ += abi.decode(log_.data, (uint256));
+                }
+            }
+            assertEq(released_, tokens_[i_] == detf ? 0 : booked_[i_]);
+            assertEq(migration.migrationDonationInventory(IERC20(tokens_[i_])), booked_[i_] - released_);
+            assertEq(IERC20(tokens_[i_]).balanceOf(detf), held_[i_] + incoming_ - outgoing_);
+            assertEq(recovery.migrationRecoveryInventory(tokens_[i_]), recovery_[i_]);
+            assertEq(IERC20(tokens_[i_]).balanceOf(address(this)), payer_[i_], "no caller payout");
+            assertEq(IERC20(tokens_[i_]).allowance(detf, reserveHook), 0);
+            assertEq(IERC20(tokens_[i_]).allowance(detf, se0), 0);
+            assertEq(IERC20(tokens_[i_]).allowance(detf, se1), 0);
+        }
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), recovered_);
+        assertGe(IERC20(Legacy.DTF).balanceOf(detf), recovered_ + 7 ether);
+        assertEq(keccak256(abi.encode(
+            bonds.positionOf(bond_), IERC721(address(bonds)).ownerOf(bond_),
+            IERC721(address(bonds)).ownerOf(bond_ + 1), IERC20(detf).totalSupply(),
+            receipt.stakingState(), receipt.gonsOf(address(bonds)), bonds.attributedBondGons(),
+            IERC20(detf).balanceOf(address(receipt)), migration.migrationOwnerFirstBondTokenId()
+        )), backing_);
+        // A genuine subsequent receipt exercises a fresh budget with the same recovery floor.
+        IERC20[] memory laterTokens_ = new IERC20[](1);
+        laterTokens_[0] = IERC20(Legacy.DTF);
+        uint256[] memory laterAmounts_ = new uint256[](1);
+        laterAmounts_[0] = 1 ether;
+        assertGt(migration.donateMigrationCapital(laterTokens_, laterAmounts_, 0, 1, block.timestamp), 0);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), recovered_);
+        assertGe(IERC20(Legacy.DTF).balanceOf(detf), recovered_ + 7 ether);
+        assertEq(IERC20(Legacy.DTF).allowance(detf, reserveHook), 0);
+        assertEq(IERC20(Legacy.DTF).allowance(detf, se1), 0);
     }
 }
 

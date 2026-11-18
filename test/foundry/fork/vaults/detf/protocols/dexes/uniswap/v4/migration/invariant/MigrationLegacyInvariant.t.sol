@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4DetfMigrationWeightedPricingV3 as PricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3 as AllocationV3} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
+
 import {MigrationRecoveryDonationForkBase} from "../MigrationRecoveryDonation.t.sol";
 import {MigrationLegacyHandler} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationLegacyHandler.sol";
@@ -39,10 +41,10 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
         bytes memory state_ = abi.encode(receipt.stakingState());
         uint256 supply_ = IERC20(detf).totalSupply();
         address holder_ = IERC721(collection_).ownerOf(id_);
-        Pricing.Inputs memory next_ = migration.migrationWeightedPricing().inputs;
+        Pricing.InputsV3 memory next_ = PricingV3(address(migration)).migrationWeightedPricingV3().inputs;
         next_.swapFeeWad = choice_ == 0 ? 1e16 : 2e16;
         vm.prank(migrationOwner);
-        pricingId = allocation.setMigrationWeightedPricing(next_);
+        pricingId = AllocationV3(address(allocation)).setMigrationWeightedPricingV3(next_);
         assertEq(abi.encode(migration.nftEntitlement(collection_, id_)), abi.encode(before_),
             "setting B must leave stored A originals and credit intact");
         uint256 credit_ = _configureNft(collection_, id_);
@@ -86,7 +88,9 @@ contract MigrationLegacyInvariantTest is MigrationRecoveryDonationForkBase {
             originals_[i_] = MigrationLegacyHandler.OriginalNft(
                 collection_, id_, input_.originalWallet, input_.originalUnits, remaining_, credit_);
         }
-        handler = new MigrationLegacyRecoveryHandler(migration, originals_, migration.previewOriginalCredit(0.01 ether, 0));
+        handler = new MigrationLegacyRecoveryHandler(
+            migration, originals_, migration.previewOriginalCredit(0.01 ether, 0), initialDonationFloor
+        );
         address donor_ = address(bytes20(hex"11c17f25e958e4637dd26ca362adeae12e24ed5b"));
         uint256 quantity_ = handler.Q0();
         vm.prank(donor_); assertTrue(IERC20(Legacy.WEIGHTED_SY).transfer(address(handler), quantity_));

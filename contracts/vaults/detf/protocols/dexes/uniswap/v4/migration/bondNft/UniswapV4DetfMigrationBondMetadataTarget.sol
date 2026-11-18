@@ -16,7 +16,7 @@ contract UniswapV4DetfMigrationBondMetadataTarget {
     /// @notice Existing child collection symbol.
     function symbol() external view returns (string memory) { return ERC721MetadataRepo._symbol(); }
 
-    /// @notice A truthful cliff image and JSON; ordinary purchased positions use the ordinary renderer.
+    /// @notice Principal follows each position's schedule; all rewards follow the parent activation gate.
     function tokenURI(uint256 tokenId_) external view returns (string memory) {
         IUniswapV4DetfMigrationBondNFTVault bond_ = IUniswapV4DetfMigrationBondNFTVault(address(this));
         address parent_ = DETFFundedBondRepo._layoutStruct().detf;
@@ -28,8 +28,8 @@ contract UniswapV4DetfMigrationBondMetadataTarget {
         v_.tokenId = tokenId_;
         v_.timestamp = block.timestamp;
         v_.migrationCliff = bond_.isMigrationPosition(tokenId_);
-        v_.migrationPresentation = v_.migrationCliff || tokenId_ < 3;
-        v_.rewardsClosed = v_.migrationPresentation && !IUniswapV4DetfMigration(parent_).migrationActivated();
+        v_.migrationPresentation = true;
+        v_.rewardsClosed = !IUniswapV4DetfMigration(parent_).migrationActivated();
         return DETFFundedBondMetadata._uri(v_);
     }
 }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
+import {IArbSys} from "@crane/contracts/external/openzeppelin-contracts/vendor/arbitrum/IArbSys.sol";
 
 import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 
@@ -29,7 +30,7 @@ contract UniswapV4CurveQuadStableSwapHook_Robinhood_Test is Test {
         vm.createSelectFork(rpcAlias, forkBlock);
 
         assertEq(block.chainid, ROBINHOOD_MAIN.CHAIN_ID, "Robinhood chainid 4663");
-        assertEq(block.number, forkBlock, "pinned fork block");
+        assertEq(IArbSys(address(0x64)).arbBlockNumber(), forkBlock, "pinned fork block");
 
         // Uni V4 must be live at the pin (PoolManager code present).
         assertGt(ROBINHOOD_MAIN.UNISWAP_V4_POOL_MANAGER.code.length, 0, "V4 PoolManager at pin");

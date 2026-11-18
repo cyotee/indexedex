@@ -43,6 +43,7 @@ import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/
 import {IUniswapV4DetfMigrationDFPkg} from "./interfaces/IUniswapV4DetfMigrationDFPkg.sol";
 import {IUniswapV4DetfMigrationRecovery} from "./interfaces/IUniswapV4DetfMigrationRecovery.sol";
 import {IUniswapV4DetfMigration, IUniswapV4DetfMigrationAllocation, IUniswapV4DetfMigrationAccounting} from "./interfaces/IUniswapV4DetfMigration.sol";
+import {IUniswapV4DetfMigrationWeightedPricingV3, IUniswapV4DetfMigrationWeightedPricingAllocationV3} from "./interfaces/IUniswapV4DetfMigrationWeightedPricingV3.sol";
 import {IUniswapV4DetfMigrationRewardTokenDFPkg, IUniswapV4DetfMigrationRewardToken} from "./sy/rewards/IUniswapV4DetfMigrationRewardToken.sol";
 import {IUniswapV4DetfMigrationSYDFPkg as MigrationSYPackage} from "./sy/IUniswapV4DetfMigrationSYDFPkg.sol";
 import {UniswapV4DetfMigrationRepo as MigrationRepo} from "./UniswapV4DetfMigrationRepo.sol";
@@ -197,7 +198,9 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](17);
+        interfaces_ = new bytes4[](19);
+        interfaces_[17] = type(IUniswapV4DetfMigrationWeightedPricingV3).interfaceId;
+        interfaces_[18] = type(IUniswapV4DetfMigrationWeightedPricingAllocationV3).interfaceId;
         interfaces_[16] = type(IUniswapV4DetfMigrationRecovery).interfaceId;
         interfaces_[15] = type(IERC721Receiver).interfaceId;
         interfaces_[12] = type(IMultiStepOwnable).interfaceId;
@@ -304,8 +307,8 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         if (msg.sender != SELF) revert InvalidMigrationPackageArguments();
         IUniswapV4Detf self_ = IUniswapV4Detf(address(this));
         PkgArgs memory args_ = _decodeArgs(DIAMOND_FACTORY.pkgArgsOfAccount(address(this)));
-        MigrationSYPackage.Preparation memory prepared_ = _requirePreparation(args_);
-        SyConstruction memory construction_ = MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
+        (MigrationSYPackage.Preparation memory prepared_, SyConstruction memory construction_) =
+            _requirePreparation(args_);
         MigrationSYPackage(address(SY_PKG)).validateBond(
             prepared_.bond, prepared_.bondPackage, construction_.bondArgs, false, address(0)
         );
@@ -334,10 +337,12 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         return true;
     }
 
-    function _requirePreparation(PkgArgs memory args_) private view returns (MigrationSYPackage.Preparation memory p_) {
+    function _requirePreparation(PkgArgs memory args_) private view
+        returns (MigrationSYPackage.Preparation memory p_, SyConstruction memory c_)
+    {
         bytes32 id_ = keccak256(abi.encode(block.chainid, SELF, args_));
         p_ = MigrationSYPackage(address(SY_PKG)).preparation(id_);
-        SyConstruction memory c_ = MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
+        c_ = MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
         if (!p_.completed || p_.constructionId != id_ || p_.parentPackage != SELF
             || p_.parent != c_.parent || p_.bond != c_.bond || p_.receipt != c_.receipt
             || p_.bondPackage != address(BOND_NFT_VAULT_PKG)
@@ -352,7 +357,7 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         IUniswapV4Detf self_) private view
     {
         PkgArgs memory args_ = _decodeArgs(DIAMOND_FACTORY.pkgArgsOfAccount(address(this)));
-        MigrationSYPackage.Preparation memory p_ = _requirePreparation(args_);
+        (MigrationSYPackage.Preparation memory p_,) = _requirePreparation(args_);
         if (p_.parent != address(this) || p_.bond != address(s_.bondNftVault)
             || p_.receipt != address(s_.rebasingClaimToken) || p_.rawSy != sy_.rawSY || p_.stakingSy != sy_.stakingSY) {
             revert InvalidMigrationChild(address(SY_PKG));
