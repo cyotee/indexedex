@@ -37,8 +37,7 @@ import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4DetfRepo} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib} from
-    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {Uv4DetfDonateDuringUnlockHarness} from
     "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol";
 import {UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals} from
@@ -432,31 +431,35 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         assertEq(IERC20(launchToken).allowance(detf, address(ponsSe)), 0, "no nested fund approve");
     }
 
-    function test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient() public {
+    function test_T_NEST_2_nestedShort_overDeclarationMintsNothing() public {
         _goLive(200 ether);
         uint256 dust_ = 2 ether;
         _fundLaunch(detfUser, dust_ * 2);
+        uint256 before_ = IERC20(launchToken).balanceOf(address(ponsSe));
         vm.prank(detfUser);
         IERC20(launchToken).transfer(address(ponsSe), dust_);
-        uint256 Rh = IBasicVault(address(ponsSe)).reserveOfToken(launchToken);
-        uint256 Bh = IERC20(launchToken).balanceOf(address(ponsSe));
-        uint256 U = Bh > Rh ? Bh - Rh : 0;
-        assertTrue(U > 0, "need surplus");
-        uint256 claimOver_ = U + 1;
-        vm.expectRevert();IStandardExchangeIn(address(ponsSe)).exchangeIn(IERC20(launchToken), claimOver_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
+        uint256 idle_ = IERC20(launchToken).balanceOf(address(ponsSe));
+        assertEq(idle_, before_ + dust_, "raw transfer stays idle");
+        uint256 sharesBefore_ = IERC20(address(ponsSe)).balanceOf(address(this));
+        (uint256 out_, uint256 refund_) = IStandardExchangeIn(address(ponsSe)).exchangeIn(
+            IERC20(launchToken), idle_ + 1, IERC20(address(ponsSe)), 0, address(this), true, _deadline()
         );
+        assertEq(out_, 0, "over-declared pretransfer mints nothing");
+        assertEq(refund_, dust_, "raw transfer is refunded");
+        assertEq(IERC20(launchToken).balanceOf(address(ponsSe)), idle_ - dust_, "booked balance remains");
+        assertEq(IERC20(address(ponsSe)).balanceOf(address(this)), sharesBefore_, "no share credit");
     }
 
-    function test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts() public {
+    function test_T_NEST_3_nestedI1_bookedPositionIsNotPretransferCredit() public {
         _goLive(200 ether);
         _liveMintOn(detf, detfUser, 10 ether);
-        IERC20 tokenIn_ = IERC20(launchToken);
-        uint256 Rh = IBasicVault(address(ponsSe)).reserveOfToken(address(tokenIn_));
-        uint256 Bh = tokenIn_.balanceOf(address(ponsSe));
-        uint256 U = Bh >= Rh ? Bh - Rh : 0;
-        uint256 claim_ = U >= 1 ? U + 1 : uint256(1);
-        vm.expectRevert();IStandardExchangeIn(address(ponsSe)).exchangeIn(tokenIn_, claim_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
+        uint256 idle_ = IERC20(launchToken).balanceOf(address(ponsSe));
+        uint256 sharesBefore_ = IERC20(address(ponsSe)).balanceOf(address(this));
+        (uint256 out_,) = IStandardExchangeIn(address(ponsSe)).exchangeIn(
+            IERC20(launchToken), idle_ + 1, IERC20(address(ponsSe)), 0, address(this), true, _deadline()
         );
+        assertEq(out_, 0, "booked position is not pretransfer credit");
+        assertEq(IERC20(address(ponsSe)).balanceOf(address(this)), sharesBefore_, "no share credit");
     }
 
     function test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts() public {
@@ -510,7 +513,6 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.stopPrank();
         assertEq(lp_, quote_, "actual SE-share donation preview");
         _assertR12aUnassigned(before_, lp_);
-        // Ordinary operations retain and book custody; feeTo performs maintenance.
         {
             address[] memory heldTokens_ = IBasicVault(detf).vaultTokens();
             for (uint256 i_; i_ < heldTokens_.length; ++i_) {
@@ -518,8 +520,10 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
                     IERC20(heldTokens_[i_]).balanceOf(detf), "ordinary leftover is booked");
             }
         }
-        _sweepDustUntilSettled();
-        _assertNoJoinableDust();
+        uint256 lpBefore_ = IERC20(detfInfo.hook()).balanceOf(address(_nft()));
+        vm.prank(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
+        detfInfo.sweepDust();
+        assertGe(IERC20(detfInfo.hook()).balanceOf(address(_nft())), lpBefore_, "sweep does not reduce donated LP");
     }
 
     function test_DN4_donate_detf_selfLeg_noMint() public {
@@ -826,11 +830,8 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.prank(address(harness));
         tok_.transfer(address(nft_), send_);
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
-        // Wings prices the SE leg through the pool. That quote cannot run while the manager is unlocked.
-        vm.expectRevert(
-            UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.RateProviderFailed.selector
-        );
-        harness.run(
+        // A DETF self-leg donation does not quote the FullSpread pool, so an open unlock does not block it.
+        bytes memory ret_ = harness.run(
             address(nft_),
             abi.encodeWithSelector(
                 bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)")),
@@ -841,10 +842,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
                 _deadline()
             )
         );
-        assertEq(
-            keccak256(abi.encode(_snapLive(dnUserOriginal))),
-            keccak256(abi.encode(before_)),
-            "unlocked Wings quote does not credit LP"
-        );
+        assertGt(abi.decode(ret_, (uint256)), 0, "self-leg donation completes during unlock");
+        assertEq(IERC20(detf).balanceOf(detfUser), before_.userDetf, "unlock donation does not pay the bonder");
     }
 }

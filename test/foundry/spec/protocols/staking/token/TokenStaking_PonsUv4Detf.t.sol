@@ -29,11 +29,10 @@ import {TestBase_UniswapV4Detf_PonsV2Se} from
 
 /**
  * @title TokenStaking_PonsUv4Detf
- * @notice E2E: launch-token / WETH pool → UpperLowerWings SE → Single SE buffer CP hook DETF
+ * @notice E2E: launch-token / WETH pool → FullSpread SE → Single SE buffer CP hook DETF
  *         → TokenStaking deposit/reward = launch token.
- * @dev Funded staking is backed by raw DETF. Wings lists only its target token, so the
- *      custom route table is the launch token through that vault. Bond claims pay sDETF
- *      without an asset-selecting close.
+ * @dev Funded staking is backed by raw DETF. The custom route table is the launch token
+ *      through the FullSpread vault. Bond claims pay sDETF without an asset-selecting close.
  */
 contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
     using VaultComponentFactoryService for ICreate3FactoryProxy;
@@ -130,11 +129,11 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         );
     }
 
-    function test_routes_declare_wings_target() public view {
-        _assertRoutesUseWingsTarget(detfInfo.mintRoutes());
-        _assertRoutesUseWingsTarget(detfInfo.burnRoutes());
-        _assertRoutesUseWingsTarget(detfInfo.bondRoutes());
-        _assertRoutesUseWingsTarget(detfInfo.donateRoutes());
+    function test_routes_declare_launch_token() public view {
+        _assertRoutesUseLaunchToken(detfInfo.mintRoutes());
+        _assertRoutesUseLaunchToken(detfInfo.burnRoutes());
+        _assertRoutesUseLaunchToken(detfInfo.bondRoutes());
+        _assertRoutesUseLaunchToken(detfInfo.donateRoutes());
     }
 
     function test_stakingBacking_is_nativeDetf() public view {
@@ -338,12 +337,12 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         assertEq(IERC20(receipt_).allowance(address(staking), address(staking.claimVault())), 0, "wrapper approval cleared");
     }
 
-    function _assertRoutesUseWingsTarget(IUniswapV4Detf.IoRoute[] memory rows_) internal view {
+    function _assertRoutesUseLaunchToken(IUniswapV4Detf.IoRoute[] memory rows_) internal view {
         bool target_;
         for (uint256 i; i < rows_.length; ++i) {
             if (address(rows_[i].token) == launchToken) target_ = true;
-            assertTrue(address(rows_[i].token) != address(weth), "WETH is not a Wings vault token");
-            assertEq(address(rows_[i].vault), address(ponsSe), "route vault is Wings SE");
+            assertTrue(address(rows_[i].token) != address(weth), "route token is the launch token");
+            assertEq(address(rows_[i].vault), address(ponsSe), "route vault is FullSpread SE");
         }
         assertTrue(target_, "launch token on table");
     }

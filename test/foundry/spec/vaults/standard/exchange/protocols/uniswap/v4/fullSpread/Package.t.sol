@@ -34,8 +34,6 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 import {Bytecode} from "@crane/contracts/utils/Bytecode.sol";
 import {Creation} from "@crane/contracts/utils/Creation.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/UniswapV4FullSpreadStandardExchangeVaultRepo.sol";
-import {UniswapV4PairTokenStandardExchangeVaultRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/pairToken/UniswapV4PairTokenStandardExchangeVaultRepo.sol";
-import {UniswapV4UpperLowerWingsStandardExchangeVaultRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultRepo.sol";
 import {IUniswapV4FullSpreadStandardExchangeVaultDFPkg as IPackage} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/interfaces/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol";
 import {TestBase_UniswapV4FullSpreadStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/test/bases/TestBase_UniswapV4FullSpreadStandardExchangeVault.sol";
 
@@ -700,15 +698,13 @@ contract UniswapV4FullSpreadStandardExchangeVault_Package_Test is TestBase_Unisw
         assertEq(keccak256(abi.encode(IVaultRegistryVaultQuery(address(indexedexManager)).vaults())), registered_);
     }
 
-    function test_storageSlotIsNotPairTokenOrWings() public pure {
+    function test_storageSlotIsNotRetiredPairTokenOrWings() public pure {
         bytes32 full_ = bytes32(uint256(keccak256(abi.encode("indexedex.vaults.standard.exchange.uniswap.v4.fullSpread"))) - 1);
         bytes32 pair_ = bytes32(uint256(keccak256(abi.encode("indexedex.vaults.standard.exchange.uniswap.v4.pairToken"))) - 1);
         bytes32 wings_ = keccak256("indexedex.vaults.standard.exchange.uniswap.v4.upperLowerWings");
         assertTrue(full_ != pair_);
         assertTrue(full_ != wings_);
         assertEq(full_, UniswapV4FullSpreadStandardExchangeVaultRepo.STORAGE_SLOT);
-        assertEq(pair_, UniswapV4PairTokenStandardExchangeVaultRepo.DEFAULT_SLOT);
-        assertEq(wings_, UniswapV4UpperLowerWingsStandardExchangeVaultRepo.STORAGE_SLOT);
     }
 
     /// @notice FS-A04: live money and book mutations in either instance leave the other instance intact.

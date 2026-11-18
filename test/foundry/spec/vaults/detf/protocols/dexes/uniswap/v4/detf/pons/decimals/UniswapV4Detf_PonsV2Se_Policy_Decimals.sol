@@ -104,8 +104,10 @@ abstract contract UniswapV4Detf_PonsV2Se_Policy_Decimals is UniswapV4Detf_PonsV2
         assertFalse(info.isReserveLive(), "inert");
         _firstBondOn(d, FIRST_BOND_AMT);
         assertTrue(info.isReserveLive(), "live");
-        uint256 g_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);
-        assertApproxEqAbs(_detfReserveInHook(d), g_, 1000, "first-bond G at peg");
+        uint256 peg_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);
+        uint256 raw_ = _detfReserveInHook(d);
+        assertLt(raw_, peg_ - 1000, "not a 1:1 peg mint");
+        assertApproxEqRel(raw_, peg_, 0.03e18, "fullSpread join stays near the opening quote");
     }
 
     function test_T2_openingUsesG_creationViewUnchanged() public {
@@ -120,7 +122,8 @@ abstract contract UniswapV4Detf_PonsV2Se_Policy_Decimals is UniswapV4Detf_PonsV2
         uint256 gOpening_ = _expectedJoinDetf(FIRST_BOND_AMT, LAUNCH_RICH_START);
         uint256 gCreation_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);
         uint256 raw_ = _detfReserveInHook(d);
-        assertApproxEqAbs(raw_, gOpening_, 1000, "first-bond G uses opening");
+        assertLt(raw_, gOpening_ - 1000, "not a 1:1 opening mint");
+        assertApproxEqRel(raw_, gOpening_, 0.03e18, "first-bond G uses opening");
         assertTrue(raw_ != gCreation_, "G is not creation-rate join");
         assertTrue(_openingAll(info.creationPairPerDetfWad(), DEFAULT_CREATION_PAIR_PER_DETF), "creation unchanged");
     }
