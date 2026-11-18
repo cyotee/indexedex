@@ -18,9 +18,10 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: process.env.E2E_BASE_URL ? undefined : {
-    command: `npm run start -- -p ${port}`,
+    command: `npm run build && npm run start -- -p ${port}`,
     url: baseURL,
     reuseExistingServer: false,
+    timeout: 600_000,
     env: { NEXT_PUBLIC_SITE_DEPLOYMENT: deployment },
   },
 })

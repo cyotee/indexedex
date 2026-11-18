@@ -32,14 +32,15 @@ export default defineConfig({
   webServer: process.env.E2E_SKIP_WEBSERVER
     ? undefined
     : {
-        command: process.env.E2E_WEB_SERVER_CMD ?? `npm run start -- -p ${PORT}`,
+        command: process.env.E2E_WEB_SERVER_CMD ?? `npm run build && npm run start -- -p ${PORT}`,
         url: BASE_URL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 180_000,
+        reuseExistingServer: false,
+        timeout: 600_000,
         stdout: 'pipe',
         stderr: 'pipe',
         env: {
           ...process.env,
+          NEXT_PUBLIC_SITE_DEPLOYMENT: 'indexedex',
           NEXT_PUBLIC_DEFAULT_CHAIN_ID: process.env.E2E_CHAIN_ID ?? '4663',
           NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT:
             process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT ?? 'anvil_robinhood_main',
