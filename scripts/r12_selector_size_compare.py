@@ -119,8 +119,12 @@ def main():
         classes[name] = text
     rebase = set(args.rebaseline)
     compared = 0; missing = []; oversize = []; diffs = []; proxy_diffs = 0
+    skipped_stale = []
     new_artifacts = discover_artifacts(base)
     for r in base:
+        if not Path(r['source']).is_file():
+            skipped_stale.append(r)
+            continue
         cur = load_artifact(r['artifact'])
         name = r['artifact'].split('/')[-1][:-5]
         if cur is None:
@@ -163,6 +167,7 @@ def main():
            'note': args.note or prev.get('note', ''), 'proxySelectorDiffCount': proxy_diffs,
            'newArtifacts': discovered,
            'newArtifactCount': len(new_artifacts),
+           'skippedStale': skipped_stale, 'skippedStaleCount': len(skipped_stale),
            'selectorCoverage': 'Artifact ABI comparison only. New units have no historical ABI baseline; '
                                'proxy selector sets require deployed cuts/loupe verification.'}
     with open(args.output, 'x') as comparison:

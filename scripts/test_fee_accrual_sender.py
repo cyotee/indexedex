@@ -17,8 +17,10 @@ import json, os, sys, time
 from pathlib import Path
 name = Path(sys.argv[0]).name
 args = sys.argv[1:]
+script = next((arg for arg in args if arg.split(':', 1)[0].endswith('.s.sol')), '')
 with open(os.environ['CLI_LOG'], 'a') as f:
-    f.write(json.dumps({'cli': name, 'args': args, 'sender': os.environ.get('DEPLOYER_ADDRESS'),
+    f.write(json.dumps({'cli': name, 'args': args, 'script': script,
+                        'sender': os.environ.get('DEPLOYER_ADDRESS'),
                         'key': os.environ.get('PRIVATE_KEY'), 'config': os.environ.get('FEE_ACCRUAL_CONFIG'),
                         'output': os.environ.get('OUT_DIR_OVERRIDE')}) + '\n')
 if name == 'cast':
@@ -45,13 +47,18 @@ elif name == 'python3':
 elif name == 'forge':
     if os.environ.get('FAIL_SIM') and '--broadcast' not in args:
         sys.exit(1)
+    if script:
+        record = Path(os.environ['FOUNDRY_BROADCAST']) / Path(script).name / '4663/run-latest.json'
+        if '--broadcast' not in args and os.environ.get('BROADCAST_RECORD_MODE') == 'unchanged':
+            record.parent.mkdir(parents=True, exist_ok=True)
+            record.write_text('{}')
     if '--broadcast' in args:
         if os.environ.get('FAIL_BROADCAST'):
             sys.exit(1)
-        record = Path(os.environ['FOUNDRY_BROADCAST']) / Path(args[1]).name / '4663/run-latest.json'
-        record.parent.mkdir(parents=True, exist_ok=True)
-        record.write_text(json.dumps({'test': time.time_ns()}))
-        if 'Phase_06_Stage_01_' in args[1]:
+        if not os.environ.get('BROADCAST_RECORD_MODE'):
+            record.parent.mkdir(parents=True, exist_ok=True)
+            record.write_text(json.dumps({'test': time.time_ns()}))
+        if 'Phase_06_Stage_01_' in script:
             (Path(os.environ['OUT_DIR_OVERRIDE']) / 'phase06_stage01_bond_nft_pkg.json').write_text('{}')
 '''
 
@@ -59,7 +66,7 @@ class FeeAccrualSender(unittest.TestCase):
     def run_public(self, options=('--broadcast',), command='fee-accrual-migrate', defaults=False, **changes):
         with tempfile.TemporaryDirectory() as tmp:
             p = Path(tmp)
-            for name in ('forge', 'cast', 'jq', 'python3'):
+            for name in ('forge', 'cast', 'jq', 'python3', 'rg'):
                 exe = p / name
                 exe.write_text('#!' + sys.executable + '\n' + CLI)
                 exe.chmod(0o755)
@@ -81,16 +88,22 @@ class FeeAccrualSender(unittest.TestCase):
                    'FEE_ACCRUAL_CONFIG': str(config), 'FEE_ACCRUAL_RUN_DIR': str(p / 'run'),
                    'FEE_ACCRUAL_CORE_DIR': str(core), 'FEE_ACCRUAL_PACKAGE_DIR': str(packages),
                    'CLI_LOG': str(p / 'log')}
-            cwd = ROOT
+            # Exercise the real shell in a private tree. Stage resolution must not
+            # depend on retired production modules or write into shared deployments.
+            cwd = p / 'repo'
+            for relative in ('scripts/shell/robinhood_main.sh', 'scripts/shell/lib/rh_4663_stages.sh',
+                             'scripts/foundry/anvil_robinhood_main/fee_accrual_launch.robinhood.json'):
+                destination = cwd / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / relative, destination)
+            stages = ('01-04', '05-01', '05-03', '06-01', '06-02', '06-04', '06-07', '06-10',
+                      '07-01', '07-02', '07-03', '07-04', '08-03', '08-04', '08-05', '08-06',
+                      '08-07', '08-08', '09-02')
+            for stage in stages:
+                phase, number = stage.split('-')
+                (cwd / 'scripts/foundry/anvil_robinhood_main' /
+                 f'Phase_{phase}_Stage_{number}_TestStage.s.sol').touch()
             if defaults:
-                cwd = p / 'repo'
-                for relative in ('scripts/shell/robinhood_main.sh', 'scripts/shell/lib/rh_4663_stages.sh',
-                                 'scripts/foundry/anvil_robinhood_main/fee_accrual_launch.robinhood.json'):
-                    destination = cwd / relative
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(ROOT / relative, destination)
-                for stage in (ROOT / 'scripts/foundry/anvil_robinhood_main').glob('*.s.sol'):
-                    (cwd / 'scripts/foundry/anvil_robinhood_main' / stage.name).touch()
                 shutil.copytree(core, cwd / 'deployments/anvil_robinhood_main')
                 for key in ('RPC_URL', 'ETH_KEYSTORE_ACCOUNT', 'FEE_ACCRUAL_CONFIG', 'FEE_ACCRUAL_RUN_DIR',
                             'FEE_ACCRUAL_PACKAGE_DIR', 'FEE_ACCRUAL_CORE_DIR', 'REHEARSAL_CORE_DIR',
@@ -119,14 +132,16 @@ class FeeAccrualSender(unittest.TestCase):
         for r in forge:
             args = r['args']
             self.assertEqual(args[args.index('--sender') + 1], OWNER)
+            self.assertEqual(args.count('--use'), 1)
+            self.assertEqual(args[args.index('--use') + 1], 'solar')
             self.assertEqual(r['key'], '0')
             self.assertIn('--offline', args)  # Trace metadata must not consume the deadline.
             for forbidden in ('--unlocked', '--legacy', '--gas-price', '--skip-simulation', '--resume'):
                 self.assertNotIn(forbidden, args)
         broadcasts = [r for r in forge if '--broadcast' in r['args']]
         self.assertEqual(len(broadcasts), 2)
-        self.assertIn('Stage_05', broadcasts[0]['args'][1])
-        self.assertIn('Stage_07', broadcasts[1]['args'][1])
+        self.assertIn('Stage_05', broadcasts[0]['script'])
+        self.assertIn('Stage_07', broadcasts[1]['script'])
         for r in broadcasts:
             self.assertIn('--slow', r['args'])
             self.assertNotIn('--account', r['args'])
@@ -157,7 +172,7 @@ class FeeAccrualSender(unittest.TestCase):
     def test_migration_requotes_and_reconciles_each_batch_until_complete(self):
         result, rows = self.run_public(MIGRATION_REMAINING='100,75,50,0')
         self.assertEqual(result.returncode, 0, result.stderr)
-        batches = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args'] and 'Stage_07' in r['args'][1]]
+        batches = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args'] and 'Stage_07' in r['script']]
         self.assertEqual(len(batches), 3)
         checks = [r['args'][2] for r in rows if r['cli'] == 'python3']
         self.assertEqual(checks.count('receipts'), 4)  # adapter + three batches
@@ -167,7 +182,7 @@ class FeeAccrualSender(unittest.TestCase):
     def test_migration_stops_if_batch_makes_no_progress(self):
         result, rows = self.run_public(MIGRATION_REMAINING='100,100')
         self.assertNotEqual(result.returncode, 0)
-        batches = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args'] and 'Stage_07' in r['args'][1]]
+        batches = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args'] and 'Stage_07' in r['script']]
         self.assertEqual(len(batches), 1)
 
     def test_script_reconciliation_checks_both_journals_without_broadcast(self):
@@ -183,7 +198,7 @@ class FeeAccrualSender(unittest.TestCase):
         result, rows = self.run_public(command='fee-accrual-launch')
         self.assertEqual(result.returncode, 0, result.stderr)
         broadcasts = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args']]
-        stages = ['-'.join(Path(r['args'][1]).name.split('_')[i] for i in (1, 3)) for r in broadcasts]
+        stages = ['-'.join(Path(r['script']).name.split('_')[i] for i in (1, 3)) for r in broadcasts]
         self.assertEqual(stages, ['05-01', '05-03', '06-01', '06-02', '06-04', '06-07', '06-10',
                                   '07-01', '07-02', '07-03', '07-04', '08-03', '08-04', '08-05', '08-07'])
         for r, stage in zip(broadcasts, stages):
@@ -202,7 +217,7 @@ class FeeAccrualSender(unittest.TestCase):
                     self.assertEqual(previous_forge, row['args'][:-2])
                 previous_forge = row['args']
         first_script = next(i for i, r in enumerate(rows) if r['cli'] == 'forge' and r['args'][0] == 'script'
-                            and 'Phase_05_' in r['args'][1])
+                            and 'Phase_05_' in r['script'])
         self.assertTrue(any(r['cli'] == 'forge' and r['args'][0] == 'build' for r in rows[:first_script]))
 
     def test_full_launch_defaults_with_only_deployer_address(self):
@@ -234,7 +249,7 @@ class FeeAccrualSender(unittest.TestCase):
         result, rows = self.run_public(command='fee-accrual-launch', COMPLETED_STAGES=completed)
         self.assertEqual(result.returncode, 0, result.stderr)
         broadcasts = [r for r in rows if r['cli'] == 'forge' and '--broadcast' in r['args']]
-        stages = ['-'.join(Path(r['args'][1]).name.split('_')[i] for i in (1, 3)) for r in broadcasts]
+        stages = ['-'.join(Path(r['script']).name.split('_')[i] for i in (1, 3)) for r in broadcasts]
         self.assertEqual(stages, ['07-04', '08-03', '08-04', '08-05', '08-07'])
         previous_forge = None
         for row in rows:
@@ -283,6 +298,16 @@ class FeeAccrualSender(unittest.TestCase):
         result, rows = self.run_public(FAIL_RECEIPTS='1')
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(any('Stage_07' in ' '.join(r['args']) for r in rows))
+
+    def test_missing_or_unchanged_broadcast_record_prevents_receipts_and_migration(self):
+        for mode in ('missing', 'unchanged'):
+            with self.subTest(mode=mode):
+                result, rows = self.run_public(BROADCAST_RECORD_MODE=mode)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('No fresh broadcast record', result.stderr)
+                self.assertEqual(sum('--broadcast' in r['args'] for r in rows), 1)
+                checks = [r['args'][2] for r in rows if r['cli'] == 'python3']
+                self.assertEqual(checks, ['preflight', 'ready', 'stage-complete'])
 
     def test_local_mismatched_owner_fails_before_cli(self):
         source = (ROOT / 'scripts/foundry/anvil_robinhood_main/deploy_all.sh').read_text()

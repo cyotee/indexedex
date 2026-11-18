@@ -2,6 +2,21 @@
 
 Deployment helpers load creation bytecode from `out/` at runtime. Keeping implementation imports out of those helpers cuts the Solidity dependency graph, but makes an explicit artifact refresh necessary before tests or scripts deploy edited contracts.
 
+## Mixed compiler generations
+
+Keep `out/` and `cache_forge/` together when seeding a checkout, and use the same
+Solar revision for its build and tests. A cache can retain artifacts from multiple
+compiler revisions at different output paths. An incremental build can leave an
+older flat artifact alongside a newer source-qualified artifact, so short and
+qualified identifiers load different bytecode for the same source.
+
+When this mismatch is confirmed from artifact metadata and the cache's artifact
+paths, preserve both directories outside their active paths and perform a fresh
+`forge build --use solar`, followed by the affected tests and hermetic suite.
+This is a repair for a diagnosed mixed-generation state, not routine cache
+deletion. Keep deployment identity and bytecode assertions intact; do not replace
+expected hashes or ignore metadata to make mismatched artifacts pass.
+
 For a warm checkout, pass every edited production source and an exact test file or suite directory to the helper:
 
 ```bash

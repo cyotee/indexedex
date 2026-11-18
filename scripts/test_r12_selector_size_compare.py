@@ -90,6 +90,20 @@ class SelectorSizeEvidenceTests(unittest.TestCase):
         self.assertEqual(Path('baseline.json').read_bytes(), initial)
         self.assertTrue(Path('result.json.baseline.json').is_file())
 
+    def test_deleted_source_stale_artifact_cannot_fail_size_or_selector_gates(self):
+        self.base.append({'source': 'contracts/se/DeletedFacet.sol',
+                          'artifact': 'out/DeletedFacet.sol/DeletedFacet.json',
+                          'methodIdentifiers': {'retired()': 'deadbeef'}})
+        Path('baseline.json').write_text(json.dumps(self.base))
+        self.artifact('DeletedFacet', 24577)
+        self.run_compare()
+        report = json.loads(Path('result.json').read_text())
+        self.assertEqual(report['compared'], 1)
+        self.assertEqual(report['missingArtifacts'], 0)
+        self.assertEqual(report['oversizeCount'], 0)
+        self.assertEqual(report['selectorDiffCount'], 0)
+        self.assertEqual(report['skippedStale'], [self.base[1]])
+
 
 if __name__ == '__main__':
     unittest.main()

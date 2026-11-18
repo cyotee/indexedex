@@ -133,9 +133,10 @@ class ArtifactPlanTest(unittest.TestCase):
         self.write("test/foundry/spec/Selected.t.sol", 'contract Selected { string constant ID = "Facet.sol:Facet"; }')
         self.write("test/foundry/spec/Unrelated.t.sol", "contract Unrelated {}")
         plan = artifacts.test_plan(self.graph(), ["contracts/Target.sol"],
-                                   "test/foundry/spec/Selected.t.sol", forge_args=["-vv"])
+                                   "test/foundry/spec/Selected.t.sol",
+                                   forge_args=["--use", "solar", "-vv", "--use=solc:0.8.30"])
         self.assertEqual(plan["test_files"], ["test/foundry/spec/Selected.t.sol"])
-        self.assertEqual(plan["test_command"], ["forge", "test", "-vv", "--skip", "contracts/**",
+        self.assertEqual(plan["test_command"], ["forge", "test", "--use", "solar", "-vv", "--skip", "contracts/**",
                                                 "--skip", "test/foundry/spec/Unrelated.t.sol"])
         self.assertNotIn("test_environment", plan)
         self.assertIn("contracts/Facet.sol", plan["roots"])
@@ -170,7 +171,7 @@ class ArtifactPlanTest(unittest.TestCase):
         self.write("test/foundry/spec/Selected.t.sol", 'import "./Other.t.sol"; contract Selected {}')
         self.write("test/foundry/spec/Other.t.sol", "contract Other {}")
         plan = artifacts.test_plan(self.graph(), [], "test/foundry/spec/Selected.t.sol")
-        self.assertEqual(plan["test_command"], ["forge", "test", "--match-path", "test/foundry/spec/Selected.t.sol",
+        self.assertEqual(plan["test_command"], ["forge", "test", "--use", "solar", "--match-path", "test/foundry/spec/Selected.t.sol",
                                                 "--skip", "test/foundry/spec/Other.t.sol"])
 
     def test_failed_artifact_build_prevents_test_execution(self):
@@ -197,7 +198,8 @@ class ArtifactPlanTest(unittest.TestCase):
         self.write("test/foundry/spec/Second.t.sol", "contract Second {}")
         argv = ["forge-artifacts.py", "plan", "--test-root", "test/foundry/spec/Selected.t.sol",
                 "--test-root", "test/foundry/spec/Second.t.sol",
-                "--no-consumer-artifacts", "contracts/Target.sol", "--json", "--", "-vv"]
+                "--no-consumer-artifacts", "contracts/Target.sol", "--json", "--",
+                "--use=solar", "-vv", "--use", "solc:0.8.30"]
         output = io.StringIO()
         with patch.object(artifacts, "SourceGraph", return_value=self.graph()), \
                 patch.object(artifacts.sys, "argv", argv), patch.object(artifacts.sys, "stdout", output):
@@ -205,7 +207,7 @@ class ArtifactPlanTest(unittest.TestCase):
         plan = json.loads(output.getvalue())
         self.assertEqual(plan["changed"], ["contracts/Target.sol"])
         self.assertEqual(plan["test_roots"], ["test/foundry/spec/Second.t.sol", "test/foundry/spec/Selected.t.sol"])
-        self.assertEqual(plan["test_command"], ["forge", "test", "-vv", "--skip", "contracts/**"])
+        self.assertEqual(plan["test_command"], ["forge", "test", "--use", "solar", "-vv", "--skip", "contracts/**"])
 
     def test_union_scopes_do_not_exclude_each_other(self):
         self.write("test/foundry/spec/a/One.t.sol", "contract One {}")
@@ -220,7 +222,7 @@ class ArtifactPlanTest(unittest.TestCase):
         self.write("contracts/Deploy.sol", 'library Deploy { string constant ID = "Fixture.t.sol:Fixture"; }')
         self.write("test/foundry/spec/Fixture.t.sol", "contract Fixture {}")
         plan = self.graph().plan(["contracts/Deploy.sol"])
-        self.assertEqual(plan["command"], ["forge", "build", "contracts/Deploy.sol", "test/foundry/spec/Fixture.t.sol"])
+        self.assertEqual(plan["command"], ["forge", "build", "--use", "solar", "contracts/Deploy.sol", "test/foundry/spec/Fixture.t.sol"])
 
     def test_closure_loads_explicit_sources_outside_initial_discovery(self):
         self.write("scripts/archive/Old.s.sol", 'import "./Dependency.sol"; contract Old {}')
