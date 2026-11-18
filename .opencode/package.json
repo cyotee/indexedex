@@ -1,0 +1,11 @@
+{
+  "name": "indexedex-opencode",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test ./tests/ --timeout 30000"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "1.18.31"
+  }
+}

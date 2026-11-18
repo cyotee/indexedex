@@ -4,7 +4,7 @@ import { link, lstat, mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, 
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parse } from "yaml";
+const { parse } = Bun.YAML;
 import researchCouncil from "../plugins/research-council";
 import reviewCouncil from "../plugins/review-council";
 import { researchProfile, reviewProfile } from "../support/research-council";

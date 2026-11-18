@@ -3,7 +3,7 @@ import { link, mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
-import { parse } from "yaml";
+const { parse } = Bun.YAML;
 import researchCouncil from "../plugins/research-council";
 import reviewCouncil from "../plugins/review-council";
 
